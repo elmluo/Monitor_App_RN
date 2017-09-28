@@ -1,0 +1,3 @@
+rootProject.name = 'YIYI_Scloud_App'
+
+include ':app'
