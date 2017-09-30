@@ -18,6 +18,7 @@ export default class YIYI_Scloud_App extends Component {
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Welcome to React Native!
+          {/*//测试*/}
         </Text>
         <Text style={styles.instructions}>
           To get started, edit index.ios.js
