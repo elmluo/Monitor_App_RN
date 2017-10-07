@@ -11,23 +11,12 @@ import {
   Text,
   View
 } from 'react-native';
+import SimpleApp from './APP/page/HomePage'
 
 export default class YIYI_Scloud_App extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-          {/*//测试*/}
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu 123
-        </Text>
-      </View>
+      <SimpleApp/>
     );
   }
 }
