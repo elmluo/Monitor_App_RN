@@ -20,9 +20,9 @@ export default class WelcomePage extends Component {
     componentDidMount() {
         new ThemeDao().getTheme().then((data)=>{
             this.theme=data;
-        })
+        });
         this.timer=setTimeout(()=> {
-            SplashScreen.hide();
+            // SplashScreen.hide();
             this.props.navigator.resetTo({
                 component: HomePage,
                 params:{
@@ -32,7 +32,8 @@ export default class WelcomePage extends Component {
         }, 500);
     }
     componentWillUnmount(){
-        this.timer&&clearTimeout(this.timer);
+        // 组件卸载后取消定时器，防止多余异常出现
+        this.timer && clearTimeout(this.timer);
     }
     render() {
         return null;

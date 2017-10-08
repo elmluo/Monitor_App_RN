@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
 } from 'react-native';
+
 import setup from './js/page/setup'
 
-AppRegistry.registerComponent('imooc_gp', () => setup);
+AppRegistry.registerComponent('YIYI_Scloud_App', () => setup);

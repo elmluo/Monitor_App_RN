@@ -7,13 +7,13 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Text,
-    Navigator,
     Image,
     View,
     DeviceEventEmitter
 } from 'react-native';
+
 import TabNavigator from 'react-native-tab-navigator';
+// import {Navigator} from 'react-native-deprecated-custom-components'
 import PopularPage from './PopularPage'
 import TrendingPage from './TrendingPage'
 import FavoritePage from './FavoritePage'
@@ -26,8 +26,8 @@ export const FLAG_TAB={
     flag_trendingTab:'tb_trending',
     flag_favoriteTab:'tb_favorite',
     flag_my:'tb_my'
-}
-import codePush from 'react-native-code-push'
+};
+// import codePush from 'react-native-code-push'
 export default class HomePage extends BaseComponent {
     constructor(props) {
         super(props);
@@ -41,23 +41,23 @@ export default class HomePage extends BaseComponent {
     /**
      * 向CodePush服务器检查更新
      */
-    update(){
-        codePush.sync({
-            updateDialog: {
-                appendReleaseDescription: true,
-                descriptionPrefix:'更新内容',
-                title:'更新',
-                mandatoryUpdateMessage:'',
-                mandatoryContinueButtonLabel:'更新',
-            },
-            mandatoryInstallMode:codePush.InstallMode.ON_NEXT_RESTART,
-        });
-    }
+    // update(){
+    //     codePush.sync({
+    //         updateDialog: {
+    //             appendReleaseDescription: true,
+    //             descriptionPrefix:'更新内容',
+    //             title:'更新',
+    //             mandatoryUpdateMessage:'',
+    //             mandatoryContinueButtonLabel:'更新',
+    //         },
+    //         mandatoryInstallMode:codePush.InstallMode.ON_NEXT_RESTART,
+    //     });
+    // }
     componentDidMount(){
         super.componentDidMount();
         this.listener = DeviceEventEmitter.addListener('ACTION_HOME',
             (action,params) => this.onAction(action,params));
-        this.update();
+        // this.update();
     }
 
     /**
