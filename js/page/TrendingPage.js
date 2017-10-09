@@ -25,7 +25,7 @@ import LanguageDao, {FLAG_LANGUAGE} from '../expand/dao/LanguageDao'
 import FavoriteDao from "../expand/dao/FavoriteDao"
 import Popover from '../common/Popover'
 import ViewUtils from '../util/ViewUtils'
-import {FLAG_TAB} from './HomePage'
+import {FLAG_TAB} from './Main'
 import MoreMenu, {MORE_MENU} from '../common/MoreMenu'
 import ProjectModel from "../model/ProjectModel";
 import Utils from '../util/Utils'

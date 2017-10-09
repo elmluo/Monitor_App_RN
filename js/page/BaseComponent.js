@@ -8,7 +8,7 @@ import React, {Component} from 'react';
 import {
     DeviceEventEmitter
 } from 'react-native';
-import {ACTION_HOME}from './HomePage'
+import {ACTION_HOME}from './Main'
 export default class BaseComponent extends Component {
     constructor(props) {
         super(props);

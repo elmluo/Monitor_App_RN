@@ -15,7 +15,7 @@ import {StyleSheet,
     DeviceEventEmitter
 } from "react-native";
 import Toast, {DURATION} from "react-native-easy-toast";
-import {ACTION_HOME} from './HomePage'
+import {ACTION_HOME} from './Main'
 import BackPressComponent from '../common/BackPressComponent'
 import GlobalStyles from "../../res/styles/GlobalStyles";
 import RepositoryCell from '../common/RepositoryCell'

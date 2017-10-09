@@ -14,6 +14,10 @@ import {
 
 import TabNavigator from 'react-native-tab-navigator';
 // import {Navigator} from 'react-native-deprecated-custom-components'
+import Home from './home/Home'
+import Monitor from './monitor/Monitor'
+import Alarm from './alarm/Alarm'
+import Function from './function/Function'
 import PopularPage from './PopularPage'
 import TrendingPage from './TrendingPage'
 import FavoritePage from './FavoritePage'
@@ -22,16 +26,20 @@ import Toast,{DURATION} from 'react-native-easy-toast'
 import BaseComponent from './BaseComponent'
 export const ACTION_HOME={A_SHOW_TOAST:'showToast',A_RESTART:'restart',A_THEME:'theme'};
 export const FLAG_TAB={
+    flag_homeTab: 'tb_home',
+    flag_monitorTab: 'tb_monitor',
+    flag_alarmTab: 'tb_alarm',
+    flag_functionTab: 'tb_function',
     flag_popularTab:'tb_popular',
     flag_trendingTab:'tb_trending',
     flag_favoriteTab:'tb_favorite',
     flag_my:'tb_my'
 };
 // import codePush from 'react-native-code-push'
-export default class HomePage extends BaseComponent {
+export default class Main extends BaseComponent {
     constructor(props) {
         super(props);
-        let selectedTab=this.props.selectedTab?this.props.selectedTab:'tb_popular';
+        let selectedTab=this.props.selectedTab?this.props.selectedTab:'tb_home';
         this.state = {
             selectedTab: selectedTab,
             theme:this.props.theme,
@@ -112,10 +120,14 @@ export default class HomePage extends BaseComponent {
         return (
             <View style={styles.container}>
                 <TabNavigator>
+                    {this._renderTab(Home,'tb_home','首页',require('../../res/Image/Tab/tab_home_nor.png'))}
+                    {this._renderTab(Monitor,'tb_monitor','监控',require('../../res/Image/Tab/tab_monitor_nor.png'))}
+                    {this._renderTab(Alarm,'tb_alarm','告警',require('../../res/Image/Tab/tab_alarm_nor.png'))}
+                    {this._renderTab(Function,'tb_function','数据',require('../../res/Image/Tab/tab_subsystem_nor.png'))}
                     {this._renderTab(PopularPage,'tb_popular','最热',require('../../res/images/ic_polular.png'))}
                     {this._renderTab(TrendingPage,'tb_trending','趋势',require('../../res/images/ic_trending.png'))}
-                    {this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}
-                    {this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}
+                    {/*{this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}*/}
+                    {/*{this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}*/}
                 </TabNavigator>
                 <Toast ref={(toast)=>this.toast=toast}/>
             </View>
@@ -128,8 +140,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     image: {
-        height: 26,
-        width: 26,
+        height: 22,
+        width: 22,
     }
 });
 

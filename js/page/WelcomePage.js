@@ -9,7 +9,7 @@ import {
     Text,
 } from 'react-native'
 import NavigationBar from '../common/NavigationBar'
-import HomePage from './HomePage'
+import Main from './Main'
 import ThemeDao from '../expand/dao/ThemeDao'
 import SplashScreen from 'react-native-splash-screen'
 export default class WelcomePage extends Component {
@@ -24,7 +24,7 @@ export default class WelcomePage extends Component {
         this.timer=setTimeout(()=> {
             // SplashScreen.hide();
             this.props.navigator.resetTo({
-                component: HomePage,
+                component: Main,
                 params:{
                     theme:this.theme,
                 }

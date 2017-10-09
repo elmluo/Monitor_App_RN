@@ -17,7 +17,7 @@ import {
 import GlobalStyles from '../../../res/styles/GlobalStyles'
 import ThemeFactory,{ThemeFlags} from '../../../res/styles/ThemeFactory'
 import ThemeDao from '../../expand/dao/ThemeDao'
-import {ACTION_HOME} from '../HomePage'
+import {ACTION_HOME} from '../Main'
 export default class CustomTheme extends Component {
     constructor(props){
         super(props);

@@ -18,7 +18,7 @@ import SortableListView from 'react-native-sortable-listview'
 import NavigationBar from '../../common/NavigationBar'
 import LanguageDao, {FLAG_LANGUAGE} from '../../expand/dao/LanguageDao'
 import BackPressComponent from '../../common/BackPressComponent'
-import {ACTION_HOME,FLAG_TAB} from '../HomePage'
+import {ACTION_HOME,FLAG_TAB} from '../Main'
 import ArrayUtils from '../../util/ArrayUtils'
 import ViewUtils from '../../util/ViewUtils'
 

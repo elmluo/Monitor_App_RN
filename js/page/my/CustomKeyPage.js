@@ -20,7 +20,7 @@ import LanguageDao, {FLAG_LANGUAGE} from '../../expand/dao/LanguageDao'
 import BackPressComponent from '../../common/BackPressComponent'
 import ArrayUtils from '../../util/ArrayUtils'
 import ViewUtils from '../../util/ViewUtils'
-import {ACTION_HOME,FLAG_TAB} from '../HomePage'
+import {ACTION_HOME,FLAG_TAB} from '../Main'
 export default class CustomKeyPage extends Component {
     constructor(props) {
         super(props);
