@@ -23,6 +23,7 @@ export default class Monitor extends Component {
         // 初始化类实例
         this.dataRepository = new DataRepository();
         this.state = {
+            isLoading: false,
             theme:this.props.theme,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2)=>r1 !== r2}),
         }
@@ -67,7 +68,7 @@ export default class Monitor extends Component {
                 }}>
                 <View style={styles.row}>
                     <View style={styles.rowTop}>
-                        <Text>{rowData.name}</Text>
+                        <Text style={styles.rowTopTitle}>{rowData.name}</Text>
                         <Text>设备数量： {rowData.deviceCount}</Text>
                     </View>
                     <View style={styles.rowBottom}>
@@ -115,8 +116,8 @@ export default class Monitor extends Component {
                             title='加载中...'
                             titleColor={this.state.theme.themeColor}
                             colors={[this.state.theme.themeColor]}
-                            refreshing={this.state.isLoading}
                             tintColor={this.state.theme.themeColor}
+                            refreshing={this.state.isLoading}
                             onRefresh={()=>{
                                 // 刷新的时候重新获取数据
                                 this._onLoad()
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     online: {
-        backgroundColor: '#3C7FFC ',
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
         fontSize: 12
     }
 

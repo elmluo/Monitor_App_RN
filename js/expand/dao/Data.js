@@ -45,7 +45,9 @@ export default class DataRepository {
                     resolve(json);
                 })
                 .catch(error => {
-                    reject(error)
+                    reject(error);
+                    console.log(error);
+                    alert('获取数据出错')
                 })
             })
         }
