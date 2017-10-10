@@ -56,24 +56,26 @@ export default class Monitor extends Component {
     }
 
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
-        let fusState =
-            rowData.fsuOnline
-                ?<Text>在线</Text>
-                :<Text>离线</Text>;
+        let onlineStyle = {
+            backgroundColor: this.state.theme.themeColor,
+        };
+        let fusState = rowData.fsuOnline
+                ?<Text style={[styles.onlineState, onlineStyle]}>在线</Text>
+                :<Text style={styles.onlineState}>离线</Text>;
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                    this._pushToDetail(rowData)
+                    this._pushToDetail.call(this,rowData)
                 }}>
                 <View style={styles.row}>
                     <View style={styles.rowTop}>
-                        <Text style={styles.rowTopTitle}>{rowData.name}</Text>
-                        <Text>设备数量： {rowData.deviceCount}</Text>
+                        <Text style={styles.name}>{rowData.name}</Text>
+                        <Text style={styles.deviceCount}>设备数量： {rowData.deviceCount}</Text>
                     </View>
                     <View style={styles.rowBottom}>
                         {fusState}
-                        <Text>{rowData.tier}</Text>
+                        <Text style={styles.tier}>{rowData.tier}</Text>
                     </View>
                 </View>
 
@@ -89,6 +91,7 @@ export default class Monitor extends Component {
             passProps: {rowData}
         })
     }
+
     componentDidMount() {
         // 组件装载完，获取数据
         this._onLoad()
@@ -107,7 +110,6 @@ export default class Monitor extends Component {
         return(
             <View style={styles.container}>
                 {navigationBar}
-                <Text>{this.state.result}</Text>
                 <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow.bind(this)}
@@ -137,21 +139,42 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
         borderBottomColor: '#EBEBEB',
         marginLeft: 16,
-        padding: 16
+        padding: 15,
+        paddingLeft: 0,
     },
     rowTop: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginBottom: 7
+    },
+    name: {
+        color: '#444444',
+        fontSize: 14
+    },
+    deviceCount: {
+        color: '#7E7E7E',
+        fontSize: 12
     },
     rowBottom: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
-    online: {
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-        fontSize: 12
+    onlineState: {
+        backgroundColor: '#949494',
+        color: '#FFFFFF',
+        fontSize: 12,
+        paddingTop: 1,
+        paddingBottom: 1,
+        paddingLeft: 6,
+        paddingRight: 6,
+        borderRadius: 3,
+    },
+    tier: {
+        fontSize: 12,
+        color: '#7E7E7E',
+        marginLeft: 8
     }
 
 });

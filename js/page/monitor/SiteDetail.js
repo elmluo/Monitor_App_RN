@@ -18,7 +18,7 @@ export default class SiteDetail extends Component {
     }
     render() {
         let statusBar={
-            // backgroundColor: this.state.theme.themeColor,
+            backgroundColor: this.state.theme.themeColor,
             barStyle: 'light-content',
         };
 
