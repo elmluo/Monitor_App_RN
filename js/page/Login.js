@@ -11,19 +11,27 @@ import {
     TouchableOpacity,
     Image,
     ImageBackground,
-
 } from 'react-native'
 
-console.log(View);
-// import NavigationBar from '../../common/NavigationBar'
-
+import NavigationBar from '../common/NavigationBar'
+import Main from './Main'
+import LoginDetail from './LoginDemo'
+import SearchPage from './SearchPage'
+import DataRepository from '../expand/dao/Data'
+let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
 let {width,height} = Dimensions.get('window');
+
 export default class Login extends Component {
     constructor(props) {
         super(props);
+        this.state={
+            username: '',
+            userpwd: '',
+        }
     }
-    loginInMainpage() {
+
+    loginInMainPage() {
         // this.refs.inputLoginName.blur();
         // this.refs.inputLoginPwd.blur();
         // this.props.navigator.resetTo({
@@ -35,16 +43,41 @@ export default class Login extends Component {
         //         ...this.props
         //     },
         // });
+
+        let url = '/app/v2/user/login';
+        let params = {
+            appId: 'YiYi',
+            username: this.state.username,
+            password: this.state.userpwd
+        };
+        dataRepository.fetchNetRepository('POST', url, params)
+            .then((response)=> {
+                if (response['success'] === true){
+                    this.props.navigator.push({
+                        component: Main,
+                        params:{
+                            theme: this.theme,
+                            ...this.props
+                        }
+                    });
+
+                    // 如果把保存逻辑数据放到路由前面，路由不会执行，很迷
+                    dataRepository.saveRepository(url, response.data, (error)=>{console.log(error, 12345)});
+                } else {
+                    console.log('获取数据失败')
+                }
+            })
+            .catch(error=> {
+                console.log(error);
+            })
     }
 
-
     /*设置背景图片*/
-
     render() {
         return (<View style={styles.container}>
 
             <ImageBackground style={styles.bgImageSize}
-                   source={require('../../res/Image/Login/ic_login_bg.png')}>
+                             source={require('../../res/Image/Login/ic_login_bg.png')}>
                 <Image style={styles.loginImg}
                        source={require('../../res/Image/Login/ic_login_logo.png')}/>
                 <Text style={styles.logoText}>义益云监控</Text>
@@ -80,10 +113,8 @@ export default class Login extends Component {
 
                 <TouchableOpacity style={styles.login}
                                   underlayColor='transparent'
-                                  onPress={() => this.loginInMainpage()}>
-
+                                  onPress={()=> {this.loginInMainPage()}}>
                     <Text style={styles.loginText}>登录</Text>
-
                 </TouchableOpacity>
             </ImageBackground>
 
