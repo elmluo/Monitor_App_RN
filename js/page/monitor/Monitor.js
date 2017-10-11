@@ -43,8 +43,8 @@ export default class Monitor extends Component {
         this.dataRepository.fetchNetRepository('POST',url, params)
             .then(result=>{
                 this.setState({
-                    result: JSON.stringify(result),   // 实时跟新列表数据源
-                    dataSource: this.state.dataSource.cloneWithRows(result.data),
+                    result: JSON.stringify(result),
+                    dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
                     isLoading: false   // 关闭加载动画
                 })
             })
@@ -66,7 +66,7 @@ export default class Monitor extends Component {
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                    this._pushToDetail.call(this,rowData)
+                    this._pushToDetail(rowData)
                 }}>
                 <View style={styles.row}>
                     <View style={styles.rowTop}>
@@ -87,8 +87,10 @@ export default class Monitor extends Component {
     _pushToDetail(rowData) {
         this.props.navigator.push({
             component: SiteDetail,
-            title: rowData.name,
-            passProps: {rowData}
+            params:{
+                item: rowData,
+                ...this.props
+            },
         })
     }
 

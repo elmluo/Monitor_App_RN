@@ -59,8 +59,8 @@ export default class Login extends Component {
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
                             style={{flex: 1}}
-                            onChangeText={(input) => this.setState({username: input})}
-                        > </TextInput>
+                            onChangeText={(input) => this.setState({username: input})}>
+                        </TextInput>
                     </View>
                     <View style={styles.item}><Text style={styles.textStyle}>用户密码：</Text>
                         <TextInput
@@ -70,7 +70,8 @@ export default class Login extends Component {
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
                             style={{flex: 1}}
-                            onChangeText={(input) => this.setState({userpwd: input})}> </TextInput>
+                            onChangeText={(input) => this.setState({userpwd: input})}>
+                        </TextInput>
                     </View>
                 </View>
             </ImageBackground>
