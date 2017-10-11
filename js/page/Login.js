@@ -17,8 +17,8 @@ import {
 console.log(View);
 // import NavigationBar from '../../common/NavigationBar'
 
-var Dimensions = require('Dimensions');
-var {width,height} = Dimensions.get('window');
+let Dimensions = require('Dimensions');
+let {width,height} = Dimensions.get('window');
 export default class Login extends Component {
     constructor(props) {
         super(props);
@@ -60,7 +60,7 @@ export default class Login extends Component {
                             clearButtonMode="while-editing"
                             style={{flex: 1}}
                             onChangeText={(input) => this.setState({username: input})}
-                        ></TextInput>
+                        > </TextInput>
                     </View>
                     <View style={styles.item}><Text style={styles.textStyle}>用户密码：</Text>
                         <TextInput
@@ -70,7 +70,7 @@ export default class Login extends Component {
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
                             style={{flex: 1}}
-                            onChangeText={(input) => this.setState({userpwd: input})}></TextInput>
+                            onChangeText={(input) => this.setState({userpwd: input})}> </TextInput>
                     </View>
                 </View>
             </ImageBackground>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         margin: 10,
-        color: '#FFF'
+
     },
     textStyle: {
         fontSize: 18,

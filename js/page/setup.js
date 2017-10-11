@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
 import {Navigator} from 'react-native-deprecated-custom-components';
-import WelcomePage from './WelcomePage'
+// import WelcomePage from './WelcomePage'
+import LoginPage from './Login'
+
 function setup() {
     //进行一些初始化配置
 
@@ -12,7 +14,8 @@ function setup() {
 
         render() {
             return <Navigator
-                initialRoute={{component: WelcomePage}}
+                // initialRoute={{component: WelcomePage}}
+                initialRoute = {{component: LoginPage}}
                 renderScene={(route, navigator)=>this.renderScene(route, navigator)}
             />
         }
