@@ -14,33 +14,69 @@ import {
 
 } from 'react-native'
 
-console.log(View);
-// import NavigationBar from '../../common/NavigationBar'
+import NavigationBar from '../common/NavigationBar'
+import Main from './Main'
+import SearchPage from './SearchPage'
+import DataRepository from '../expand/dao/Data'
+let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
 let {width,height} = Dimensions.get('window');
 export default class Login extends Component {
     constructor(props) {
         super(props);
-        this.userName = "";
-        this.password = "";
-        this.state = {text: ''};
-    }
-//  点击登录事件
-    loginInMainpage() {
-        // this.refs.inputLoginName.blur();
-        // this.refs.inputLoginPwd.blur();
-        
+        this.state={
+            username: '',
+            userpwd: '',
+        }
     }
 
-// 点击忘记密码
-    noPwdClick(){
+    loginInMainPage() {
+        let url = '/app/v2/user/login';
+        let params = {
+            appId: 'YiYi',
+            username: this.state.username,
+            password: this.state.userpwd
+        };
+        dataRepository.fetchNetRepository('POST', url, params)
+            .then((response)=> {
+                if (response['success'] === true){
 
+                    // 保存用户登录信息
+                    dataRepository.saveRepository('user', params)
+                        .then(()=> {
+                            // console.log('用户信息已经保存');
+                        });
+
+                    // 保存用户登录后返回信息
+                    dataRepository.saveRepository(url, response.data)
+                        .then(()=>{
+                            this._pushToMainPage();
+                        })
+                        .catch(error=>{
+                            alert(error)
+                        });
+                } else {
+                    console.log('获取数据失败')
+                }
+            })
+            .catch(error=> {
+                console.log(error);
+            })
     }
-// 点击服务器设置
-    setSetIpClick(){
 
+    /**
+     * 路由到主页面
+     * @private
+     */
+    _pushToMainPage() {
+        this.props.navigator.replace({
+            component: Main,
+            params:{
+                theme: this.theme,
+                ...this.props
+            }
+        });
     }
-
 
     /*设置背景图片*/
 
@@ -48,7 +84,7 @@ export default class Login extends Component {
         return (<View style={styles.container}>
 
             <ImageBackground style={styles.bgImageSize}
-                   source={require('../../res/Image/Login/ic_login_bg.png')}>
+                             source={require('../../res/Image/Login/ic_login_bg.png')}>
                 <Image style={styles.loginImg}
                        source={require('../../res/Image/Login/ic_login_logo.png')}/>
                 <Text style={styles.logoText}>义益云监控</Text>
@@ -62,13 +98,8 @@ export default class Login extends Component {
                             placeholder="请输入用户名"
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
-                            style={styles.textInputSize}
-                            onChangeText={
-                                (text) => {
-                                    // this.setState({text});
-                                    // this.props.onChangeText(text);
-                                }
-                            }>
+                            style={{flex: 1}}
+                            onChangeText={(input) => this.setState({username: input})}>
                         </TextInput>
                     </View>
                     <View style={styles.item}><Image source={require('../../res/Image/Login/ic_password_key_nor.png')} style={styles.iconKeyStyle}/>
@@ -78,14 +109,8 @@ export default class Login extends Component {
                             placeholder="请输入密码"
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
-                            style={styles.textInputSize}
-                            secureTextEntry={true}
-                            onChangeText={
-                                (text) => {
-                                    // this.setState({text});
-                                    // this.props.onChangeText(text);
-                                }
-                            }>
+                            style={{flex: 1}}
+                            onChangeText={(input) => this.setState({userpwd: input})}>
                         </TextInput>
                     </View>
                 </View>
@@ -95,10 +120,8 @@ export default class Login extends Component {
 
                 <TouchableOpacity style={styles.login}
                                   underlayColor='transparent'
-                                  onPress={() => this.loginInMainpage()}>
-
+                                  onPress={()=> {this.loginInMainPage()}}>
                     <Text style={styles.loginText}>登录</Text>
-
                 </TouchableOpacity>
             </ImageBackground>
             <Text style={styles.textNo}>忘记密码|服务器设置</Text>

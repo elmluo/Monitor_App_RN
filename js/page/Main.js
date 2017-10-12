@@ -39,7 +39,7 @@ export const FLAG_TAB={
 export default class Main extends BaseComponent {
     constructor(props) {
         super(props);
-        let selectedTab=this.props.selectedTab?this.props.selectedTab:'tb_popular';
+        let selectedTab=this.props.selectedTab?this.props.selectedTab:'tb_home';
         this.state = {
             selectedTab: selectedTab,
             theme:this.props.theme,

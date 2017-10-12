@@ -7,15 +7,15 @@ import {
     StyleSheet,
     Text,
     View,
-    TouchableOpacity,
-    Image
+    Image,
+    TouchableOpacity
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
-export default class SiteDetail extends Component {
+export default class AlarmDetail extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            theme:this.props.theme,
+        this.state={
+            theme: this.props.theme
         }
     }
 
@@ -37,23 +37,6 @@ export default class SiteDetail extends Component {
         )
     }
 
-    _renderRightButton() {
-        return(
-            <View style={{flexDirection: 'row'}}>
-                <TouchableOpacity
-                    onPress={()=>{
-                        alert('还不能打开地图功能')
-                    }}>
-                    <View style={{padding: 5, marginRight: 8}}>
-                        <Image
-                            style={{width: 24, height: 24}}
-                            source={require('../../../res/Image/Nav/ic_notice_selected.png')}/>
-                    </View>
-                </TouchableOpacity>
-            </View>
-        )
-    }
-
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -61,11 +44,10 @@ export default class SiteDetail extends Component {
         };
         let navigationBar =
             <NavigationBar
-                title={this.props.item.name}
+                title={'告警详情页'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}
-                leftButton={this._renderLeftButton()}
-                rightButton={this._renderRightButton()}/>;
+                leftButton={this._renderLeftButton()}/>;
 
         return(
             <View style={styles.container}>

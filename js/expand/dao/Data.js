@@ -51,6 +51,61 @@ export default class DataRepository {
                 })
             })
         }
+    }
 
+    /**
+     * 保存至本地
+     * @param url
+     * @param value
+     * @returns {*}
+     */
+    saveRepository(url, value) {
+        if (!value || !url ) return;
+        return new Promise((resolve, reject)=>{
+            AsyncStorage.setItem(url, JSON.stringify(value), (error)=>{
+                if (!error) {
+                    resolve();
+                } else {
+                    reject(error)
+                }
+            });
+        })
+
+    }
+
+    /**
+     * 获取本地数据
+     * @param url
+     * @returns {Promise}
+     */
+    fetchLocalRepository(url) {
+        return new Promise((resolve, reject)=> {
+            AsyncStorage.getItem(url, (error, result)=> {
+                if (!error) {
+                    try {
+                        resolve(JSON.parse(result));
+                    } catch (e) {
+                        reject(e);
+                        console.error(e);
+                    }
+                } else {
+                    reject(error);
+                    console.error(error);
+                }
+            })
+        })
+    }
+
+    removeLocalRepository(url) {
+        if (!value || !url ) return;
+        return new Promise((resolve, reject)=>{
+            AsyncStorage.removeItem(url, (error)=>{
+                if (!error) {
+                    resolve();
+                } else {
+                    reject(error)
+                }
+            });
+        })
     }
 }
