@@ -15,7 +15,6 @@ import {
 
 import NavigationBar from '../common/NavigationBar'
 import Main from './Main'
-import LoginDetail from './LoginDemo'
 import SearchPage from './SearchPage'
 import DataRepository from '../expand/dao/Data'
 let dataRepository = new DataRepository();
@@ -45,7 +44,7 @@ export default class Login extends Component {
                     // 保存用户登录信息
                     dataRepository.saveRepository('user', params)
                         .then(()=> {
-                            alert('用户信息已经保存')
+                            // console.log('用户信息已经保存');
                         });
 
                     // 保存用户登录后返回信息
@@ -191,7 +190,7 @@ const styles = StyleSheet.create({
 
     },
     loginBtnBgImg:{
-        marginTop:15,
+        marginTop:100,
         width: width * 0.7,
         height: 40,
         alignSelf: 'center',

@@ -47,6 +47,7 @@ export default class WelcomePage extends Component {
         }).then((isSaved)=> {
             isSaved
                 ? this._toLogin()
+                // ? this._pushToLoginPage()
                 : this._pushToLoginPage();
         })
     }
@@ -71,17 +72,27 @@ export default class WelcomePage extends Component {
             dataRepository.fetchNetRepository('POST', url, params)
                 .then(response=>{
                     dataRepository.fetchLocalRepository(url).then((localData)=> {
-                            // console.log(localData);
-                            // console.log(response.data);
-                            // 根据是否需要跟新执行不同逻辑
-                            if (response.data.version === localData.version){
-                                resolve(false);
+                            console.log(localData);
+                            console.log(response.data);
+                            if (localData) {
+                                // 若之前登陆过，比较、跟新本地版本信息
+                                if (response.data.version === localData.version){
+                                    resolve(false);
+                                } else {
+                                    dataRepository.saveRepository(url, response.data)
+                                        .then((error)=>{
+                                            reject(error);
+                                        });
+                                }
                             } else {
+                                // 若首次打开，保存版本信息,进入登陆页面
                                 dataRepository.saveRepository(url, response.data)
                                     .then((error)=>{
-                                        reject(error);
+                                        resolve(false);
                                     });
                             }
+
+
                         })
                         .catch(error=>{
                             reject(error)
@@ -170,7 +181,7 @@ export default class WelcomePage extends Component {
         dataRepository.fetchLocalRepository('/app/v2/version/get')
             .then((result)=>{
                 oldVersion = result;
-                alert(JSON.stringify(oldVersion));
+                // alert(JSON.stringify(oldVersion));
             });
         return(
             <View style={styles.container}>
