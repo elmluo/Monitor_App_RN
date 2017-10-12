@@ -32,18 +32,6 @@ export default class Login extends Component {
     }
 
     loginInMainPage() {
-        // this.refs.inputLoginName.blur();
-        // this.refs.inputLoginPwd.blur();
-        // this.props.navigator.resetTo({
-        //     component: MainPage,
-        //     params: {
-        //         logNmae: this.state.username,
-        //         logPwd: this.state.userpwd,
-        //         parentComponent: this,
-        //         ...this.props
-        //     },
-        // });
-
         let url = '/app/v2/user/login';
         let params = {
             appId: 'YiYi',
@@ -53,16 +41,21 @@ export default class Login extends Component {
         dataRepository.fetchNetRepository('POST', url, params)
             .then((response)=> {
                 if (response['success'] === true){
-                    this.props.navigator.push({
-                        component: Main,
-                        params:{
-                            theme: this.theme,
-                            ...this.props
-                        }
-                    });
 
-                    // 如果把保存逻辑数据放到路由前面，路由不会执行，很迷
-                    dataRepository.saveRepository(url, response.data, (error)=>{console.log(error, 12345)});
+                    // 保存用户登录信息
+                    dataRepository.saveRepository('user', params)
+                        .then(()=> {
+                            alert('用户信息已经保存')
+                        });
+
+                    // 保存用户登录后返回信息
+                    dataRepository.saveRepository(url, response.data)
+                        .then(()=>{
+                            this._pushToMainPage();
+                        })
+                        .catch(error=>{
+                            alert(error)
+                        });
                 } else {
                     console.log('获取数据失败')
                 }
@@ -70,6 +63,20 @@ export default class Login extends Component {
             .catch(error=> {
                 console.log(error);
             })
+    }
+
+    /**
+     * 路由到主页面
+     * @private
+     */
+    _pushToMainPage() {
+        this.props.navigator.replace({
+            component: Main,
+            params:{
+                theme: this.theme,
+                ...this.props
+            }
+        });
     }
 
     /*设置背景图片*/

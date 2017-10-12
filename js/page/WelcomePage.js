@@ -9,18 +9,18 @@ import {
     Text,
     Platform,
 } from 'react-native'
-import NavigationBar from '../common/NavigationBar'
 import Main from './Main'
 import Login from './Login'
-import LoginDemo from './LoginDemo'
 import ThemeDao from '../expand/dao/ThemeDao'
 import SplashScreen from 'react-native-splash-screen'
-import SearchPage from "./SearchPage";
 import DataRepository from '../expand/dao/Data'
 let dataRepository  = new DataRepository();
 export default class WelcomePage extends Component {
     constructor(props) {
         super(props);
+        this.state={
+            result: null,
+        }
     }
 
     componentDidMount() {
@@ -38,51 +38,113 @@ export default class WelcomePage extends Component {
         //     });
         // }, 1000);
 
-        this._checkVersion()
+        this._checkNeedUpdate().then((isUpdate)=>{
+            if (isUpdate === false) {
+                return this._checkUser()
+            } else {
+                // 欢迎页面有关跟新交互代码逻辑
+            }
+        }).then((isSaved)=> {
+            isSaved
+                ? this._toLogin()
+                : this._pushToLoginPage();
+        })
     }
+
     componentWillUnmount(){
         // 组件卸载后取消定时器，防止多余异常出现
-        this.timer && clearTimeout(this.timer);
+        // this.timer && clearTimeout(this.timer);
     }
 
     /**
-     * 获取软件版本信息
-     * @returns {XML}
+     * 验证app是否需要跟新
+     * @returns {Promise}
+     * @private
      */
-    _checkVersion() {
+    _checkNeedUpdate() {
         let url='/app/v2/version/get';
         let params = {
             appId: 'YiYi',
             os: Platform.OS,
         };
-        dataRepository.fetchNetRepository('POST', url, params)
-            .then(result=>{
-                alert(JSON.stringify(result));
-                dataRepository.fetchLocalRepository(url)
-                    .then((localData)=> {
-                        // alert(JSON.stringify(localData));
-                        // 根据是否需要跟新执行不同逻辑
-                        if (result.data.version === localData.value.version){
-                            alert('版本相同不用跟新');
-                            this._pushToLogin();
-                            // this._pushToMain()
-                        } else {
-                            // 跟新本地数据
-                            dataRepository.saveRepository(url, result.data, (error)=> {
-                                console.log(error)
-                            });
-                            // ...toDoUpdate
-                        }
-                    });
+        return new Promise((resolve, reject)=> {
+            dataRepository.fetchNetRepository('POST', url, params)
+                .then(response=>{
+                    dataRepository.fetchLocalRepository(url).then((localData)=> {
+                            // console.log(localData);
+                            // console.log(response.data);
+                            // 根据是否需要跟新执行不同逻辑
+                            if (response.data.version === localData.version){
+                                resolve(false);
+                            } else {
+                                dataRepository.saveRepository(url, response.data)
+                                    .then((error)=>{
+                                        reject(error);
+                                    });
+                            }
+                        })
+                        .catch(error=>{
+                            reject(error)
+                        });
 
-                this.setState({
-                    result: result
+                    this.setState({
+                        result: response
+                    })
                 })
-            })
+        });
     }
 
-    _pushToMain(){
-        this.props.navigator.push({
+    /**
+     * 验证用户是否已经登录
+     * @returns {Promise}
+     * @private
+     */
+    _checkUser(){
+        return new Promise((resolve, reject)=> {
+            dataRepository.fetchLocalRepository('user')
+                .then((userData)=>{
+                    // console.log(userData, '获取本地用户信息');
+                    if (userData) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                })
+                .catch(error=>{
+                    reject(error)
+                })
+        })
+    }
+
+    /**
+     * 用户已经登录，获取本地用户信息，发送登录操作
+     * @private
+     */
+
+    _toLogin(){
+        dataRepository.fetchLocalRepository('user').then((userData)=>{
+            let url = '/app/v2/user/login';
+            let params = {
+                appId: 'YiYi',
+                username: userData.username,
+                password: userData.password
+            };
+            dataRepository.fetchNetRepository('POST', url, params)
+                .then((response)=> {
+                    if (response['success'] === true){
+                        this._pushToMainPage();
+                    } else {
+                        console.log('response.info')
+                    }
+                })
+                .catch(error=> {
+                    console.log(error);
+                })
+        });
+    }
+
+    _pushToMainPage(){
+        this.props.navigator.resetTo({
             component: Main,
             params: {
                 ...this.props,
@@ -90,8 +152,9 @@ export default class WelcomePage extends Component {
             }
         })
     }
-    _pushToLogin(){
-        this.props.navigator.push({
+
+    _pushToLoginPage(){
+        this.props.navigator.resetTo({
             component: Login,
             params: {
                 ...this.props,
@@ -99,11 +162,21 @@ export default class WelcomePage extends Component {
             }
         })
     }
+
     render() {
         // return null;
+        let newVersion = JSON.stringify(this.state.result);
+        let  oldVersion;
+        dataRepository.fetchLocalRepository('/app/v2/version/get')
+            .then((result)=>{
+                oldVersion = result;
+                alert(JSON.stringify(oldVersion));
+            });
         return(
             <View style={styles.container}>
                 <Text>检查是否跟新</Text>
+                <Text>老版本信息</Text>
+                <Text>{newVersion}</Text>
             </View>
         )
 
