@@ -98,7 +98,7 @@ export default class Login extends Component {
                             placeholder="请输入用户名"
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
-                            style={{flex: 1}}
+                            style={styles.textInputSize}
                             onChangeText={(input) => this.setState({username: input})}>
                         </TextInput>
                     </View>
@@ -109,7 +109,8 @@ export default class Login extends Component {
                             placeholder="请输入密码"
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
-                            style={{flex: 1}}
+                            secureTextEntry={true}
+                            style={styles.textInputSize}
                             onChangeText={(input) => this.setState({userpwd: input})}>
                         </TextInput>
                     </View>
@@ -209,7 +210,7 @@ const styles = StyleSheet.create({
     },
     textNo:{
         color: 'rgb(102,102,102)',
-        marginTop:100,
+        marginTop:width * 0.40,
         fontSize:15,
 
     },
