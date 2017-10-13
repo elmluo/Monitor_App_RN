@@ -78,11 +78,11 @@ export default class Monitor extends Component {
                         })
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
-                        {/*<Image*/}
-                        {/*style={{width:24,height:24}}*/}
-                        {/*source={require('../../../res/Image//ic_notice_nor.png')}*/}
-                        {/*/>*/}
-                        <Text>个人</Text>
+                        <Image
+                        style={{width:24,height:24}}
+                        source={require('../../../res/Image/Nav/ic_myItem.png')}
+                        />
+                        {/*<Text>个人</Text>*/}
                     </View>
                 </TouchableOpacity>
             </View>
