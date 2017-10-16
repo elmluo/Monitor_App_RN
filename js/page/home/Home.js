@@ -21,7 +21,7 @@ import MyPage from '../my/MyPage'
 import MyInfoPage from '../my/MyInfoPage'
 import HomeAlarmCell from './HomeAlarmCell'
 import HomeStatisticChart from './HomeStatisticChart'
-import Echarts from 'native-echarts'
+import Echarts from '../../common/Echarts'
 let {width, height} = Dimensions.get('window');
 
 export default class Monitor extends Component {
@@ -34,7 +34,9 @@ export default class Monitor extends Component {
                 count: 123,
                 color: '#ff0000',
                 name: '一级告警'
-            }
+            },
+
+            chartData: [1,2,3,4,5,6,7,8,9,10]
         }
     }
 
@@ -92,169 +94,6 @@ export default class Monitor extends Component {
     }
 
     render() {
-        let option = {
-            backgroundColor: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                    offset: 0, color: '#3B4BC2' // 0% 处的颜色
-                }, {
-                    offset: 0.4, color: '#46A4EC' // 100% 处的颜色
-                }]
-            },
-            tooltip : {
-                axisPointer: {
-                    type: 'none',
-                    animation: true,
-                },
-                trigger: 'axis',
-                formatter (v, p, f) {
-                    return v[0].data;
-                },
-                // ptosition (point, params, dom, rect, size) {
-                //     var triAng = document.createElement('div');
-                //     triAng.style.position = 'absolute';
-                //     triAng.style.border = '5px solid transparent';
-                //     triAng.style.borderTopColor = '#3AB0FF';
-                //     triAng.style.left = (size.contentSize[0] / 2 - 5) + 'px';
-                //     dom.appendChild(triAng);
-                //
-                //     var time = document.createElement('div');
-                //     time.innerText = params[0].axisValue;
-                //     time.style.position = 'absolute';
-                //     time.style.borderTopColor = '#3AB0FF';
-                //     time.style.width = '100px';
-                //     time.style.textAlign = 'center';
-                //     time.style.fontSize = '0.8rem';
-                //     time.style.left = - (100 - size.contentSize[0]) / 2 + 'px';
-                //     time.style.top = size.contentSize[1] + 12 + 'px';
-                //
-                //     dom.appendChild(time);
-                //
-                //     // 固定在顶部
-                //     return [point[0] - size.contentSize[0] / 2, point[1] - size.contentSize[1] - 10];
-                // },
-                exraCssText: 'background-color:#3AB0FF; padding:0 5px;'
-            },
-            grid: {
-                left: '2%',
-                right: '2%'
-                // backgroundColor: "transparent"
-                // containLabel: true
-            },
-            xAxis : [
-                {
-                    type : 'category',
-                    // boundaryGap : false,
-                    data : [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],  //list.map(v=>new Date(v.time).Format('hh:mm:ss')),
-                    boundaryGap: false,
-                    axisTick: {
-                        show:false
-                    },
-                    axisLine: {
-                        show: false,
-                        lineStyle: {
-                            color: '#fff'
-                        }
-                    },
-                    axisLabel: {
-                        interval: 3,
-                    },
-                    splitLine: {
-                        show: true,
-                        interval: 3,
-                        lineStyle: {
-                            color: "rgba(255,255,255,0.1)"
-                        }
-                    },
-                }
-            ],
-            yAxis : [
-                {
-                    interval: 3, // 数据最大值的80%
-                    show: true,
-                    splitLine: {
-                        lineStyle: {
-                            color: "rgba(255,255,255,0.1)"
-                        }
-                    },
-
-                    axisTick: {
-                        show:false
-                    },
-                    axisLine: {
-                        show: false,
-                        lineStyle: {
-                            color: '#fff'
-                        }
-                    }
-                },
-            ],
-            //     dataZoom: [{
-            //     type: 'inside',
-            //     start: 0,
-            //     end:50
-            // }],
-            series : [
-                {
-                    name:'seriesName',
-                    type:'line',
-                    smooth: true,
-                    areaStyle: {
-                        normal: {
-                            color: {
-                                type: 'linear',
-                                x: 0,
-                                y: 0,
-                                x2: 0,
-                                y2: 1,
-                                colorStops: [{
-                                    offset: 0, color: 'rgba(6,228,255,1)' // 0% 处的颜色
-                                }, {
-                                    offset: 1, color: 'rgba(6,228,255,0)' // 100% 处的颜色
-                                }]
-                            }
-                        }
-                    },
-                    lineStyle: {
-                        normal: {
-                            width: 4,
-                            color: {
-                                type: 'linear',
-                                x: 0,
-                                y: 0,
-                                x2: 1,
-                                y2: 0,
-                                colorStops: [{
-                                    offset: 0, color: '#06E4FF' // 0% 处的颜色
-                                }, {
-                                    offset: 1, color: '#FFFFFF' // 100% 处的颜色
-                                }]
-                            }
-                        }
-                    },
-                    data: [6,1,7,4,9,0,3,5,7,1,6,1,7,4,9,0,3,5,7,1,6,1,7,4,9,0,3,1],//list.map(v=>v.value),
-                    markPoint: {
-                        symbol: 'rect',
-                        symbolSize: 100
-                    },
-                    itemStyle: {
-                        normal: {
-                            opacity: 0
-                        },
-                        emphasis: {
-                            opacity: 1,
-                            color: '#fff',
-                            borderColor: 'rgba(255,255,255,0.1)',
-                            borderWidth: 10
-                        }
-                    }
-                }
-            ]
-        };
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
             barStyle: 'light-content'
@@ -280,7 +119,11 @@ export default class Monitor extends Component {
                         titleColor={this.props.theme.themeColor}
                         colors={[this.props.theme.themeColor]}
                         refreshing={this.state.isLoading}
-                        onRefresh={() => alert('将重新加载数据')}
+                        onRefresh={() => {
+                            this.setState({chartData: new Array(10).join(' ').split(' ').map(function (v) {
+                                return Math.floor(Math.random() * 10);
+                            })});
+                        }}
                         tintColor={this.props.theme.themeColor}
                     />
                 }>
@@ -289,8 +132,7 @@ export default class Monitor extends Component {
                         style={styles.gb}
                         source={require('../../../res/Image/Login/ic_login_bg.png')}
                     >
-                        <HomeStatisticChart width={width} height={height*0.4}/>
-                        {/*<Echarts option={option} height={300} />*/}
+                        <HomeStatisticChart chartData = {this.state.chartData} width={width} height={height*0.4}/>
                     </ImageBackground>
                     <View style={styles.alarm}>
                         <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>

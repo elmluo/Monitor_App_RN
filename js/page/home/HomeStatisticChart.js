@@ -6,7 +6,7 @@ import {
     Dimensions,
 } from 'react-native'
 let {width, height} = Dimensions.get('window');
-import Echarts from 'native-echarts'
+import Echarts from '../../common/Echarts'
 
 export default class HomeStatisticChart extends Component{
     constructor(props) {
@@ -15,7 +15,15 @@ export default class HomeStatisticChart extends Component{
 
         }
     }
+
+    componentWillReceiveProps(nextProps) {
+            console.log(this.refs.echarts);
+        if (nextProps.isReload) {
+            this.refs.echarts.refs.chart.reload();
+        }
+    }
     render() {
+        console.log(this.props.chartData);
         let option = {
             backgroundColor: {
                 type: 'linear',
@@ -38,30 +46,30 @@ export default class HomeStatisticChart extends Component{
                 formatter (v, p, f) {
                     return v[0].data;
                 },
-                // ptosition (point, params, dom, rect, size) {
-                //     var triAng = document.createElement('div');
-                //     triAng.style.position = 'absolute';
-                //     triAng.style.border = '5px solid transparent';
-                //     triAng.style.borderTopColor = '#3AB0FF';
-                //     triAng.style.left = (size.contentSize[0] / 2 - 5) + 'px';
-                //     dom.appendChild(triAng);
-                //
-                //     var time = document.createElement('div');
-                //     time.innerText = params[0].axisValue;
-                //     time.style.position = 'absolute';
-                //     time.style.borderTopColor = '#3AB0FF';
-                //     time.style.width = '100px';
-                //     time.style.textAlign = 'center';
-                //     time.style.fontSize = '0.8rem';
-                //     time.style.left = - (100 - size.contentSize[0]) / 2 + 'px';
-                //     time.style.top = size.contentSize[1] + 12 + 'px';
-                //
-                //     dom.appendChild(time);
-                //
-                //     // 固定在顶部
-                //     return [point[0] - size.contentSize[0] / 2, point[1] - size.contentSize[1] - 10];
-                // },
-                exraCssText: 'background-color:#3AB0FF; padding:0 5px;'
+                position (point, params, dom, rect, size) {
+                    var triAng = document.createElement('div');
+                    triAng.style.position = 'absolute';
+                    triAng.style.border = '5px solid transparent';
+                    triAng.style.borderTopColor = '#3AB0FF';
+                    triAng.style.left = (size.contentSize[0] / 2 - 5) + 'px';
+                    dom.appendChild(triAng);
+                
+                    var time = document.createElement('div');
+                    time.innerText = params[0].axisValue;
+                    time.style.position = 'absolute';
+                    time.style.borderTopColor = '#3AB0FF';
+                    time.style.width = '100px';
+                    time.style.textAlign = 'center';
+                    time.style.fontSize = '0.8rem';
+                    time.style.left = - (100 - size.contentSize[0]) / 2 + 'px';
+                    time.style.top = size.contentSize[1] + 12 + 'px';
+                
+                    dom.appendChild(time);
+                
+                    // 固定在顶部
+                    return [point[0] - size.contentSize[0] / 2, point[1] - size.contentSize[1] - 10];
+                },
+                extraCssText: 'background-color:#3AB0FF; padding:0 5px;'
             },
             grid: {
                 left: '2%',
@@ -73,7 +81,7 @@ export default class HomeStatisticChart extends Component{
                 {
                     type : 'category',
                     // boundaryGap : false,
-                    data : [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],  //list.map(v=>new Date(v.time).Format('hh:mm:ss')),
+                    data : this.props.chartData,  //list.map(v=>new Date(v.time).Format('hh:mm:ss')),
                     boundaryGap: false,
                     axisTick: {
                         show:false
@@ -160,7 +168,7 @@ export default class HomeStatisticChart extends Component{
                             }
                         }
                     },
-                    data: [6,1,7,4,9,0,3,5,7,1,6,1,7,4,9,0,3,5,7,1,6,1,7,4,9,0,3,1],//list.map(v=>v.value),
+                    data: this.props.chartData,//list.map(v=>v.value),
                     markPoint: {
                         symbol: 'rect',
                         symbolSize: 100
@@ -180,7 +188,7 @@ export default class HomeStatisticChart extends Component{
             ]
         };
         return(
-            <Echarts option={option} height={this.props.height} style={{backgroundColor: '#ff0'}}/>
+            <Echarts ref = 'echarts' option={option} height={this.props.height} style={{backgroundColor: '#ff0'}}/>
         )
     }
 }
