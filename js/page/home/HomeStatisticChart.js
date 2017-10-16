@@ -18,17 +18,17 @@ export default class HomeStatisticChart extends Component{
     render() {
         let option = {
             backgroundColor: {
-            type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [{
-                offset: 0, color: '#3B4BC2' // 0% 处的颜色
-            }, {
-                offset: 0.4, color: '#46A4EC' // 100% 处的颜色
-            }]
-        },
+                type: 'linear',
+                    x: 0,
+                    y: 0,
+                    x2: 0,
+                    y2: 1,
+                    colorStops: [{
+                    offset: 0, color: '#3B4BC2' // 0% 处的颜色
+                }, {
+                    offset: 0.4, color: '#46A4EC' // 100% 处的颜色
+                }]
+            },
             tooltip : {
                 axisPointer: {
                     type: 'none',
