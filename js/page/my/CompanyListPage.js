@@ -13,17 +13,27 @@ import {
     TouchableOpacity
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
-import DataRepository from '../../expand/dao/Data'
-import SiteDetail from './SiteDetail'
-// import DataRepository from '../../expand/dao/DataRepository'
+import dataRepository from '../../expand/dao/Data'
+import MainPage from '../Main'
+import DataRepository from '../../expand/dao/DataRepository'
+import ViewUtils from '../../util/ViewUtils'
 
-export default class Monitor extends Component {
+export const MORE_INFO = {
+    Company: '所在企业',
+    Company_Info: '企业信息',
+    Company_Name: '企业名称',
+    Company_Phone: '企业联系人号码',
+    Company_Email: '联系邮箱',
+
+}
+export default class CompanyListPage extends Component {
     constructor(props) {
         super(props);
         // 初始化类实例
         this.dataRepository = new DataRepository();
         this.state = {
             isLoading: false,
+            personCompany: null,
             theme:this.props.theme,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2)=>r1 !== r2}),
         }
@@ -32,52 +42,67 @@ export default class Monitor extends Component {
     _onLoad() {
         // 开启加载动画
         this.setState({
-           isLoading: true
+            isLoading: true
         });
-        let url = '/app/v2/site/model/list';
-        let params = {
-            stamp: 'Skongtrolink',
-            page: 1,
-            size: 20,
-        };
-        this.dataRepository.fetchNetRepository('POST',url, params)
-            .then(result=>{
-                this.setState({
-                    result: JSON.stringify(result),
-                    dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
-                    isLoading: false   // 关闭加载动画
+
+
+        dataRepository.fetchLocalRepository('/app/v2/user/login').then(result => {
+            let url = '/app/v2/company/customer/list';
+
+
+            let params = {
+                agencyId: result.companyId,
+
+            };
+            this.dataRepository.fetchNetRepository('POST', url, params)
+                .then(result => {
+                    this.setState({
+                        result: JSON.stringify(result),
+                        personCompany: result.data,
+                        dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
+                        isLoading: false   // 关闭加载动画
+                    })
                 })
-            })
-            .catch(error=> {
-                this.setState({
-                    result: JSON.stringify(error)
-                });
-            })
+                .catch(error => {
+                    this.setState({
+                        result: JSON.stringify(error)
+                    });
+                })
+
+        })
+
+
+    }
+    getItem(tag, text, rightIcon, rightText) {
+        return ViewUtils.getCellItem(() => this.onClick(tag), text, rightIcon, rightText);
     }
 
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
-        let onlineStyle = {
-            backgroundColor: this.state.theme.themeColor,
-        };
-        let fusState = rowData.fsuOnline
-                ?<Text style={[styles.onlineState, onlineStyle]}>在线</Text>
-                :<Text style={styles.onlineState}>离线</Text>;
+
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
                     this._pushToDetail(rowData)
                 }}>
-                <View style={styles.row}>
-                    <View style={styles.rowTop}>
-                        <Text style={styles.name}>{rowData.name}</Text>
-                        <Text style={styles.deviceCount}>设备数量： {rowData.deviceCount}</Text>
+                    <View style={{position: 'relative', top: 6}}>
+                        <View style={styles.cell}>
+                            <View style={styles.cellLeft}>
+
+                                <Image source={require('../../../res/Image/Login/ic_company_hl.png')}
+                                       resizeMode='stretch'
+                                       style={{opacity: 1, width: 16, height: 16, marginRight: 10}}/>
+                                <Text style={{fontSize: 16, color: 'rgb(126,126,126)'}}> {this.state.personCompany?this.state.personCompany.name:'企业名称'}</Text>
+                            </View>
+
+                        </View>
+                        <View style={styles.line}/>
+                        {this.getItem(MORE_INFO.Company_Name, '用户名', null, this.state.personCompany?this.state.personCompany.contactsName:'--')}
+                        <View style={styles.line}/>
+                        {this.getItem(MORE_INFO.Company_Name, '手机', null, this.state.personCompany?this.state.personCompany.contactsPhone:'--')}
+                        <View style={styles.line}/>
+                        {this.getItem(MORE_INFO.User_Info, '联系邮箱', null,  this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
                     </View>
-                    <View style={styles.rowBottom}>
-                        {fusState}
-                        <Text style={styles.tier}>{rowData.tier}</Text>
-                    </View>
-                </View>
 
             </TouchableOpacity>
 
@@ -86,7 +111,7 @@ export default class Monitor extends Component {
 
     _pushToDetail(rowData) {
         this.props.navigator.push({
-            component: SiteDetail,
+            component: MainPage,
             params:{
                 item: rowData,
                 ...this.props
@@ -98,7 +123,7 @@ export default class Monitor extends Component {
         // 组件装载完，获取数据
         this._onLoad()
     }
-    
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,

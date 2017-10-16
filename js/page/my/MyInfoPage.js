@@ -18,6 +18,7 @@ import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import SiteDetail from '../monitor/SiteDetail'
 import ViewUtils from '../../util/ViewUtils'
+import LoginPage from '../Login'
 
 // import DataRepository from '../../expand/dao/DataRepository'
 export const MORE_INFO = {
@@ -116,6 +117,17 @@ export default class MyInfoPage extends Component {
         })
     }
 
+
+    _pushToLogin() {
+        this.props.navigator.push({
+            component: LoginPage,
+            params: {
+                theme: this.theme,
+                ...this.props
+            },
+        })
+    }
+
     componentDidMount() {
         // 组件装载完，获取数据
         this._onLoad()
@@ -154,6 +166,7 @@ export default class MyInfoPage extends Component {
                             {text: '取消', onPress: () => console.log('Foo Pressed!')},
                             {text: '退出', onPress:() => {
                             ///退出登录操作
+                             this._pushToLogin();
                     }},
                         ]
                     )}>
