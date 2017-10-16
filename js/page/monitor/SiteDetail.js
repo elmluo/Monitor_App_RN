@@ -47,7 +47,7 @@ export default class SiteDetail extends Component {
                     <View style={{padding: 5, marginRight: 8}}>
                         <Image
                             style={{width: 24, height: 24}}
-                            source={require('../../../res/Image/Nav/ic_notice_selected.png')}/>
+                            source={require('../../../res/Image/Nav/ic_map_nor.png')}/>
                     </View>
                 </TouchableOpacity>
             </View>

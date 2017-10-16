@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     Image,
     ImageBackground,
+
 } from 'react-native'
 
 import NavigationBar from '../common/NavigationBar'
@@ -20,7 +21,6 @@ import DataRepository from '../expand/dao/Data'
 let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
 let {width,height} = Dimensions.get('window');
-
 export default class Login extends Component {
     constructor(props) {
         super(props);
@@ -79,6 +79,7 @@ export default class Login extends Component {
     }
 
     /*设置背景图片*/
+
     render() {
         return (<View style={styles.container}>
 
@@ -89,26 +90,27 @@ export default class Login extends Component {
                 <Text style={styles.logoText}>义益云监控</Text>
 
                 <View style = {styles.loginTextBg}>
-                    <View style={styles.item}><Text style={styles.textStyle}>用户帐号：</Text>
+                    <View style={styles.item}><Image source={require('../../res/Image/Login/ic_user_key_nor.png')} style={styles.iconKeyStyle}/>
                         <TextInput
                             ref="inputLoginName"
-                            autoFocus={true}
-                            underlineColorAndroid="gray"
+                            // autoFocus={true}
+                            underlineColorAndroid="transparent"
                             placeholder="请输入用户名"
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
-                            style={{flex: 1}}
+                            style={styles.textInputSize}
                             onChangeText={(input) => this.setState({username: input})}>
                         </TextInput>
                     </View>
-                    <View style={styles.item}><Text style={styles.textStyle}>用户密码：</Text>
+                    <View style={styles.item}><Image source={require('../../res/Image/Login/ic_password_key_nor.png')} style={styles.iconKeyStyle}/>
                         <TextInput
                             ref="inputLoginPwd"
-                            underlineColorAndroid="gray"
+                            underlineColorAndroid="transparent"
                             placeholder="请输入密码"
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
-                            style={{flex: 1}}
+                            secureTextEntry={true}
+                            style={styles.textInputSize}
                             onChangeText={(input) => this.setState({userpwd: input})}>
                         </TextInput>
                     </View>
@@ -123,6 +125,8 @@ export default class Login extends Component {
                     <Text style={styles.loginText}>登录</Text>
                 </TouchableOpacity>
             </ImageBackground>
+            <Text style={styles.textNo}>忘记密码|服务器设置</Text>
+
 
         </View>)
     }
@@ -140,11 +144,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 10,
 
-    },
-    textStyle: {
-        fontSize: 18,
-        color: 'black',
-        marginRight: 10
     },
     login: {
         height: 40,
@@ -190,12 +189,32 @@ const styles = StyleSheet.create({
 
     },
     loginBtnBgImg:{
-        marginTop:100,
+        marginTop:85,
         width: width * 0.7,
         height: 40,
         alignSelf: 'center',
 
-    }
+    },
+    iconKeyStyle:{
+        left:34,
+        marginTop:20,
+
+
+    },
+    textInputSize:{
+        marginTop:20,
+        left:50,
+        width:width*0.6,
+        height:30,
+        textAlign:'left'
+    },
+    textNo:{
+        color: 'rgb(102,102,102)',
+        marginTop:width * 0.40,
+        fontSize:15,
+
+    },
+
 
 
 });

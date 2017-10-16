@@ -1,0 +1,207 @@
+/**
+ * Created by penn on 2016/12/14.
+ */
+
+import React, {Component} from 'react';
+import {
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    ListView,
+    RefreshControl,
+    TouchableOpacity
+} from 'react-native'
+import NavigationBar from '../../common/NavigationBar'
+import dataRepository from '../../expand/dao/Data'
+import MainPage from '../Main'
+import DataRepository from '../../expand/dao/DataRepository'
+import ViewUtils from '../../util/ViewUtils'
+
+export const MORE_INFO = {
+    Company: '所在企业',
+    Company_Info: '企业信息',
+    Company_Name: '企业名称',
+    Company_Phone: '企业联系人号码',
+    Company_Email: '联系邮箱',
+
+}
+export default class CompanyListPage extends Component {
+    constructor(props) {
+        super(props);
+        // 初始化类实例
+        this.dataRepository = new DataRepository();
+        this.state = {
+            isLoading: false,
+            personCompany: null,
+            theme:this.props.theme,
+            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2)=>r1 !== r2}),
+        }
+    }
+
+    _onLoad() {
+        // 开启加载动画
+        this.setState({
+            isLoading: true
+        });
+
+
+        dataRepository.fetchLocalRepository('/app/v2/user/login').then(result => {
+            let url = '/app/v2/company/customer/list';
+
+
+            let params = {
+                agencyId: result.companyId,
+
+            };
+            this.dataRepository.fetchNetRepository('POST', url, params)
+                .then(result => {
+                    this.setState({
+                        result: JSON.stringify(result),
+                        personCompany: result.data,
+                        dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
+                        isLoading: false   // 关闭加载动画
+                    })
+                })
+                .catch(error => {
+                    this.setState({
+                        result: JSON.stringify(error)
+                    });
+                })
+
+        })
+
+
+    }
+    getItem(tag, text, rightIcon, rightText) {
+        return ViewUtils.getCellItem(() => this.onClick(tag), text, rightIcon, rightText);
+    }
+
+    _renderRow(rowData, sectionID, rowID, hightlightRow) {
+
+        return (
+            <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                    this._pushToDetail(rowData)
+                }}>
+                    <View style={{position: 'relative', top: 6}}>
+                        <View style={styles.cell}>
+                            <View style={styles.cellLeft}>
+
+                                <Image source={require('../../../res/Image/Login/ic_company_hl.png')}
+                                       resizeMode='stretch'
+                                       style={{opacity: 1, width: 16, height: 16, marginRight: 10}}/>
+                                <Text style={{fontSize: 16, color: 'rgb(126,126,126)'}}> {this.state.personCompany?this.state.personCompany.name:'企业名称'}</Text>
+                            </View>
+
+                        </View>
+                        <View style={styles.line}/>
+                        {this.getItem(MORE_INFO.Company_Name, '用户名', null, this.state.personCompany?this.state.personCompany.contactsName:'--')}
+                        <View style={styles.line}/>
+                        {this.getItem(MORE_INFO.Company_Name, '手机', null, this.state.personCompany?this.state.personCompany.contactsPhone:'--')}
+                        <View style={styles.line}/>
+                        {this.getItem(MORE_INFO.User_Info, '联系邮箱', null,  this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
+                    </View>
+
+            </TouchableOpacity>
+
+        )
+    }
+
+    _pushToDetail(rowData) {
+        this.props.navigator.push({
+            component: MainPage,
+            params:{
+                item: rowData,
+                ...this.props
+            },
+        })
+    }
+
+    componentDidMount() {
+        // 组件装载完，获取数据
+        this._onLoad()
+    }
+
+    render() {
+        let statusBar = {
+            backgroundColor: this.state.theme.themeColor,
+            barStyle: 'light-content'
+        };
+        let navigationBar =
+            <NavigationBar
+                title={'监控页面'}
+                statusBar={statusBar}
+                style={this.state.theme.styles.navBar}/>;
+        return(
+            <View style={styles.container}>
+                {navigationBar}
+                <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this._renderRow.bind(this)}
+                    refreshControl={
+                        <RefreshControl
+                            title='加载中...'
+                            titleColor={this.state.theme.themeColor}
+                            colors={[this.state.theme.themeColor]}
+                            tintColor={this.state.theme.themeColor}
+                            refreshing={this.state.isLoading}
+                            onRefresh={()=>{
+                                // 刷新的时候重新获取数据
+                                this._onLoad()
+                            }}/>
+                    }/>
+            </View>
+        )
+    }
+}
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+    row: {
+        flex: 1,
+        justifyContent: 'center',
+        borderBottomWidth: 2,
+        borderBottomColor: '#EBEBEB',
+        marginLeft: 16,
+        padding: 15,
+        paddingLeft: 0,
+    },
+    rowTop: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 7
+    },
+    name: {
+        color: '#444444',
+        fontSize: 14
+    },
+    deviceCount: {
+        color: '#7E7E7E',
+        fontSize: 12
+    },
+    rowBottom: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    onlineState: {
+        backgroundColor: '#949494',
+        color: '#FFFFFF',
+        fontSize: 12,
+        paddingTop: 1,
+        paddingBottom: 1,
+        paddingLeft: 6,
+        paddingRight: 6,
+        borderRadius: 3,
+    },
+    tier: {
+        fontSize: 12,
+        color: '#7E7E7E',
+        marginLeft: 8
+    }
+
+});

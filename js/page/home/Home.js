@@ -18,6 +18,7 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import BulletinList from './BulletinList'
 import MyPage from '../my/MyPage'
+import MyInfoPage from '../my/MyInfoPage'
 import HomeAlarmCell from './HomeAlarmCell'
 import HomeStatisticChart from './HomeStatisticChart'
 
@@ -74,16 +75,16 @@ export default class Monitor extends Component {
                 <TouchableOpacity
                     onPress={() => {
                         this.props.navigator.push({
-                            component: MyPage,
+                            component: MyInfoPage,
                             params: {...this.props}
                         })
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
-                        {/*<Image*/}
-                        {/*style={{width:24,height:24}}*/}
-                        {/*source={require('../../../res/Image//ic_notice_nor.png')}*/}
-                        {/*/>*/}
-                        <Text>个人</Text>
+                        <Image
+                        style={{width:24,height:24}}
+                        source={require('../../../res/Image/Nav/ic_myItem.png')}
+                        />
+                        {/*<Text>个人</Text>*/}
                     </View>
                 </TouchableOpacity>
             </View>
@@ -97,11 +98,11 @@ export default class Monitor extends Component {
         };
         let navigationBar =
             <NavigationBar
-                title={'主控页面'}
-                statusBar={statusBar}
-                style={this.state.theme.styles.navBar}
-                rightButton={this._renderRightButton()}
-                leftButton={this._renderLeftButton()}/>;
+            title={'主控页面'}
+            statusBar={statusBar}
+            style={this.state.theme.styles.navBar}
+            rightButton={this._renderRightButton()}
+            leftButton={this._renderLeftButton()}/>;
         let content =
             <ScrollView
                 style={styles.scrollView}
