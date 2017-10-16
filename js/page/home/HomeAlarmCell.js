@@ -5,15 +5,29 @@ import {
     Image,
     View,
     Text,
+    ART,
 } from 'react-native'
+
+const {Surface, Group, Shape, Path} = ART;
+
+import Wedge from '../../common/Wedge';
 
 export default class HomeAlarmCell extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            theme: this.props.theme,
         }
     }
     render() {
+        // 饼图背景圆路径
+        const pathCircle = new Path()
+            .moveTo(21,0)
+            .arc(0,42,21)
+            .arc(0,-42,21)
+            .close();
+
+
         return (
             <View style={styles.cell}>
                 <View style={styles.cellLeft}>
@@ -26,7 +40,20 @@ export default class HomeAlarmCell extends Component {
                 </View>
 
                 <View style={styles.cellRight}>
-                    <Text>圆饼图</Text>
+                    {/*圆饼图*/}
+                    <Surface width={42} height={42}>
+                        <Group>
+                            {/*底部圆*/}
+                            <Shape d={pathCircle} fill='#F3F3F3'/>
+                            <Wedge
+                                outerRadius={21}
+                                startAngle={0}
+                                endAngle={100}
+                                originX={50}
+                                originY={50}
+                                fill="red"/>
+                        </Group>
+                    </Surface>
                 </View>
             </View>
         )
@@ -46,7 +73,6 @@ const styles = StyleSheet.create({
         paddingBottom: 6,
         marginBottom: 6,
         backgroundColor: '#FFFFFF',
-
         borderRadius: 2,
     },
     cellLeft: {
@@ -67,5 +93,10 @@ const styles = StyleSheet.create({
         marginTop: 2,
         fontSize: 12,
         color: '#6B6B6B'
+    },
+    cellRight: {
+        width: 42,
+        height: 42,
+        borderRadius: 21,
     }
 });
