@@ -39,7 +39,7 @@ export default class MyInfoPage extends Component {
     constructor(props) {
         super(props);
         // 初始化类实例
-        //     this.dataRepository = new DataRepository();
+        this.dataRepository = new DataRepository();
         this.state = {
             personInfo: null,
             personCompany: null,
@@ -58,8 +58,6 @@ export default class MyInfoPage extends Component {
         let userId = null;
         dataRepository.fetchLocalRepository('/app/v2/user/login').then(result => {
             userId = result.userId;
-
-
 
         let params = {
             stamp: 'Skongtrolink',
@@ -83,7 +81,6 @@ export default class MyInfoPage extends Component {
 
                 dataRepository.fetchNetRepository('POST', _URL_CompanyInfoGet, parameters_Company)
                     .then(result => {
-                        // alert(JSON.stringify(result));
 
                         this.setState({
                             personCompany: result.data,
@@ -166,7 +163,14 @@ export default class MyInfoPage extends Component {
                             {text: '取消', onPress: () => console.log('Foo Pressed!')},
                             {text: '退出', onPress:() => {
                             ///退出登录操作
-                             this._pushToLogin();
+                             this.dataRepository.removeLocalRepository('user')
+                             this.dataRepository.removeLocalRepository('/app/v2/user/info/get')
+                                 .then(()=> {
+
+                                     this._pushToLogin();
+
+                                 });
+
                     }},
                         ]
                     )}>

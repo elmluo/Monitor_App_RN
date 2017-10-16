@@ -97,12 +97,14 @@ export default class DataRepository {
     }
 
     removeLocalRepository(url) {
-        if (!value || !url ) return;
+        if (!url ) return;
         return new Promise((resolve, reject)=>{
             AsyncStorage.removeItem(url, (error)=>{
                 if (!error) {
                     resolve();
+                    console.log('success')
                 } else {
+                    console.log('failure');
                     reject(error)
                 }
             });
