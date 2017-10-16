@@ -49,7 +49,39 @@ export default class ViewUtils {
             </TouchableHighlight>
         )
     }
-
+    /**
+     * 获取个人信息页的Item
+     * @param callBack 单击item的回调
+     * @param icon 左侧图标
+     * @param text 显示的文本
+     * @param expandableIco 右侧图标
+     * @param rightText 显示右侧文本
+     * @return {XML}
+     */
+    static getCellItem(callBack, text, expandableIco,rightText) {
+        return (
+            <TouchableHighlight
+                onPress={callBack}>
+                <View style={[styles.cell_item_container]}>
+                    <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                        <View style={{opacity: 1, width: 0, height: 0,marginRight: 10}}/>
+                        <Text style = {{color:'rgb(126,126,126)',fontSize:14}}>{text}</Text>
+                    </View>
+                    <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                        {expandableIco?
+                        <Image source={expandableIco}
+                               style={{
+                                   height: 22,
+                                   width: 22,
+                                   opacity: 1
+                               }}/> :
+                            <Text style = {{color:'rgb(126,126,126)',fontSize:14}}>{rightText?rightText:'--'}</Text>
+                        }
+                    </View>
+                </View>
+            </TouchableHighlight>
+        )
+    }
     static getLeftButton(callBack) {
         return <TouchableOpacity
             style={{padding: 8}}
@@ -112,6 +144,13 @@ const styles = StyleSheet.create({
     setting_item_container: {
         backgroundColor: 'white',
         padding: 10, height: 60,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    },
+    cell_item_container: {
+        backgroundColor: 'white',
+        padding: 10, height: 44,
         alignItems: 'center',
         justifyContent: 'space-between',
         flexDirection: 'row'

@@ -113,8 +113,7 @@ export default class Monitor extends Component {
             <View style={styles.container}>
                 {navigationBar}
                 <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
+
                     refreshControl={
                         <RefreshControl
                             title='加载中...'

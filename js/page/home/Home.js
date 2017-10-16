@@ -18,6 +18,7 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import BulletinList from './BulletinList'
 import MyPage from '../my/MyPage'
+import MyInfoPage from '../my/MyInfoPage'
 import HomeAlarmCell from './HomeAlarmCell'
 
 let {width, height} = Dimensions.get('window');
@@ -73,7 +74,7 @@ export default class Monitor extends Component {
                 <TouchableOpacity
                     onPress={() => {
                         this.props.navigator.push({
-                            component: MyPage,
+                            component: MyInfoPage,
                             params: {...this.props}
                         })
                     }}>
@@ -96,11 +97,11 @@ export default class Monitor extends Component {
         };
         let navigationBar =
             <NavigationBar
-                title={'主控页面'}
-                statusBar={statusBar}
-                style={this.state.theme.styles.navBar}
-                rightButton={this._renderRightButton()}
-                leftButton={this._renderLeftButton()}/>;
+            title={'主控页面'}
+            statusBar={statusBar}
+            style={this.state.theme.styles.navBar}
+            rightButton={this._renderRightButton()}
+            leftButton={this._renderLeftButton()}/>;
         let content =
             <ScrollView
                 style={styles.scrollView}

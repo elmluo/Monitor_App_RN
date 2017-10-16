@@ -36,6 +36,8 @@ export const MORE_MENU = {
     Feedback: '反馈',
     Share: '分享',
 }
+
+
 export default class MoreMenu extends Component {
     constructor(props) {
         super(props);
