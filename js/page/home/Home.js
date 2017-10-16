@@ -19,6 +19,7 @@ import NavigationBar from '../../common/NavigationBar'
 import BulletinList from './BulletinList'
 import MyPage from '../my/MyPage'
 import HomeAlarmCell from './HomeAlarmCell'
+import HomeStatisticChart from './HomeStatisticChart'
 
 let {width, height} = Dimensions.get('window');
 
@@ -124,14 +125,7 @@ export default class Monitor extends Component {
                         style={styles.gb}
                         source={require('../../../res/Image/Login/ic_login_bg.png')}
                     >
-                        <View style={styles.overlay}>
-                            <Text>
-                                这里是图表内容
-                            </Text>
-                            <Text>
-                                2017.09.15
-                            </Text>
-                        </View>
+                        <HomeStatisticChart width={width} height={height*0.4}/>
                     </ImageBackground>
                     <View style={styles.alarm}>
                         <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
@@ -168,9 +162,11 @@ const styles = StyleSheet.create({
         height: 0.4 * height,
     },
     overlay: {
+        width: width,
+        height: 0.4 * height,
         position: 'absolute',
         // bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         // alignItems: 'center',
     },
 
