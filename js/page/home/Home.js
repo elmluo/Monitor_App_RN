@@ -67,7 +67,7 @@ export default class Monitor extends Component {
     }
 
     /**
-     * 渲染navigationBar右侧按钮
+     * 渲染navigationBar左侧按钮
      * @returns {XML}
      * @private
      */

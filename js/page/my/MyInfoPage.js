@@ -20,6 +20,7 @@ import SiteDetail from '../monitor/SiteDetail'
 import ViewUtils from '../../util/ViewUtils'
 import LoginPage from '../Login'
 
+
 // import DataRepository from '../../expand/dao/DataRepository'
 export const MORE_INFO = {
     User_Info: '个人信息',
@@ -77,7 +78,9 @@ export default class MyInfoPage extends Component {
                 let parameters_Company = {
                     companyId:result.data.companyId
                 };
-                // alert(JSON.stringify(parameters_Company));
+
+
+                // alert(JSON.stringify(result));
 
                 dataRepository.fetchNetRepository('POST', _URL_CompanyInfoGet, parameters_Company)
                     .then(result => {
@@ -151,7 +154,14 @@ export default class MyInfoPage extends Component {
     getItem(tag, text, rightIcon, rightText) {
         return ViewUtils.getCellItem(() => this.onClick(tag), text, rightIcon, rightText);
     }
+    onClick(tab) {
+        switch (tab) {
+            case MORE_INFO.User_Info:
 
+                break;
+
+        }
+    }
     _renderRightButton() {
         return (
             <View style={{flexDirection: 'row'}}>
@@ -233,13 +243,13 @@ export default class MyInfoPage extends Component {
 
                             </View>
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Info, '用户名', null, this.state.personInfo?this.state.personInfo.name:'--')}
+                            {this.getItem(null, '用户名', null, this.state.personInfo?this.state.personInfo.name:'--')}
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Phone, '手机', null, this.state.personInfo?this.state.personInfo.phone:'--')}
+                            {this.getItem(null, '手机', null, this.state.personInfo?this.state.personInfo.phone:'--')}
                             <View style={styles.line}/>
                             {this.getItem(MORE_INFO.User_Info, '密码', require('../../../res/Image/BaseIcon/ic_listPush_nor.png'), null)}
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Info, '所在企业', null,  this.state.personCompany?this.state.personCompany.name:'--')}
+                            {this.getItem(null, '所在企业', null,  this.state.personCompany?this.state.personCompany.name:'--')}
                         </View>
 
                         {/*{企业信息板块}*/}

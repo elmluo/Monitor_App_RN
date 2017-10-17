@@ -18,6 +18,10 @@ import NavigationBar from '../common/NavigationBar'
 import Main from './Main'
 import SearchPage from './SearchPage'
 import DataRepository from '../expand/dao/Data'
+import CacheField from '../model/CacheField'
+import CompanyPage from './my/CompanyListPage'
+
+
 let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
 let {width,height} = Dimensions.get('window');
@@ -37,27 +41,85 @@ export default class Login extends Component {
             username: this.state.username,
             password: this.state.userpwd
         };
+        //进行登录
+
         dataRepository.fetchNetRepository('POST', url, params)
             .then((response)=> {
+
                 if (response['success'] === true){
 
                     // 保存用户登录信息
                     dataRepository.saveRepository('user', params)
                         .then(()=> {
-                            // console.log('用户信息已经保存');
+                            console.log('用户信息已经保存');
                         });
+                    //根据登录返回 classes 判断是代理商还是普通用户
+                    // alert('登录成功');
 
-                    // 保存用户登录后返回信息
-                    dataRepository.saveRepository(url, response.data)
-                        .then(()=>{
-                            this._pushToMainPage();
-                        })
-                        .catch(error=>{
-                            alert(error)
-                        });
+                    if (response.data.classes === '代理商用户'){
+                        // alert('代理商');
+
+                        this._pushToCompanyPage();
+
+                    }else {
+                        alert('普通用户');
+                        // 获取用户信息 主要保存：companyId、userId
+                        //
+                        let userUrl = '/app/v2/user/info/get';
+                        let UserParams = {
+                            userId: response.data.userId,
+                        };
+                        // alert(JSON.stringify(response.data));
+
+                        dataRepository.fetchNetRepository('POST', userUrl, UserParams)
+                            .then((response) => {
+                                // alert(JSON.stringify(response.data));
+
+                                if (response['success'] === true) {
+                                    //获取企业 主要保存企业唯一码：stamp
+
+                                    let companyUrl = '/app/v2/company/info/get';
+                                    let companyParams = {
+                                        companyId: response.data.companyId,
+                                    };
+                                    dataRepository.fetchNetRepository('POST', companyUrl, companyParams)
+                                        .then((companyResponse) => {
+                                            if (companyResponse['success'] === true) {
+                                                // 保存用户登录后返回信息
+                                                // alert(JSON.stringify(companyResponse.data));
+
+                                                dataRepository.saveRepository(url, {
+                                                    companyId: response.data.companyId,
+                                                    stamp: companyResponse.data.stamp,
+                                                    userId: response.data.userId
+                                                })
+                                                    .then(() => {
+
+                                                        this._pushToMainPage();
+                                                    })
+                                                    .catch(error => {
+                                                        alert(error)
+                                                    });
+                                            }else {
+                                                console.log('获取数据失败')
+
+                                            }
+                                            });
+
+                                } else {
+                                    console.log('获取数据失败')
+                                }
+                            })
+                            .catch(error => {
+                                alert(error)
+                            });
+                    }
+
                 } else {
                     console.log('获取数据失败')
+                    alert(JSON.stringify(response.info));
                 }
+
             })
             .catch(error=> {
                 console.log(error);
@@ -77,6 +139,36 @@ export default class Login extends Component {
             }
         });
     }
+
+    /**
+     * 登录到企业列表
+     * @private
+     */
+    _pushToCompanyPage() {
+        this.props.navigator.push({
+            component: CompanyPage,
+            params:{
+                theme: this.theme,
+                ...this.props
+            }
+        });
+    }
+
+    /**
+     * 登录到手机验证
+     * @private
+     */
+    _pushToForgetPasswordPage() {
+        this.props.navigator.push({
+            component: CompanyPage,
+            params:{
+                theme: this.theme,
+                ...this.props
+            }
+        });
+    }
+
+
 
     /*设置背景图片*/
 
@@ -108,8 +200,8 @@ export default class Login extends Component {
                             underlineColorAndroid="transparent"
                             placeholder="请输入密码"
                             clearTextOnFocus={true}
-                            clearButtonMode="while-editing"
                             secureTextEntry={true}
+                            clearButtonMode="while-editing"
                             style={styles.textInputSize}
                             onChangeText={(input) => this.setState({userpwd: input})}>
                         </TextInput>
@@ -125,8 +217,24 @@ export default class Login extends Component {
                     <Text style={styles.loginText}>登录</Text>
                 </TouchableOpacity>
             </ImageBackground>
-            <Text style={styles.textNo}>忘记密码|服务器设置</Text>
 
+            <View style={styles.viewBottomStyle}>
+                <View>
+                    <TouchableOpacity onPress={()=>{alert('点击忘记')}}>
+                        <Text style={styles.textBottomStyle} >忘记密码</Text>
+                    </TouchableOpacity>
+
+                </View>
+                <View>
+                    <Text> | </Text>
+                </View>
+                <View>
+                    <TouchableOpacity onPress={()=>{alert('服务器设置')}}>
+                        <Text style={styles.textBottomStyle}>服务器设置</Text>
+                    </TouchableOpacity>
+
+                </View>
+            </View>
 
         </View>)
     }
@@ -136,7 +244,6 @@ export default class Login extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // justifyContent:'center',
         alignItems:'center',
     },
     item: {
@@ -147,8 +254,6 @@ const styles = StyleSheet.create({
     },
     login: {
         height: 40,
-        // backgroundColor: 'green',
-        // margin: 20,
         justifyContent: 'center',
     },
     loginText: {
@@ -166,7 +271,6 @@ const styles = StyleSheet.create({
     loginImg:{
         marginTop:60,
         alignSelf: 'center',
-
     },
     logoText:{
         fontSize:20,
@@ -182,38 +286,38 @@ const styles = StyleSheet.create({
         height: height * 0.3,
         marginTop:49,
         borderRadius: 5,
-        shadowColor:'rgba(19,171,228,0.25)',
+        shadowColor:'rgba(19,171,228,0.5)',
         shadowOffset:{h:15,w:20},
         shadowRadius:20,
-        shadowOpacity:0.5,
-
+        shadowOpacity:0.7,
     },
     loginBtnBgImg:{
         marginTop:85,
         width: width * 0.7,
         height: 40,
         alignSelf: 'center',
-
     },
     iconKeyStyle:{
         left:34,
         marginTop:20,
-
-
     },
     textInputSize:{
         marginTop:20,
         left:50,
         width:width*0.6,
-        height:30,
+        height:50,
         textAlign:'left'
     },
-    textNo:{
-        color: 'rgb(102,102,102)',
+    viewBottomStyle:{
         marginTop:width * 0.40,
-        fontSize:15,
-
+        flexDirection:'row',
+        justifyContent: 'center',
+        alignItems:'center'
     },
+    textBottomStyle:{
+        fontSize:15,
+        color: 'rgb(102,102,102)'
+    }
 
 
 
