@@ -14,6 +14,7 @@ import {
     RefreshControl,
     Platform,
     Dimensions,
+    InteractionManager,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import BulletinList from './BulletinList'
@@ -21,11 +22,16 @@ import MyPage from '../my/MyPage'
 import MyInfoPage from '../my/MyInfoPage'
 import HomeAlarmCell from './HomeAlarmCell'
 import HomeStatisticChart from './HomeStatisticChart'
-import Echarts from '../../common/Echarts'
-let {width, height} = Dimensions.get('window');
+import DataRepository from '../../expand/dao/Data'
 
+let dataRepository = new DataRepository();
+let {width, height} = Dimensions.get('window');
 export default class Monitor extends Component {
     constructor(props) {
+        // 去除本地保存的stamp
+        dataRepository.fetchLocalRepository('/app/v2/user/login').then((result)=>{
+            this.state.stamp = result.stamp;
+        });
         super(props);
         this.state = {
             theme: this.props.theme,
@@ -35,10 +41,10 @@ export default class Monitor extends Component {
                 color: '#ff0000',
                 name: '一级告警'
             },
-
             chartData: [1,2,3,4,5,6,7,8,9,10]
         }
     }
+
 
     /**
      * 渲染navigationBar右侧按钮
@@ -93,6 +99,74 @@ export default class Monitor extends Component {
         )
     }
 
+    /**
+     * 获取企业唯一码
+     * @returns {Promise}
+     * @private
+     */
+    _getStamp() {
+        return new Promise((resolve, reject)=> {
+            dataRepository.fetchLocalRepository('/app/v2/user/login').then((result)=> {
+                resolve(result.stamp)
+            }, (error)=> {
+                console.log(error);
+                reject(error)
+            })
+        })
+    }
+
+    /**
+     * 获取FSU数量（按在线状态统计）
+     * @private
+     */
+    _getFsuCount(stamp) {
+        let URL = '/app/v2/statistics/count/fsu';
+        let params = {
+            stamp: stamp
+        };
+        dataRepository.fetchNetRepository('POST', URL, params)
+            .then(result => {
+                console.log(result);
+                alert(JSON.stringify({'fsu数量':result}));
+            })
+    }
+
+    /**
+     * 一周FSU数量
+     * @private
+     */
+    _getWeekFsuCount(stamp) {
+        let URL = '/app/v2/statistics/count/fsu/week';
+        let params = {
+            stamp: stamp
+        };
+        console.log(this.stamp);
+        dataRepository.fetchNetRepository('POST', URL, params)
+            .then(result => {
+                console.log(result);
+                // 获取 一周fsu数量
+                alert(JSON.stringify({'一周FSU':result}));
+            })
+    }
+
+    /**
+     * 获取告警数量
+     * @param stamp
+     * @private
+     */
+    _getAlarmCount(stamp) {
+        let URL = '/app/v2/statistics/count/alarm';
+        let params = {
+            stamp: stamp,
+            status: 2,
+            type: 1
+        };
+        dataRepository.fetchNetRepository('POST', URL, params)
+            .then(result => {
+                alert(JSON.stringify({'alarm数量': result}));
+            })
+    }
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -136,12 +210,23 @@ export default class Monitor extends Component {
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
-                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
-                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
-                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
-                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
-                    </View>
-
+                            <HomeAlarmCell
+                                count = {this.state.cellData.count}
+                                alarmName ={this.state.cellData.name}
+                                alarmColor={this.state.cellData.color}/>
+                            <HomeAlarmCell
+                                count = {this.state.cellData.count}
+                                alarmName ={this.state.cellData.name}
+                                alarmColor={this.state.cellData.color}/>
+                            <HomeAlarmCell
+                                count = {this.state.cellData.count}
+                                alarmName ={this.state.cellData.name}
+                                alarmColor={this.state.cellData.color}/>
+                            <HomeAlarmCell
+                                count = {this.state.cellData.count}
+                                alarmName ={this.state.cellData.name}
+                                alarmColor={this.state.cellData.color}/>
+                        </View>
                     </View>
                 </View>
             </ScrollView>;
@@ -151,12 +236,28 @@ export default class Monitor extends Component {
                 {navigationBar}
                 {content}
             </View>
-
         )
     }
 
     componentDidMount() {
+        // 页面加载完成再去渲染数据，减缓卡顿问题
+        InteractionManager.runAfterInteractions(()=>{
+            this._getStamp().then((stamp)=> {
+                // // 三个请求操作都是promise操作的话，用Promise.all()
+                // Promise.all([
+                //     this._getFsuCount(stamp),
+                //     // this._getWeekFsuCount(stamp),
+                //     this._getAlarmCount(stamp)
+                // ]).then((results)=> {
+                //     console.log(results);
+                // });
 
+                this._getFsuCount(stamp);
+                this._getAlarmCount(stamp);
+                // this._getWeekFsuCount(stamp);
+            });
+
+        });
     }
 }
 const styles = StyleSheet.create({
