@@ -2,19 +2,16 @@ import React from 'react';
 import {
     StyleSheet,
     View,
-    Text,
     Image,
-    Alert,
     TouchableOpacity,
     Dimensions,
     TextInput,
 } from 'react-native';
 import NavigationBar from '../../common/NavigationBar'
 import Btn from '../my/BaseBtn'
-import LoginPage from '../Login'
 
 let {width,height} = Dimensions.get('window')
-export default class ResetPasswordPage extends React.Component {
+export default class SetPasswordPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,6 +20,7 @@ export default class ResetPasswordPage extends React.Component {
         };
 
     }
+    //返回按钮
     _renderLeftButton() {
         return (
             <View style={{flexDirection: 'row'}}>
@@ -58,7 +56,21 @@ export default class ResetPasswordPage extends React.Component {
             <View style={styles.container}>
                 {navigationBar}
 
-                <View>
+                <View style = {{marginTop:49}}>
+                    <View style = {styles.textInputViewStyle}>
+                        <TextInput
+                            ref="inputLoginName"
+                            // autoFocus={true}
+                            underlineColorAndroid="transparent"
+                            placeholderTextColor = '#7E7E7E'
+                            placeholder="请输入旧密码"
+                            clearTextOnFocus={true}
+                            secureTextEntry={true}
+                            clearButtonMode="while-editing"
+                            style={styles.textInputSize}
+                            onChangeText={(input) => this.setState({username: input})}>
+                        </TextInput>
+                    </View>
                     <View style = {styles.textInputViewStyle}>
                         <TextInput
                             ref="inputLoginName"
@@ -78,8 +90,8 @@ export default class ResetPasswordPage extends React.Component {
                             ref="inputLoginName"
                             // autoFocus={true}
                             underlineColorAndroid="transparent"
-                            placeholderTextColor = '#7E7E7E'
                             placeholder="请再输入一次密码"
+                            placeholderTextColor = '#7E7E7E'
                             clearTextOnFocus={true}
                             secureTextEntry={true}
                             clearButtonMode="while-editing"
@@ -93,15 +105,7 @@ export default class ResetPasswordPage extends React.Component {
 
 
                     <TouchableOpacity onPress={() => {
-                        this.props.navigator.replace({
-                            component: LoginPage,
-                            params: {
-                                theme: this.theme,
-                                ...this.props
-                            }
-                        });
-
-
+                        this.props.navigator.pop();
                     }}>
                         <Btn text = {this.state.btnText} />
                     </TouchableOpacity>
@@ -130,6 +134,7 @@ let styles = new StyleSheet.create({
         marginTop:20,
         height:50,
         width:width-60,
-        textAlign:'left'
+        textAlign:'left',
+
     }
 });

@@ -8,7 +8,6 @@ import {
     Text,
     View,
     Image,
-    ListView,
     Alert,
     ScrollView,
     RefreshControl,
@@ -17,12 +16,10 @@ import {
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
-import SiteDetail from '../monitor/SiteDetail'
 import ViewUtils from '../../util/ViewUtils'
 import LoginPage from '../Login'
+import SetPasswordPage from '../my/SetPasswordPage'
 
-
-// import DataRepository from '../../expand/dao/DataRepository'
 export const MORE_INFO = {
     User_Info: '个人信息',
     User_Name: '用户名',
@@ -47,9 +44,12 @@ export default class MyInfoPage extends Component {
             personCompany: null,
             isLoading: false,
             theme: this.props.theme,
-            // dataSource: new ScrollView.DataSource({rowHasChanged: (r1, r2)=>r1 !== r2}),
         }
     }
+
+    /**
+     * 获取信息列表
+     */
 
     _onLoad() {
         // 开启加载动画
@@ -57,18 +57,15 @@ export default class MyInfoPage extends Component {
             isLoading: true
         });
         let url = '/app/v2/user/info/get';
-        let userId = null;
+        //去缓存中拿 stamp、userId
         dataRepository.fetchLocalRepository('/app/v2/user/login').then(result => {
-            userId = result.userId;
 
         let params = {
-            stamp: 'Skongtrolink',
-            // page: 1,
-            userId:userId,
-            // size: 20,
+            stamp: result.stamp,
+            userId:result.userId,
         };
         // alert(JSON.stringify(params));
-
+        //获取个人信息
         dataRepository.fetchNetRepository('POST', url, params)
             .then((result) => {
                 // alert(JSON.stringify(result));
@@ -80,9 +77,8 @@ export default class MyInfoPage extends Component {
                     companyId:result.data.companyId
                 };
 
-
                 // alert(JSON.stringify(result));
-
+                //获取企业信息
                 dataRepository.fetchNetRepository('POST', _URL_CompanyInfoGet, parameters_Company)
                     .then(result => {
 
@@ -107,18 +103,7 @@ export default class MyInfoPage extends Component {
         })
     }
 
-
-    _pushToDetail(rowData) {
-        this.props.navigator.push({
-            component: SiteDetail,
-            params: {
-                item: rowData,
-                ...this.props
-            },
-        })
-    }
-
-
+    //调转登录页面
     _pushToLogin() {
         this.props.navigator.push({
             component: LoginPage,
@@ -135,7 +120,7 @@ export default class MyInfoPage extends Component {
             this._onLoad()
         });
     }
-
+    //设置返回按钮
     _renderLeftButton() {
         return (
             <View style={{flexDirection: 'row'}}>
@@ -153,18 +138,26 @@ export default class MyInfoPage extends Component {
             </View>
         )
     }
-
+    // cell 封装
     getItem(tag, text, rightIcon, rightText) {
         return ViewUtils.getCellItem(() => this.onClick(tag), text, rightIcon, rightText);
     }
+    //修改密码点击时间
     onClick(tab) {
         switch (tab) {
-            case MORE_INFO.User_Info:
-
+            case MORE_INFO.User_Password:
+                this.props.navigator.push({
+                    component:SetPasswordPage,
+                    params: {
+                        theme: this.theme,
+                        ...this.props
+                    },
+                })
                 break;
 
         }
     }
+    //初始化退出登录按钮
     _renderRightButton() {
         return (
             <View style={{flexDirection: 'row'}}>
@@ -250,7 +243,7 @@ export default class MyInfoPage extends Component {
                             <View style={styles.line}/>
                             {this.getItem(null, '手机', null, this.state.personInfo?this.state.personInfo.phone:'--')}
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Info, '密码', require('../../../res/Image/BaseIcon/ic_listPush_nor.png'), null)}
+                            {this.getItem(MORE_INFO.User_Password, '密码', require('../../../res/Image/BaseIcon/ic_listPush_nor.png'), null)}
                             <View style={styles.line}/>
                             {this.getItem(null, '所在企业', null,  this.state.personCompany?this.state.personCompany.name:'--')}
                         </View>
@@ -268,9 +261,9 @@ export default class MyInfoPage extends Component {
 
                             </View>
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Info, '企业名称', null, this.state.personCompany?this.state.personCompany.name:'--')}
+                            {this.getItem(null, '企业名称', null, this.state.personCompany?this.state.personCompany.name:'--')}
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Info, '联系邮箱', null, this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
+                            {this.getItem(null, '联系邮箱', null, this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
                         </View>
                     </View>
                 </ScrollView>
