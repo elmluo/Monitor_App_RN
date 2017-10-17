@@ -5,46 +5,58 @@ import {
     Text,
     Dimensions,
 } from 'react-native'
+
 let {width, height} = Dimensions.get('window');
 import Echarts from '../../common/Echarts'
 
-export default class HomeStatisticChart extends Component{
+export default class HomeStatisticChart extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-
-        }
+        this.state = {}
     }
 
     componentWillReceiveProps(nextProps) {
-            console.log(this.refs.echarts);
+        console.log(this.refs.echarts);
         if (nextProps.isReload) {
             this.refs.echarts.refs.chart.reload();
         }
     }
+
     render() {
+
+        // 获取获取7天时间数组
+        //[10-1,10-2,10-3.....]
+        let xAxisData = this.props.chartData.map((item) => {
+            let d = new Date();
+            d.setTime(item.recordTime);
+            // console.log(d);
+            // return d.getMonth() + 1 + ' -' + d.getDate()
+
+            return d;
+        });
+
         console.log(this.props.chartData);
         let option = {
             backgroundColor: {
                 type: 'linear',
-                    x: 0,
-                    y: 0,
-                    x2: 0,
-                    y2: 1,
-                    colorStops: [{
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [{
                     offset: 0, color: '#3B4BC2' // 0% 处的颜色
                 }, {
                     offset: 0.4, color: '#46A4EC' // 100% 处的颜色
                 }]
             },
-            tooltip : {
+            tooltip: {
                 axisPointer: {
                     type: 'none',
                     animation: true,
                 },
                 trigger: 'axis',
                 formatter: function (v, p, f) {
-                    return v[0].data;
+                    return (v[0].data * 100).toFixed(1) + '%';
                 },
                 position: function (point, params, dom, rect, size) {
                     var triAng = document.createElement('div');
@@ -53,7 +65,7 @@ export default class HomeStatisticChart extends Component{
                     triAng.style.borderTopColor = '#3AB0FF';
                     triAng.style.left = (size.contentSize[0] / 2 - 5) + 'px';
                     dom.appendChild(triAng);
-                
+
                     var time = document.createElement('div');
                     time.innerText = params[0].axisValue;
                     time.style.position = 'absolute';
@@ -61,11 +73,11 @@ export default class HomeStatisticChart extends Component{
                     time.style.width = '100px';
                     time.style.textAlign = 'center';
                     time.style.fontSize = '0.8rem';
-                    time.style.left = - (100 - size.contentSize[0]) / 2 + 'px';
+                    time.style.left = -(100 - size.contentSize[0]) / 2 + 'px';
                     time.style.top = size.contentSize[1] + 12 + 'px';
-                
+
                     dom.appendChild(time);
-                
+
                     return [point[0] - size.contentSize[0] / 2, point[1] - size.contentSize[1] - 10];
                 },
                 extraCssText: 'background-color:#3AB0FF; padding:0 5px;'
@@ -76,14 +88,14 @@ export default class HomeStatisticChart extends Component{
                 // backgroundColor: "transparent"
                 // containLabel: true
             },
-            xAxis : [
+            xAxis: [
                 {
-                    type : 'category',
+                    type: 'category',
                     // boundaryGap : false,
-                    data : this.props.chartData,  //list.map(v=>new Date(v.time).Format('hh:mm:ss')),
+                    data: xAxisData,  //list.map(v=>new Date(v.time).Format('hh:mm:ss')),
                     boundaryGap: false,
                     axisTick: {
-                        show:false
+                        show: false
                     },
                     axisLine: {
                         show: false,
@@ -92,18 +104,16 @@ export default class HomeStatisticChart extends Component{
                         }
                     },
                     axisLabel: {
-                        interval: 3,
                     },
                     splitLine: {
                         show: true,
-                        interval: 3,
                         lineStyle: {
                             color: "rgba(255,255,255,0.1)"
                         }
                     },
                 }
             ],
-            yAxis : [
+            yAxis: [
                 {
                     interval: 3, // 数据最大值的80%
                     show: true,
@@ -114,7 +124,7 @@ export default class HomeStatisticChart extends Component{
                     },
 
                     axisTick: {
-                        show:false
+                        show: false
                     },
                     axisLine: {
                         show: false,
@@ -129,10 +139,10 @@ export default class HomeStatisticChart extends Component{
             //     start: 0,
             //     end:50
             // }],
-            series : [
+            series: [
                 {
-                    name:'seriesName',
-                    type:'line',
+                    name: 'seriesName',
+                    type: 'line',
                     smooth: true,
                     areaStyle: {
                         normal: {
@@ -167,7 +177,8 @@ export default class HomeStatisticChart extends Component{
                             }
                         }
                     },
-                    data: this.props.chartData,//list.map(v=>v.value),
+
+                    data: this.props.chartData.map(v => (v.onlineCount / (v.onlineCount + v.offlineCount))),//list.map(v=>v.value),
                     markPoint: {
                         symbol: 'rect',
                         symbolSize: 100
@@ -186,8 +197,8 @@ export default class HomeStatisticChart extends Component{
                 }
             ]
         };
-        return(
-            <Echarts ref = 'echarts' option={option} height={this.props.height}/>
+        return (
+            <Echarts ref='echarts' option={option} height={this.props.height}/>
         )
     }
 }

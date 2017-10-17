@@ -10,7 +10,8 @@ import {
     Image,
     ListView,
     RefreshControl,
-    TouchableOpacity
+    TouchableOpacity,
+    InteractionManager
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -24,15 +25,15 @@ export default class Monitor extends Component {
         this.dataRepository = new DataRepository();
         this.state = {
             isLoading: false,
-            theme:this.props.theme,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2)=>r1 !== r2}),
+            theme: this.props.theme,
+            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         }
     }
 
     _onLoad() {
         // 开启加载动画
         this.setState({
-           isLoading: true
+            isLoading: true
         });
         let url = '/app/v2/site/model/list';
         let params = {
@@ -40,19 +41,17 @@ export default class Monitor extends Component {
             page: 1,
             size: 20,
         };
-        this.dataRepository.fetchNetRepository('POST',url, params)
-            .then(result=>{
-                this.setState({
-                    result: JSON.stringify(result),
-                    dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
-                    isLoading: false   // 关闭加载动画
-                })
+        this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
+            this.setState({
+                result: JSON.stringify(result),
+                dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
+                isLoading: false   // 关闭加载动画
             })
-            .catch(error=> {
-                this.setState({
-                    result: JSON.stringify(error)
-                });
-            })
+        }).catch(error => {
+            this.setState({
+                result: JSON.stringify(error)
+            });
+        })
     }
 
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
@@ -60,8 +59,8 @@ export default class Monitor extends Component {
             backgroundColor: this.state.theme.themeColor,
         };
         let fusState = rowData.fsuOnline
-                ?<Text style={[styles.onlineState, onlineStyle]}>在线</Text>
-                :<Text style={styles.onlineState}>离线</Text>;
+            ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
+            : <Text style={styles.onlineState}>离线</Text>;
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
@@ -87,7 +86,7 @@ export default class Monitor extends Component {
     _pushToDetail(rowData) {
         this.props.navigator.push({
             component: SiteDetail,
-            params:{
+            params: {
                 item: rowData,
                 ...this.props
             },
@@ -95,10 +94,13 @@ export default class Monitor extends Component {
     }
 
     componentDidMount() {
-        // 组件装载完，获取数据
-        this._onLoad()
+        InteractionManager.runAfterInteractions(()=> {
+            // 组件装载完，获取数据
+            this._onLoad()
+        });
+
     }
-    
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -109,7 +111,7 @@ export default class Monitor extends Component {
                 title={'监控页面'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
-        return(
+        return (
             <View style={styles.container}>
                 {navigationBar}
                 <ListView
@@ -122,7 +124,7 @@ export default class Monitor extends Component {
                             colors={[this.state.theme.themeColor]}
                             tintColor={this.state.theme.themeColor}
                             refreshing={this.state.isLoading}
-                            onRefresh={()=>{
+                            onRefresh={() => {
                                 // 刷新的时候重新获取数据
                                 this._onLoad()
                             }}/>

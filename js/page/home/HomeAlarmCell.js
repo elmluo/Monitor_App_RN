@@ -22,14 +22,6 @@ export default class HomeAlarmCell extends Component {
         }
     }
 
-    _calculateEndAngle(count) {
-        console.log(count);
-        alert(this.props.allCount);
-        // this.setState({
-        //     endAngle: (count / this.props.allCount) * 360
-        // })
-    }
-
     _renderImage(alarmName) {
         if (alarmName === '一级告警') {
             return <Image source={require('../../../res/Image/BaseIcon/ic_oneAlarm_nor.png')}/>
@@ -69,7 +61,7 @@ export default class HomeAlarmCell extends Component {
                             <Wedge
                                 outerRadius={21}
                                 startAngle={0}
-                                endAngle={45}
+                                endAngle={(this.props.count/this.props.allCount)*360}  // 通过传入数量和总数计算比例
                                 originX={50}
                                 originY={50}
                                 fill={this.props.alarmColor}/>
@@ -82,7 +74,6 @@ export default class HomeAlarmCell extends Component {
 
     componentDidMount() {
         InteractionManager.runAfterInteractions(()=> {
-            this._calculateEndAngle(this.props.count);
         })
     }
 }
