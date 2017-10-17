@@ -6,6 +6,7 @@ import {
     View,
     Text,
     ART,
+    InteractionManager
 } from 'react-native'
 
 const {Surface, Group, Shape, Path} = ART;
@@ -17,8 +18,30 @@ export default class HomeAlarmCell extends Component {
         super(props);
         this.state = {
             theme: this.props.theme,
+            endAngle: 45,
         }
     }
+
+    _calculateEndAngle(count) {
+        console.log(count);
+        alert(this.props.allCount);
+        // this.setState({
+        //     endAngle: (count / this.props.allCount) * 360
+        // })
+    }
+
+    _renderImage(alarmName) {
+        if (alarmName === '一级告警') {
+            return <Image source={require('../../../res/Image/BaseIcon/ic_oneAlarm_nor.png')}/>
+        } else if (alarmName === '二级告警') {
+            return <Image source={require('../../../res/Image/BaseIcon/ic_twoAlarm_nor.png')}/>
+        } else if (alarmName === '三级告警') {
+            return <Image source={require('../../../res/Image/BaseIcon/ic_threeAlarm_nor.png')}/>
+        } else{
+            return <Image source={require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png')}/>
+        }
+    }
+
     render() {
         // 饼图背景圆路径
         const pathCircle = new Path()
@@ -27,12 +50,10 @@ export default class HomeAlarmCell extends Component {
             .arc(0,-42,21)
             .close();
 
-
         return (
             <View style={styles.cell}>
                 <View style={styles.cellLeft}>
-                    <Image
-                        source={require('../../../res/Image/BaseIcon/ic_oneAlarm_nor.png')}/>
+                    {this._renderImage(this.props.alarmName)}
                     <View style={styles.cellLeftText}>
                         <Text style={styles.cellLeftAlarmCount}>{this.props.count}</Text>
                         <Text style={styles.cellLeftAlarmName}>{this.props.alarmName}</Text>
@@ -48,15 +69,21 @@ export default class HomeAlarmCell extends Component {
                             <Wedge
                                 outerRadius={21}
                                 startAngle={0}
-                                endAngle={100}
+                                endAngle={45}
                                 originX={50}
                                 originY={50}
-                                fill="red"/>
+                                fill={this.props.alarmColor}/>
                         </Group>
                     </Surface>
                 </View>
             </View>
         )
+    }
+
+    componentDidMount() {
+        InteractionManager.runAfterInteractions(()=> {
+            this._calculateEndAngle(this.props.count);
+        })
     }
 }
 

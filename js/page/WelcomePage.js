@@ -187,7 +187,7 @@ export default class WelcomePage extends Component {
             <View style={styles.container}>
                 <Text>检查是否跟新</Text>
                 <Text>老版本信息</Text>
-                <Text>{newVersion}</Text>
+                <Text>{this.state.result}</Text>
             </View>
         )
 
