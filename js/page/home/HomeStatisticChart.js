@@ -43,10 +43,10 @@ export default class HomeStatisticChart extends Component{
                     animation: true,
                 },
                 trigger: 'axis',
-                formatter (v, p, f) {
+                formatter: function (v, p, f) {
                     return v[0].data;
                 },
-                position (point, params, dom, rect, size) {
+                position: function (point, params, dom, rect, size) {
                     var triAng = document.createElement('div');
                     triAng.style.position = 'absolute';
                     triAng.style.border = '5px solid transparent';
@@ -66,7 +66,6 @@ export default class HomeStatisticChart extends Component{
                 
                     dom.appendChild(time);
                 
-                    // 固定在顶部
                     return [point[0] - size.contentSize[0] / 2, point[1] - size.contentSize[1] - 10];
                 },
                 extraCssText: 'background-color:#3AB0FF; padding:0 5px;'
@@ -188,7 +187,7 @@ export default class HomeStatisticChart extends Component{
             ]
         };
         return(
-            <Echarts ref = 'echarts' option={option} height={this.props.height} style={{backgroundColor: '#ff0'}}/>
+            <Echarts ref = 'echarts' option={option} height={this.props.height}/>
         )
     }
 }

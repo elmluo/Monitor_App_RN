@@ -11,7 +11,8 @@ import {
     Alert,
     ScrollView,
     RefreshControl,
-    TouchableOpacity
+    TouchableOpacity,
+    InteractionManager
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -114,8 +115,10 @@ export default class MyInfoPage extends Component {
     }
 
     componentDidMount() {
-        // 组件装载完，获取数据
-        this._onLoad()
+        InteractionManager.runAfterInteractions(()=>{
+            // 组件装载完，获取数据
+            this._onLoad()
+        });
     }
     //设置返回按钮
     _renderLeftButton() {
