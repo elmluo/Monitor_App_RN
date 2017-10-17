@@ -67,7 +67,7 @@ export default class Monitor extends Component {
     }
 
     /**
-     * 渲染navigationBar右侧按钮
+     * 渲染navigationBar左侧按钮
      * @returns {XML}
      * @private
      */
@@ -134,11 +134,14 @@ export default class Monitor extends Component {
                     >
                         <HomeStatisticChart chartData = {this.state.chartData} width={width} height={height*0.4}/>
                     </ImageBackground>
-                    <View style={styles.alarm}>
-                        <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
-                        <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
-                        <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
-                        <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
+                    <View style={styles.alarmWrap}>
+                        <View style={styles.alarm}>
+                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
+                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
+                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
+                            <HomeAlarmCell count = {this.state.cellData.count} alarmName ={this.state.cellData.name} alarmColor={this.state.cellData.color}/>
+                    </View>
+
                     </View>
                 </View>
             </ScrollView>;
@@ -162,7 +165,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     scrollView: {
-      backgroundColor: 'pink'
+      backgroundColor: '#F3F3F3'
     },
     gb: {
         width: width,
@@ -176,12 +179,19 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         // alignItems: 'center',
     },
-
-    alarm: {
+    alarmWrap: {
+        width: width,
+        height: 0.4*height,
         position: 'relative',
+    },
+    alarm: {
+        position: 'absolute',
         top: -height* 0.05,
-        marginLeft: 16,
-        marginRight: 16,
+        width: width,
+        height: 0.45*height,
+        justifyContent: 'space-between',
+        paddingLeft: 16,
+        paddingRight: 16,
     },
 
 });
