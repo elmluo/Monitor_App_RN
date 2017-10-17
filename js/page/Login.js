@@ -14,13 +14,11 @@ import {
 
 } from 'react-native'
 
-import NavigationBar from '../common/NavigationBar'
 import Main from './Main'
-import SearchPage from './SearchPage'
 import DataRepository from '../expand/dao/Data'
-import CacheField from '../model/CacheField'
 import CompanyPage from './my/CompanyListPage'
-
+import ForgetPasswordPage from './my/ForgetPasswordPage'
+import SetUpServer from './my/SetUpServer'
 
 let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
@@ -160,7 +158,7 @@ export default class Login extends Component {
      */
     _pushToForgetPasswordPage() {
         this.props.navigator.push({
-            component: CompanyPage,
+            component: ForgetPasswordPage,
             params:{
                 theme: this.theme,
                 ...this.props
@@ -168,7 +166,19 @@ export default class Login extends Component {
         });
     }
 
-
+    /**
+     * 登录到服务器设置
+     * @private
+     */
+    _pushToSetUpServerPage() {
+        this.props.navigator.push({
+            component: SetUpServer,
+            params:{
+                theme: this.theme,
+                ...this.props
+            }
+        });
+    }
 
     /*设置背景图片*/
 
@@ -182,7 +192,8 @@ export default class Login extends Component {
                 <Text style={styles.logoText}>义益云监控</Text>
 
                 <View style = {styles.loginTextBg}>
-                    <View style={styles.item}><Image source={require('../../res/Image/Login/ic_user_key_nor.png')} style={styles.iconKeyStyle}/>
+                    <View style={styles.item}>
+                        <Image source={require('../../res/Image/Login/ic_user_key_nor.png')} style={styles.iconKeyStyle}/>
                         <TextInput
                             ref="inputLoginName"
                             // autoFocus={true}
@@ -194,7 +205,8 @@ export default class Login extends Component {
                             onChangeText={(input) => this.setState({username: input})}>
                         </TextInput>
                     </View>
-                    <View style={styles.item}><Image source={require('../../res/Image/Login/ic_password_key_nor.png')} style={styles.iconKeyStyle}/>
+                    <View style={styles.item}>
+                        <Image source={require('../../res/Image/Login/ic_password_key_nor.png')} style={styles.iconKeyStyle}/>
                         <TextInput
                             ref="inputLoginPwd"
                             underlineColorAndroid="transparent"
@@ -220,7 +232,7 @@ export default class Login extends Component {
 
             <View style={styles.viewBottomStyle}>
                 <View>
-                    <TouchableOpacity onPress={()=>{alert('点击忘记')}}>
+                    <TouchableOpacity onPress={()=>{this._pushToForgetPasswordPage()}}>
                         <Text style={styles.textBottomStyle} >忘记密码</Text>
                     </TouchableOpacity>
 
@@ -229,7 +241,7 @@ export default class Login extends Component {
                     <Text> | </Text>
                 </View>
                 <View>
-                    <TouchableOpacity onPress={()=>{alert('服务器设置')}}>
+                    <TouchableOpacity onPress={()=>{this._pushToSetUpServerPage()}}>
                         <Text style={styles.textBottomStyle}>服务器设置</Text>
                     </TouchableOpacity>
 
@@ -249,7 +261,10 @@ const styles = StyleSheet.create({
     item: {
         flexDirection: 'row',
         alignItems: 'center',
-        margin: 10,
+        marginLeft:30,
+        marginRight:30,
+        borderBottomWidth:1,
+        borderBottomColor:'rgb(235,235,235)'
 
     },
     login: {
@@ -298,13 +313,13 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     iconKeyStyle:{
-        left:34,
+        left:0,
         marginTop:20,
     },
     textInputSize:{
         marginTop:20,
-        left:50,
-        width:width*0.6,
+        left:15,
+        width:width*0.69,
         height:50,
         textAlign:'left'
     },
