@@ -69,9 +69,8 @@ const styles = StyleSheet.create({
         // padding: 12,
         paddingLeft: 14,
         paddingRight: 14,
-        paddingTop: 10,
-        paddingBottom: 6,
-        marginBottom: 6,
+        paddingTop: 9,
+        paddingBottom: 9,
         backgroundColor: '#FFFFFF',
         borderRadius: 2,
     },
@@ -90,7 +89,7 @@ const styles = StyleSheet.create({
         color: "red",
     },
     cellLeftAlarmName: {
-        marginTop: 2,
+        marginTop: 6,
         fontSize: 12,
         color: '#6B6B6B'
     },
