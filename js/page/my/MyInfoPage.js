@@ -105,7 +105,7 @@ export default class MyInfoPage extends Component {
 
     //调转登录页面
     _pushToLogin() {
-        this.props.navigator.push({
+        this.props.navigator.resetTo({
             component: LoginPage,
             params: {
                 theme: this.theme,
@@ -139,8 +139,8 @@ export default class MyInfoPage extends Component {
         )
     }
     // cell 封装
-    getItem(tag, text, rightIcon, rightText) {
-        return ViewUtils.getCellItem(() => this.onClick(tag), text, rightIcon, rightText);
+    getItem(tag,leftIcon, text, rightIcon, rightText) {
+        return ViewUtils.getCellItem(() => this.onClick(tag),leftIcon, text, rightIcon, rightText);
     }
     //修改密码点击时间
     onClick(tab) {
@@ -228,42 +228,24 @@ export default class MyInfoPage extends Component {
                     <View style={{flex: 1}}>
                         {/*{个人信息板块}*/}
                         <View style={{position: 'relative', top: 6}}>
-                            <View style={styles.cell}>
-                                <View style={styles.cellLeft}>
-
-                                    <Image source={require('../../../res/Image/Login/ic_user_hl.png')}
-                                           resizeMode='stretch'
-                                           style={{opacity: 1, width: 16, height: 16, marginRight: 10}}/>
-                                    <Text style={{fontSize: 16, color: 'rgb(126,126,126)'}}>个人信息</Text>
-                                </View>
-
-                            </View>
+                            {this.getItem(null,require('../../../res/Image/Login/ic_user_hl.png'),'个人信息',null,null)}
                             <View style={styles.line}/>
-                            {this.getItem(null, '用户名', null, this.state.personInfo?this.state.personInfo.name:'--')}
+                            {this.getItem(null, null,'用户名', null, this.state.personInfo?this.state.personInfo.name:'--')}
                             <View style={styles.line}/>
-                            {this.getItem(null, '手机', null, this.state.personInfo?this.state.personInfo.phone:'--')}
+                            {this.getItem(null, null,'手机', null, this.state.personInfo?this.state.personInfo.phone:'--')}
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Password, '密码', require('../../../res/Image/BaseIcon/ic_listPush_nor.png'), null)}
+                            {this.getItem(MORE_INFO.User_Password, null,'密码', require('../../../res/Image/BaseIcon/ic_listPush_nor.png'), null)}
                             <View style={styles.line}/>
-                            {this.getItem(null, '所在企业', null,  this.state.personCompany?this.state.personCompany.name:'--')}
+                            {this.getItem(null, null,'所在企业', null,  this.state.personCompany?this.state.personCompany.name:'--')}
                         </View>
 
                         {/*{企业信息板块}*/}
                         <View style={{position: 'relative', marginTop: 10}}>
-                            <View style={styles.cell}>
-                                <View style={styles.cellLeft}>
-
-                                    <Image source={require('../../../res/Image/Login/ic_company_hl.png')}
-                                           resizeMode='stretch'
-                                           style={{opacity: 1, width: 16, height: 16, marginRight: 10}}/>
-                                    <Text style={{fontSize: 16, color: 'rgb(126,126,126)'}}>企业信息</Text>
-                                </View>
-
-                            </View>
+                            {this.getItem(null,require('../../../res/Image/Login/ic_company_hl.png'),'企业信息',null,null)}
                             <View style={styles.line}/>
-                            {this.getItem(null, '企业名称', null, this.state.personCompany?this.state.personCompany.name:'--')}
+                            {this.getItem(null, null,'企业名称', null, this.state.personCompany?this.state.personCompany.name:'--')}
                             <View style={styles.line}/>
-                            {this.getItem(null, '联系邮箱', null, this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
+                            {this.getItem(null, null,'联系邮箱', null, this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
                         </View>
                     </View>
                 </ScrollView>

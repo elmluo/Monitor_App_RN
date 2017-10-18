@@ -52,19 +52,23 @@ export default class ViewUtils {
     /**
      * 获取个人信息页的Item
      * @param callBack 单击item的回调
-     * @param icon 左侧图标
+     * @param leftIcon 左侧图标
      * @param text 显示的文本
      * @param expandableIco 右侧图标
      * @param rightText 显示右侧文本
      * @return {XML}
      */
-    static getCellItem(callBack, text, expandableIco,rightText) {
+    static getCellItem(callBack,leftIcon, text, expandableIco,rightText) {
         return (
             <TouchableHighlight
                 onPress={callBack}>
                 <View style={[styles.cell_item_container]}>
                     <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                        <View style={{opacity: 1, width: 0, height: 0,marginRight: 10}}/>
+                        {leftIcon ?
+                            <Image source={leftIcon} resizeMode='stretch'
+                                   style={{opacity: 1, width: 16, height: 16, marginRight: 14}}/> :
+                            <View style={{opacity: 1, width: 0, height: 0, marginRight: 10,}}/>
+                        }
                         <Text style = {{color:'rgb(126,126,126)',fontSize:14}}>{text}</Text>
                     </View>
                     <View style={{alignItems: 'center', flexDirection: 'row'}}>
@@ -75,7 +79,7 @@ export default class ViewUtils {
                                    width: 22,
                                    opacity: 1
                                }}/> :
-                            <Text style = {{color:'rgb(126,126,126)',fontSize:14}}>{rightText?rightText:'--'}</Text>
+                            <Text style = {{color:'rgb(68,68,68)',fontSize:14}}>{rightText?rightText:'--'}</Text>
                         }
                     </View>
                 </View>
