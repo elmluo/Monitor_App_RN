@@ -23,7 +23,7 @@ export default class Function extends Component {
         };
         let navigationBar =
             <NavigationBar
-                title={'******'}
+                title={'服务页'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
         return(
