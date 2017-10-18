@@ -28,10 +28,6 @@ let dataRepository = new DataRepository();
 let {width, height} = Dimensions.get('window');
 export default class Monitor extends Component {
     constructor(props) {
-        // 去除本地保存的stamp
-        dataRepository.fetchLocalRepository('/app/v2/user/login').then((result) => {
-            this.state.stamp = result.stamp;
-        });
         super(props);
         this.state = {
             theme: this.props.theme,
@@ -39,22 +35,23 @@ export default class Monitor extends Component {
             fsuCount: [
                 {item: "在线", count: 1}
             ],
-            // allCount: null,
+            allCount: 21,
             levelAlarm: [
                 {item: "一级告警", count: 7},
-                {item: "二级告警", count: 1},
-                {item: "三级告警", count: 19},
-                {item: "四级告警", count: 0},
+                {item: "一级告警", count: 7},
+                {item: "一级告警", count: 7},
+                {item: "一级告警", count: 7},
             ],
             fsuWeekCount: [
                 {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
+                {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
+                {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
+                {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
+                {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
+                {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
+                {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
                 {onlineCount: 1, offlineCount: 14, recordTime: 1508115600137},
-                {onlineCount: 1, offlineCount: 14, recordTime: 1508137200332},
-                {onlineCount: 1, offlineCount: 14, recordTime: 1508158800171},
-                {onlineCount: 1, offlineCount: 14, recordTime: 1508180400187},
-                {onlineCount: 1, offlineCount: 14, recordTime: 1508202000173},
             ],
-            chartData: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         }
     }
 
@@ -137,12 +134,15 @@ export default class Monitor extends Component {
         let params = {
             stamp: stamp
         };
-        dataRepository.fetchNetRepository('POST', URL, params)
-            .then(result => {
-                // console.log(result);
-                // alert(JSON.stringify({'fsu数量': result}));
-                this.setState.fsuCount = result.data;
+        dataRepository.fetchNetRepository('POST', URL, params).then(result => {
+            // console.log(result);
+            // alert(JSON.stringify({'fsu数量': result}));
+            this.setState({
+                fsuCount: result.data
             })
+
+
+        })
     }
 
     /**
@@ -154,14 +154,15 @@ export default class Monitor extends Component {
         let params = {
             stamp: stamp
         };
-        dataRepository.fetchNetRepository('POST', URL, params)
-            .then(result => {
-                console.log(result);
-                // 获取 一周fsu数量
-                alert(JSON.stringify({'一周FSU': result}));
-                console.log(result);
-                this.setState.fsuWeekCount = result.data;
+        dataRepository.fetchNetRepository('POST', URL, params).then(result => {
+            // console.log(result);
+            // 获取 一周fsu数量
+            // alert(JSON.stringify({'一周FSU': result}));
+            // console.log(result);
+            this.setState({
+                fsuWeekCount: result.data
             })
+        })
     }
 
     /**
@@ -176,17 +177,24 @@ export default class Monitor extends Component {
             status: 2,
             type: 1
         };
-        dataRepository.fetchNetRepository('POST', URL, params)
-            .then(result => {
-                alert(JSON.stringify({'alarm数量': result}));
-                console.log(result);
-                this.setState.levelAlarm = result.data;
-                let allCount = 0;
-                for (let i = 0; i < result.data.length; i++) {
-                    allCount += result.data[i].count
-                }
-                this.setState.allCount = allCount;
-            })
+        dataRepository.fetchNetRepository('POST', URL, params).then(result => {
+            // alert(JSON.stringify({'alarm数量': result}));
+            // console.log(result);
+            this.setState({
+                levelAlarm: result.data
+            });
+            // 计算告警数量总和
+            let allCount = 0;
+            for (let i = 0; i < result.data.length; i++) {
+                allCount += result.data[i].count
+            }
+            this.setState({
+                allCount: allCount
+            });
+
+
+            console.log(this.state);
+        })
     }
 
     /**
@@ -237,11 +245,6 @@ export default class Monitor extends Component {
                         refreshing={this.state.isLoading}
                         onRefresh={() => {
                             this._refreshData();
-                            this.setState({
-                                chartData: new Array(10).join(' ').split(' ').map(function (v) {
-                                    return Math.floor(Math.random() * 10);
-                                })
-                            });
                         }}
                         tintColor={this.props.theme.themeColor}
                     />
@@ -251,7 +254,8 @@ export default class Monitor extends Component {
                         style={styles.gb}
                         source={require('../../../res/Image/Login/ic_login_bg.png')}
                     >
-                        <HomeStatisticChart chartData={this.state.chartData} width={width} height={height * 0.4}/>
+                        <HomeStatisticChart chartData={this.state.fsuWeekCount} width={width}
+                                            height={height * 0.4}/>
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
