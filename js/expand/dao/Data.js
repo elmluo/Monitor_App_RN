@@ -96,6 +96,21 @@ export default class DataRepository {
         })
     }
 
+    /**
+     * 获取本地数据
+     * @param url
+     * @returns {Promise}
+     */
+    fetchLocal(url) {
+        AsyncStorage.getItem(url, (error, result)=> {
+            if (!error) {
+                return result
+            } else {
+                return error
+            }
+        })
+    }
+
     removeLocalRepository(url) {
         if (!url ) return;
         return new Promise((resolve, reject)=>{

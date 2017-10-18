@@ -19,10 +19,13 @@ import DataRepository from '../expand/dao/Data'
 import CompanyPage from './my/CompanyListPage'
 import ForgetPasswordPage from './my/ForgetPasswordPage'
 import SetUpServer from './my/SetUpServer'
+import Storage from '../common/StorageClass'
 
 let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
 let {width,height} = Dimensions.get('window');
+let storage = new Storage();
+
 export default class Login extends Component {
     constructor(props) {
         super(props);
@@ -83,9 +86,8 @@ export default class Login extends Component {
                                     dataRepository.fetchNetRepository('POST', companyUrl, companyParams)
                                         .then((companyResponse) => {
                                             if (companyResponse['success'] === true) {
-                                                // 保存用户登录后返回信息
+                                                // 保存用户登录返回信息
                                                 // alert(JSON.stringify(companyResponse.data));
-
                                                 dataRepository.saveRepository(url, {
                                                     companyId: response.data.companyId,
                                                     stamp: companyResponse.data.stamp,

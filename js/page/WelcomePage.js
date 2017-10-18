@@ -128,7 +128,7 @@ export default class WelcomePage extends Component {
     }
 
     /**
-     * 用户已经登录，获取本地用户信息，发送登录操作
+     * 用户已经登录，获取本地用户信息，发送登录操作, 保存登录信息到单例
      * @private
      */
 

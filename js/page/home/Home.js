@@ -23,7 +23,9 @@ import MyInfoPage from '../my/MyInfoPage'
 import HomeAlarmCell from './HomeAlarmCell'
 import HomeStatisticChart from './HomeStatisticChart'
 import DataRepository from '../../expand/dao/Data'
+import Storage from '../../common/StorageClass'
 
+let storage = new Storage();
 let dataRepository = new DataRepository();
 let {width, height} = Dimensions.get('window');
 export default class Monitor extends Component {
@@ -55,6 +57,22 @@ export default class Monitor extends Component {
         }
     }
 
+    /**
+     * 从本地获取登录信息，同时保存到单例，全局使用
+     * @returns {Promise}
+     * @private
+     */
+    _getStamp() {
+        return new Promise((resolve, reject) => {
+            dataRepository.fetchLocalRepository('/app/v2/user/login').then((result) => {
+                storage.setLoginInfo(result);   // 保存loginInfo到单例
+                resolve(result.stamp)
+            }, (error) => {
+                console.log(error);
+                reject(error)
+            })
+        })
+    }
 
     /**
      * 渲染navigationBar右侧按钮
@@ -110,38 +128,27 @@ export default class Monitor extends Component {
     }
 
     /**
-     * 获取企业唯一码
+     * 获取FSU数量（按在线状态统计
+     * @param stamp
      * @returns {Promise}
      * @private
      */
-    _getStamp() {
-        return new Promise((resolve, reject) => {
-            dataRepository.fetchLocalRepository('/app/v2/user/login').then((result) => {
-                resolve(result.stamp)
-            }, (error) => {
-                console.log(error);
-                reject(error)
-            })
-        })
-    }
-
-    /**
-     * 获取FSU数量（按在线状态统计）
-     * @private
-     */
     _getFsuCount(stamp) {
-        let URL = '/app/v2/statistics/count/fsu';
-        let params = {
-            stamp: stamp
-        };
-        dataRepository.fetchNetRepository('POST', URL, params).then(result => {
-            // console.log(result);
-            // alert(JSON.stringify({'fsu数量': result}));
-            this.setState({
-                fsuCount: result.data
+        return new Promise((resolve, reject)=> {
+            let URL = '/app/v2/statistics/count/fsu';
+            let params = {
+                stamp: stamp
+            };
+            dataRepository.fetchNetRepository('POST', URL, params).then(result => {
+                // console.log(result);
+                // alert(JSON.stringify({'fsu数量': result}));
+                // this.setState({
+                //     fsuCount: result.data
+                // })
+                resolve(result);
+            }, (error)=> {
+                reject(error);
             })
-
-
         })
     }
 
@@ -150,19 +157,24 @@ export default class Monitor extends Component {
      * @private
      */
     _getWeekFsuCount(stamp) {
-        let URL = '/app/v2/statistics/counts/fsu/week';
-        let params = {
-            stamp: stamp
-        };
-        dataRepository.fetchNetRepository('POST', URL, params).then(result => {
-            // console.log(result);
-            // 获取 一周fsu数量
-            // alert(JSON.stringify({'一周FSU': result}));
-            // console.log(result);
-            this.setState({
-                fsuWeekCount: result.data
+        return new Promise((resolve,reject)=> {
+            let URL = '/app/v2/statistics/counts/fsu/week';
+            let params = {
+                stamp: stamp
+            };
+            dataRepository.fetchNetRepository('POST', URL, params).then((result) => {
+                // console.log(result);
+                // 获取 一周fsu数量
+                // alert(JSON.stringify({'一周FSU': result}));
+                // console.log(result);
+                // this.setState({
+                //     fsuWeekCount: result.data
+                // })
+                resolve(result);
+            },(error)=> {
+                reject(error);
             })
-        })
+        });
     }
 
     /**
@@ -171,29 +183,32 @@ export default class Monitor extends Component {
      * @private
      */
     _getAlarmCount(stamp) {
-        let URL = '/app/v2/statistics/count/alarm';
-        let params = {
-            stamp: stamp,
-            status: 2,
-            type: 1
-        };
-        dataRepository.fetchNetRepository('POST', URL, params).then(result => {
-            // alert(JSON.stringify({'alarm数量': result}));
-            // console.log(result);
-            this.setState({
-                levelAlarm: result.data
-            });
-            // 计算告警数量总和
-            let allCount = 0;
-            for (let i = 0; i < result.data.length; i++) {
-                allCount += result.data[i].count
-            }
-            this.setState({
-                allCount: allCount
-            });
+        return new Promise((resolve, reject)=> {
+            let URL = '/app/v2/statistics/count/alarm';
+            let params = {
+                stamp: stamp,
+                status: 2,
+                type: 1
+            };
+            dataRepository.fetchNetRepository('POST', URL, params).then(result => {
+                // alert(JSON.stringify({'alarm数量': result}));
+                // console.log(result);
+                // this.setState({
+                //     levelAlarm: result.data
+                // });
+
+                // 计算告警数量总和
 
 
-            console.log(this.state);
+                // this.setState({
+                //     allCount: allCount
+                // });
+
+                console.log(this.state);
+                resolve(result);
+            }, (error)=> {
+                reject(error)
+            })
         })
     }
 
@@ -203,17 +218,31 @@ export default class Monitor extends Component {
      */
     _refreshData() {
         this._getStamp().then((stamp) => {
-            // // 三个请求操作都是promise操作的话，用Promise.all()
-            // Promise.all([
-            //     this._getFsuCount(stamp),
-            //     // this._getWeekFsuCount(stamp),
-            //     this._getAlarmCount(stamp)
-            // ]).then((results)=> {
-            //     console.log(results);
-            // });
-            this._getFsuCount(stamp);
-            this._getWeekFsuCount(stamp);
-            this._getAlarmCount(stamp);
+            // 三个请求操作都是promise操作的话，用Promise.all()
+            //
+            Promise.all([
+                this._getFsuCount(stamp),
+                this._getWeekFsuCount(stamp),
+                this._getAlarmCount(stamp)
+            ]).then((results)=> {
+                console.log(results);
+
+                // 计算告警数量总和
+                let allCount = 0;
+                for (let i = 0; i < results[0].data.length; i++) {
+                    allCount += results[0].data[i].count
+                }
+
+                this.setState({
+                    fsuCount: results[0].data,
+                    fsuWeekCount: results[1].data,
+                    levelAlarm: results[2].data,
+                    allCount: allCount
+                })
+            });
+            // this._getFsuCount(stamp);
+            // this._getWeekFsuCount(stamp);
+            // this._getAlarmCount(stamp);
         });
     }
 
@@ -254,8 +283,9 @@ export default class Monitor extends Component {
                         style={styles.gb}
                         source={require('../../../res/Image/Login/ic_login_bg.png')}
                     >
-                        <HomeStatisticChart chartData={this.state.fsuWeekCount} width={width}
-                                            height={height * 0.4}/>
+                        {/*<HomeStatisticChart chartData={this.state.fsuWeekCount}*/}
+                                            {/*width={width}*/}
+                                            {/*height={height * 0.4}/>*/}
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
@@ -292,11 +322,18 @@ export default class Monitor extends Component {
         )
     }
 
+    // shouldComponentUpdate(nextProps,nextState){
+    //     //写自己的逻辑判断是否需要更新组件
+    //     return false;
+    // }
+
     componentDidMount() {
+        alert(123456);
         // 页面加载完成再去渲染数据，减缓卡顿问题
-        InteractionManager.runAfterInteractions(() => {
+        // InteractionManager.runAfterInteractions(() => {
             this._refreshData()
-        });
+
+        // });
     }
 }
 const styles = StyleSheet.create({
