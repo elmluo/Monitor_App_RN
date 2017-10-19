@@ -28,6 +28,7 @@ export default class BulletinList extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            noNetWork: false,
             noData: false,
             isLoading: false,
             theme: this.props.theme,
@@ -174,25 +175,26 @@ export default class BulletinList extends Component {
                 leftButton={this._renderLeftButton()}/>;
 
         // 判断数据是否为空，若为空，返回提示页面,若不为空
-        let content = this.state.noNetWork
-            ? <NoContentPage type='noNetWork'/>
-            : this.state.noData
-                ? <NoContentPage type='noData'/>
-                : <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
-                    refreshControl={
-                        <RefreshControl
-                            title='加载中...'
-                            titleColor={this.state.theme.themeColor}
-                            colors={[this.state.theme.themeColor]}
-                            tintColor={this.state.theme.themeColor}
-                            refreshing={this.state.isLoading}
-                            onRefresh={() => {
-                                // 重新获取数据
-                                this._getBulletinList();
-                            }}/>
-                    }/>;
+        let content =
+            this.state.noNetWork
+                ? <NoContentPage type='noNetWork'/>
+                : this.state.noData
+                    ? <NoContentPage type='noData'/>
+                    : <ListView
+                        dataSource={this.state.dataSource}
+                        renderRow={this._renderRow.bind(this)}
+                        refreshControl={
+                            <RefreshControl
+                                title='加载中...'
+                                titleColor={this.state.theme.themeColor}
+                                colors={[this.state.theme.themeColor]}
+                                tintColor={this.state.theme.themeColor}
+                                refreshing={this.state.isLoading}
+                                onRefresh={() => {
+                                    // 重新获取数据
+                                    this._getBulletinList();
+                                }}/>
+                        }/>;
 
         return (
             <View style={styles.container}>

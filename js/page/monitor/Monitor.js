@@ -16,7 +16,10 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import SiteDetail from './SiteDetail'
-// import DataRepository from '../../expand/dao/DataRepository'
+import NetInfoUtils from '../../util/NetInfoUtils'
+import Storage from '../../common/StorageClass'
+
+let storage = new Storage();
 
 export default class Monitor extends Component {
     constructor(props) {
@@ -24,20 +27,22 @@ export default class Monitor extends Component {
         // 初始化类实例
         this.dataRepository = new DataRepository();
         this.state = {
+            noNetWork: false,
+            noData: false,
             isLoading: false,
             theme: this.props.theme,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         }
     }
 
-    _onLoad() {
+    _getBulletinList() {
         // 开启加载动画
         this.setState({
             isLoading: true
         });
         let url = '/app/v2/site/model/list';
         let params = {
-            stamp: 'Skongtrolink',
+            stamp: storage.getLoginInfo().stamp,
             page: 1,
             size: 20,
         };
@@ -95,8 +100,15 @@ export default class Monitor extends Component {
 
     componentDidMount() {
         InteractionManager.runAfterInteractions(()=> {
-            // 组件装载完，获取数据
-            this._onLoad()
+            NetInfoUtils.checkNetworkState((isConnectedNet) => {
+                if (isConnectedNet) {
+                    this._getBulletinList();
+                } else {
+                    this.setState({
+                        noNetWork: true
+                    });
+                }
+            });
         });
 
     }
@@ -126,7 +138,7 @@ export default class Monitor extends Component {
                             refreshing={this.state.isLoading}
                             onRefresh={() => {
                                 // 刷新的时候重新获取数据
-                                this._onLoad()
+                                this._getBulletinList();
                             }}/>
                     }/>
             </View>

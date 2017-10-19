@@ -31,7 +31,7 @@ export default class ComponentName extends React.Component {
             return (
                 <View style={styles.content}>
                     <Image source={require('../../res/Image/Anomaly/ic_noNetwork.png')}/>
-                    <Text style={styles.text}> 当前无网络！</Text>
+                    <Text style={styles.text}> 请检查网络是否正常！</Text>
                 </View>
             )
         } else if (type === 'netWorkError') {
