@@ -11,6 +11,7 @@ import {
     Image
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
+import FlatListDemo from '../demo/FlatList'
 export default class SiteDetail extends Component {
     constructor(props) {
         super(props);
@@ -70,9 +71,10 @@ export default class SiteDetail extends Component {
         return(
             <View style={styles.container}>
                 {navigationBar}
-                <View style={{flex: 1, backgroundColor: 'white'}}>
-                    <Text>告警详情页</Text>
-                </View>
+                {/*<View style={{flex: 1, backgroundColor: 'white'}}>*/}
+                    {/*<Text>告警详情页</Text>*/}
+                {/*</View>*/}
+                <FlatListDemo/>
             </View>
         )
     }

@@ -58,7 +58,7 @@ export default class BulletinList extends Component {
 
                 // mock模拟数据
                 let result = {
-                    data: new Array(10).join(' ').split(' ').map((v)=> {
+                    data: new Array(10).join(' ').split(' ').map((v) => {
                         return {
                             noticeId: "（公告ID【String】",
                             title: "九和路数据中心",
@@ -176,25 +176,22 @@ export default class BulletinList extends Component {
 
         // 判断数据是否为空，若为空，返回提示页面,若不为空
         let content =
-            this.state.noNetWork
-                ? <NoContentPage type='noNetWork'/>
-                : this.state.noData
-                    ? <NoContentPage type='noData'/>
-                    : <ListView
-                        dataSource={this.state.dataSource}
-                        renderRow={this._renderRow.bind(this)}
-                        refreshControl={
-                            <RefreshControl
-                                title='加载中...'
-                                titleColor={this.state.theme.themeColor}
-                                colors={[this.state.theme.themeColor]}
-                                tintColor={this.state.theme.themeColor}
-                                refreshing={this.state.isLoading}
-                                onRefresh={() => {
-                                    // 重新获取数据
-                                    this._getBulletinList();
-                                }}/>
-                        }/>;
+            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
+                : this.state.noData ? <NoContentPage type='noData'/> : <ListView
+                    dataSource={this.state.dataSource}
+                    renderRow={this._renderRow.bind(this)}
+                    refreshControl={
+                        <RefreshControl
+                            title='加载中...'
+                            titleColor={this.state.theme.themeColor}
+                            colors={[this.state.theme.themeColor]}
+                            tintColor={this.state.theme.themeColor}
+                            refreshing={this.state.isLoading}
+                            onRefresh={() => {
+                                // 重新获取数据
+                                this._getBulletinList();
+                            }}/>
+                    }/>;
 
         return (
             <View style={styles.container}>
@@ -220,7 +217,7 @@ export default class BulletinList extends Component {
     }
 
     componentDidMount() {
-        InteractionManager.runAfterInteractions(()=> {
+        InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {
                 if (isConnectedNet) {
                     this._getBulletinList();

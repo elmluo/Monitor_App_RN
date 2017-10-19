@@ -18,6 +18,7 @@ import DataRepository from '../../expand/dao/Data'
 import SiteDetail from './SiteDetail'
 import NetInfoUtils from '../../util/NetInfoUtils'
 import Storage from '../../common/StorageClass'
+import NoContentPage from '../../common/NoContentPage'
 
 let storage = new Storage();
 
@@ -35,7 +36,11 @@ export default class Monitor extends Component {
         }
     }
 
-    _getBulletinList() {
+    /***
+     * 获取站点列表
+     * @private
+     */
+    _getSiteList() {
         // 开启加载动画
         this.setState({
             isLoading: true
@@ -47,11 +52,26 @@ export default class Monitor extends Component {
             size: 20,
         };
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
-            this.setState({
-                result: JSON.stringify(result),
-                dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
-                isLoading: false   // 关闭加载动画
-            })
+            if (result.success === true) {
+
+                if (!result.data || result.data.length === 0) {
+                    this.setState({
+                        isLoading: false,
+                        noNetWord: false,
+                        noData: true
+                    })
+                } else {
+                    console.log(JSON.stringify(result));
+                    this.setState({
+                        result: JSON.stringify(result),
+                        dataSource: this.state.dataSource.cloneWithRows(result.data),
+                        isLoading: false,
+                        noData: false,
+                    })
+                }
+            } else {
+                console.log('连接服务失败')
+            }
         }).catch(error => {
             this.setState({
                 result: JSON.stringify(error)
@@ -59,13 +79,32 @@ export default class Monitor extends Component {
         })
     }
 
+    /**
+     * 渲染cell
+     * @param rowData
+     * @param sectionID
+     * @param rowID
+     * @param hightlightRow
+     * @returns {XML}
+     * @private
+     */
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let onlineStyle = {
             backgroundColor: this.state.theme.themeColor,
         };
-        let fusState = rowData.fsuOnline
-            ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
-            : <Text style={styles.onlineState}>离线</Text>;
+        let fusOnline =
+            rowData.fsuOnline ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
+                : <Text style={styles.onlineState}>离线</Text>;
+
+        let operationState;
+        if (rowData.operationState === '工程态') {
+            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(141, 135, 179)'}]}>工程态</Text>
+        } else if (rowData.operationState === '测试态') {
+            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(136, 121, 232)'}]}>测试态</Text>
+        } else if (rowData.operationState === '交维态') {
+            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(107, 92, 245)'}]}>交维态</Text>
+        }
+
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
@@ -75,11 +114,17 @@ export default class Monitor extends Component {
                 <View style={styles.row}>
                     <View style={styles.rowTop}>
                         <Text style={styles.name}>{rowData.name}</Text>
-                        <Text style={styles.deviceCount}>设备数量： {rowData.deviceCount}</Text>
+                        <View style={styles.rowTopRight}>
+                            <Text style={styles.rowTopRightText}>设备数量：</Text>
+                            <Text style={styles.rowTopRightText}>{rowData.deviceCount? rowData.deviceCount: 0}</Text>
+                        </View>
                     </View>
                     <View style={styles.rowBottom}>
-                        {fusState}
                         <Text style={styles.tier}>{rowData.tier}</Text>
+                        <View style={styles.rowBottomRight}>
+                            {operationState}
+                            {fusOnline}
+                        </View>
                     </View>
                 </View>
 
@@ -99,10 +144,10 @@ export default class Monitor extends Component {
     }
 
     componentDidMount() {
-        InteractionManager.runAfterInteractions(()=> {
+        InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {
                 if (isConnectedNet) {
-                    this._getBulletinList();
+                    this._getSiteList();
                 } else {
                     this.setState({
                         noNetWork: true
@@ -123,12 +168,18 @@ export default class Monitor extends Component {
                 title={'监控页面'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
-        return (
-            <View style={styles.container}>
-                {navigationBar}
-                <ListView
+        let content =
+            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
+                : this.state.noData ? <NoContentPage type='noData'/> : <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow.bind(this)}
+                    onEndReachedThreshold={50}
+                    onEndReached={()=> {
+                        alert('到底了');
+
+                        this._getSiteList()
+
+                    }}
                     refreshControl={
                         <RefreshControl
                             title='加载中...'
@@ -138,9 +189,15 @@ export default class Monitor extends Component {
                             refreshing={this.state.isLoading}
                             onRefresh={() => {
                                 // 刷新的时候重新获取数据
-                                this._getBulletinList();
+                                this._getSiteList();
                             }}/>
                     }/>
+
+
+        return (
+            <View style={styles.container}>
+                {navigationBar}
+                {content}
             </View>
         )
     }
@@ -164,33 +221,52 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 7
     },
+    rowTopRight: {
+        width: 90,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
     name: {
         color: '#444444',
         fontSize: 14
     },
-    deviceCount: {
+    rowTopRightText: {
         color: '#7E7E7E',
-        fontSize: 12
+        fontSize: 12,
     },
     rowBottom: {
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    rowBottomRight: {
+        flexDirection: 'row'
+    },
+    tier: {
+        fontSize: 12,
+        color: '#7E7E7E',
     },
     onlineState: {
         backgroundColor: '#949494',
         color: '#FFFFFF',
         fontSize: 12,
-        paddingTop: 1,
-        paddingBottom: 1,
+        // paddingTop: 1,
+        // paddingBottom: 1,
         paddingLeft: 6,
         paddingRight: 6,
         borderRadius: 3,
     },
-    tier: {
+    operationState: {
+        backgroundColor: '#949494',
+        color: '#FFFFFF',
         fontSize: 12,
-        color: '#7E7E7E',
-        marginLeft: 8
+        // paddingTop: 1,
+        // paddingBottom: 1,
+        paddingLeft: 6,
+        paddingRight: 6,
+        borderRadius: 3,
+        marginRight: 4,
     }
 
 });

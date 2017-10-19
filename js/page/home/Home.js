@@ -389,13 +389,12 @@ export default class Monitor extends Component {
 
     componentDidMount() {
         // 页面加载完成再去渲染数据，减缓卡顿问题
-        // InteractionManager.runAfterInteractions(() => {
-        this._refreshData();
-        this._getStamp().then((stamp)=> {
-            this._getNoticeNotReadCount(stamp);
-        })
-
-        // });
+        InteractionManager.runAfterInteractions(() => {
+            this._refreshData();
+            this._getStamp().then((stamp)=> {
+                this._getNoticeNotReadCount(stamp);
+            })
+        });
     }
 }
 const styles = StyleSheet.create({
