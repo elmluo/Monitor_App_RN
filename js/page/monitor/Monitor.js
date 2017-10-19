@@ -16,9 +16,8 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import SiteDetail from './SiteDetail'
-import NetInfoUtils from '../../util/NetInfoUtils'
 import Storage from '../../common/StorageClass'
-import NoContentPage from '../../common/NoContentPage'
+import CustomListView from  '../../common/CustomListView'
 
 let storage = new Storage();
 
@@ -34,49 +33,6 @@ export default class Monitor extends Component {
             theme: this.props.theme,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         }
-    }
-
-    /***
-     * 获取站点列表
-     * @private
-     */
-    _getSiteList() {
-        // 开启加载动画
-        this.setState({
-            isLoading: true
-        });
-        let url = '/app/v2/site/model/list';
-        let params = {
-            stamp: storage.getLoginInfo().stamp,
-            page: 1,
-            size: 20,
-        };
-        this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
-            if (result.success === true) {
-
-                if (!result.data || result.data.length === 0) {
-                    this.setState({
-                        isLoading: false,
-                        noNetWord: false,
-                        noData: true
-                    })
-                } else {
-                    console.log(JSON.stringify(result));
-                    this.setState({
-                        result: JSON.stringify(result),
-                        dataSource: this.state.dataSource.cloneWithRows(result.data),
-                        isLoading: false,
-                        noData: false,
-                    })
-                }
-            } else {
-                console.log('连接服务失败')
-            }
-        }).catch(error => {
-            this.setState({
-                result: JSON.stringify(error)
-            });
-        })
     }
 
     /**
@@ -143,21 +99,6 @@ export default class Monitor extends Component {
         })
     }
 
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
-            NetInfoUtils.checkNetworkState((isConnectedNet) => {
-                if (isConnectedNet) {
-                    this._getSiteList();
-                } else {
-                    this.setState({
-                        noNetWork: true
-                    });
-                }
-            });
-        });
-
-    }
-
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -168,32 +109,21 @@ export default class Monitor extends Component {
                 title={'监控页面'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
-        let content =
-            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
-                : this.state.noData ? <NoContentPage type='noData'/> : <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
-                    onEndReachedThreshold={50}
-                    onEndReached={()=> {
-                        alert('到底了');
-
-                        this._getSiteList()
-
-                    }}
-                    refreshControl={
-                        <RefreshControl
-                            title='加载中...'
-                            titleColor={this.state.theme.themeColor}
-                            colors={[this.state.theme.themeColor]}
-                            tintColor={this.state.theme.themeColor}
-                            refreshing={this.state.isLoading}
-                            onRefresh={() => {
-                                // 刷新的时候重新获取数据
-                                this._getSiteList();
-                            }}/>
-                    }/>
-
-
+        let url = '/app/v2/site/model/list';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            page: 1,
+            size: 20,
+        };
+        let content = <CustomListView
+                {...this.props}
+                url={url}
+                params={params}
+                renderRow={this._renderRow}
+                onPressCell={(data)=>{
+                    alert(data)
+                }}
+            />;
         return (
             <View style={styles.container}>
                 {navigationBar}

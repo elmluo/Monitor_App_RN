@@ -8,28 +8,33 @@ import {
     Text,
     View,
     TouchableOpacity,
-    Image
+    Image,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
-import FlatListDemo from '../demo/FlatList'
+// import FlatListDemo from '../demo/FlatList'
+import CustomListView from '../../common/CustomListView'
+import Storage from '../../common/StorageClass'
+
+let storage = new Storage();
+
 export default class SiteDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            theme:this.props.theme,
+            theme: this.props.theme,
         }
     }
 
     _renderLeftButton() {
-        return(
-            <View style={{flexDirection:'row'}}>
+        return (
+            <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
-                    onPress={()=>{
+                    onPress={() => {
                         this.props.navigator.pop();
                     }}>
-                    <View style={{padding:5,marginRight:8}}>
+                    <View style={{padding: 5, marginRight: 8}}>
                         <Image
-                            style={{width:24,height:24}}
+                            style={{width: 24, height: 24}}
                             source={require('../../../res/Image/Nav/ic_backItem.png')}
                         />
                     </View>
@@ -39,10 +44,10 @@ export default class SiteDetail extends Component {
     }
 
     _renderRightButton() {
-        return(
+        return (
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
-                    onPress={()=>{
+                    onPress={() => {
                         alert('还不能打开地图功能')
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
@@ -67,14 +72,26 @@ export default class SiteDetail extends Component {
                 style={this.state.theme.styles.navBar}
                 leftButton={this._renderLeftButton()}
                 rightButton={this._renderRightButton()}/>;
-
-        return(
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            page: 1,
+            size: 20,
+        };
+        return (
             <View style={styles.container}>
                 {navigationBar}
-                {/*<View style={{flex: 1, backgroundColor: 'white'}}>*/}
-                    {/*<Text>告警详情页</Text>*/}
-                {/*</View>*/}
-                <FlatListDemo/>
+                <View style={{backgroundColor: 'white'}}>
+                    <Text>告警详情页</Text>
+                </View>
+                <CustomListView
+                    {...this.props}
+                    url={'/app/v2/site/model/list'}
+                    params={params}
+                    renderRow={this._renderRow}
+                    onPressCell={(data)=>{
+                        alert(data)
+                    }}
+                />
             </View>
         )
     }

@@ -124,10 +124,10 @@ export default class Main extends BaseComponent {
                     {this._renderTab(Monitor,'tb_monitor','监控',require('../../res/Image/Tab/tab_monitor_nor.png'))}
                     {this._renderTab(Alarm,'tb_alarm','告警',require('../../res/Image/Tab/tab_alarm_nor.png'))}
                     {this._renderTab(Function,'tb_function','功能',require('../../res/Image/Tab/tab_subsystem_nor.png'))}
-                    {this._renderTab(PopularPage,'tb_popular','告警',require('../../res/images/ic_polular.png'))}
+                    {/*{this._renderTab(PopularPage,'tb_popular','告警',require('../../res/images/ic_polular.png'))}*/}
                     {/*{this._renderTab(TrendingPage,'tb_trending','趋势',require('../../res/images/ic_trending.png'))}*/}
-                    {this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}
-                    {this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}
+                    {/*{this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}*/}
+                    {/*{this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}*/}
                 </TabNavigator>
                 <Toast ref={(toast)=>this.toast=toast}/>
             </View>

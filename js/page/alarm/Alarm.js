@@ -17,6 +17,9 @@ import AlarmDetail from './AlarmDetail'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
+import Storage from '../../common/StorageClass'
+
+let storage = new Storage();
 
 export default class Alarm extends Component {
     constructor(props) {
@@ -31,7 +34,7 @@ export default class Alarm extends Component {
         return (
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
-                    onPress={()=> {
+                    onPress={() => {
                         this.props.navigator.push({
                             component: SearchPage,
                             params: {
@@ -39,7 +42,7 @@ export default class Alarm extends Component {
                             }
                         })
                     }}>
-                    <View style={{padding:5,marginRight:8}}>
+                    <View style={{padding: 5, marginRight: 8}}>
                         <Text style={{color: '#FFFFFF'}}>
                             筛选
                         </Text>
@@ -50,7 +53,7 @@ export default class Alarm extends Component {
     }
 
     render() {
-        let statusBar={
+        let statusBar = {
             backgroundColor: this.state.theme.themeColor,
             barStyle: 'light-content'
         };
@@ -63,16 +66,17 @@ export default class Alarm extends Component {
         let content =
             <ScrollableTabView
                 ref='scrollableTabView'
-                tabBarUnderlineStyle={{backgroundColor:'white', height: 2}}
+                tabBarUnderlineStyle={{backgroundColor: 'white', height: 2}}
                 tabBarInactiveTextColor='mintcream'
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
-                initialPage={0}>
-                <AlarmTab tabLabel='关注告警' {...this.props}>关注告警</AlarmTab>
-                <AlarmTab tabLabel='实时告警' {...this.props}>实时告警</AlarmTab>
-                <AlarmTab tabLabel='历史告警' {...this.props}>历史告警</AlarmTab>
+                initialPage={1} // 默认加载哪一个tab
+            >
+                <AlarmTab tabLabel='关注告警' {...this.props} >关注告警</AlarmTab>
+                <AlarmTab tabLabel='实时告警' {...this.props} status={2}>实时告警</AlarmTab>
+                <AlarmTab tabLabel='历史告警' {...this.props} status={1}>历史告警</AlarmTab>
             </ScrollableTabView>;
-        return(
+        return (
             <View style={styles.container}>
                 {navigationBar}
                 {content}
@@ -80,8 +84,6 @@ export default class Alarm extends Component {
         )
     }
 }
-
-
 
 
 /**
@@ -95,16 +97,16 @@ class AlarmTab extends Component {
         this.state = {
             isLoading: false,
             dataSource: new ListView.DataSource({
-                rowHasChanged: (r1, r2)=> r1 !==r2
+                rowHasChanged: (r1, r2) => r1 !== r2
             })
         }
     }
 
     componentDidMount() {
-        this._loadData();
+        this._getAlarmList();
     }
 
-    _loadData() {
+    _getAlarmList() {
         this.setState({
             isLoading: true
         });
@@ -113,7 +115,17 @@ class AlarmTab extends Component {
             stamp: 'Skongtrolink',
             page: 1,
             size: 20,
-        };
+        }
+        // let params = {
+        //     stamp: storage.getLoginInfo().stamp,
+        //     userId: storage.getLoginInfo().userId,
+        //     siteId: [],
+        //     level: [],
+        //     deviceType: [],
+        //     page: 1,
+        //     size: 20,
+        //     status: this.props.status
+        // };
 
         // 切换不同标签页，通过tabBle
         // if (this.props.tabLabel === '历史告警') {
@@ -122,8 +134,8 @@ class AlarmTab extends Component {
         //     let status = 1
         // }
 
-        this.dataRepository.fetchNetRepository('POST',url,params)
-            .then(result=>{
+        this.dataRepository.fetchNetRepository('POST', url, params)
+            .then(result => {
                 this.setState({
                     result: JSON.stringify(result),
                     dataSource: this.state.dataSource.cloneWithRows(result.data),
@@ -134,7 +146,7 @@ class AlarmTab extends Component {
 
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let alarmIconSource;
-        switch(rowData.level) {
+        switch (rowData.level) {
             case '1':
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_oneAlarm_nor.png');
                 break;
@@ -161,7 +173,12 @@ class AlarmTab extends Component {
                             source={alarmIconSource}/>
                     </View>
                     <View style={styles.cellRight}>
-                        <View style={{flexDirection: 'row',justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: 10
+                        }}>
                             <Text style={{color: '#444444', fontSize: 16}}>告警名称******</Text>
                             <Text style={{color: '#7E7E7E', fontSize: 12}}>2017-10-10 15：30</Text>
                         </View>
@@ -202,9 +219,9 @@ class AlarmTab extends Component {
                             colors={[this.props.theme.themeColor]}
                             tintColor={this.props.theme.themeColor}
                             refreshing={this.state.isLoading}
-                            onRefresh={()=>{
+                            onRefresh={() => {
                                 // 刷新的时候重新获取数据
-                                this._loadData()
+                                this._getAlarmList()
                             }}/>
                     }/>
             </View>
@@ -225,9 +242,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'black'
     },
-    cellLeft: {
-
-    },
+    cellLeft: {},
     cellRight: {
         flex: 1,
         marginLeft: 14,
