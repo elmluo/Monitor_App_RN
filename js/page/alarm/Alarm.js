@@ -12,7 +12,7 @@ import {
     ListView,
     RefreshControl
 } from 'react-native'
-import SearchPage from '../SearchPage'
+import SearchPage from '../SearchPage01'
 import AlarmDetail from './AlarmDetail'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'

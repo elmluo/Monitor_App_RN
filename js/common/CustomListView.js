@@ -156,6 +156,9 @@ export default class CustomListView extends Component {
             this.state.noNetWork ? <NoContentPage type='noNetWork'/>
                 : this.state.noData ? <NoContentPage type='noData'/> : <ListView
                     dataSource={this.state.dataSource}
+                    renderHeader={
+                        this.props.renderHeader ? this.props.renderHeader : null
+                    }
                     renderRow={
                         this.props.renderRow ? this.props.renderRow
                             : this._renderDefaultRow.bind(this)

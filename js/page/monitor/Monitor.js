@@ -8,14 +8,18 @@ import {
     Text,
     View,
     TouchableOpacity,
-    InteractionManager
+    InteractionManager,
+    Dimensions,
 } from 'react-native'
+import SearchPage from '../SearchPage'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import SiteDetail from './SiteDetail'
 import Storage from '../../common/StorageClass'
-import CustomListView from  '../../common/CustomListView'
+import CustomListView from '../../common/CustomListView'
+import Searchbox from '../../common/Searchbox'
 
+let {width, height} = Dimensions.get('window');
 let storage = new Storage();
 let dataRepository = new DataRepository();
 export default class Monitor extends Component {
@@ -63,7 +67,7 @@ export default class Monitor extends Component {
                         <Text style={styles.name}>{rowData.name}</Text>
                         <View style={styles.rowTopRight}>
                             <Text style={styles.rowTopRightText}>设备数量：</Text>
-                            <Text style={styles.rowTopRightText}>{rowData.deviceCount? rowData.deviceCount: 0}</Text>
+                            <Text style={styles.rowTopRightText}>{rowData.deviceCount ? rowData.deviceCount : 0}</Text>
                         </View>
                     </View>
                     <View style={styles.rowBottom}>
@@ -90,6 +94,7 @@ export default class Monitor extends Component {
         })
     }
 
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -108,24 +113,35 @@ export default class Monitor extends Component {
             page: 1,
             size: 20,
         };
-        let content = <CustomListView
+        let content =
+            <CustomListView
                 {...this.props}
                 url={url}
                 params={params}
                 // bind(this)机制需要熟悉
                 renderRow={this._renderRow.bind(this)}
-                alertText={'没有更多数据了~'}
-            />;
+                // renderHeader={this._renderHeader.bind(this)}
+                alertText={'没有更多数据了~'}/>;
         return (
             <View style={styles.container}>
                 {navigationBar}
+                <Searchbox
+                    placeholder={'请输入站点名称'}
+                    onClick={() => {
+                        this.props.navigator.push({
+                            component: SearchPage,
+                            params: {...this.props}
+                        });
+                    }}
+
+                />
                 {content}
             </View>
         )
     }
 
     componentDidMount() {
-        InteractionManager.runAfterInteractions(()=> {
+        InteractionManager.runAfterInteractions(() => {
 
         })
     }

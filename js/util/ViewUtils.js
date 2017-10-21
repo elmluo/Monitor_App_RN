@@ -86,6 +86,7 @@ export default class ViewUtils {
             </TouchableHighlight>
         )
     }
+
     static getLeftButton(callBack) {
         return <TouchableOpacity
             style={{padding: 8}}
