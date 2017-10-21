@@ -16,14 +16,17 @@ import DataRepository from '../expand/dao/Data'
 import NetInfoUtils from '../util/NetInfoUtils'
 import Storage from '../common/StorageClass'
 import NoContentPage from '../common/NoContentPage'
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 let storage = new Storage();
 
-export default class Monitor extends Component {
+export default class CustomListView extends Component {
     constructor(props) {
         super(props);
         // 初始化类实例
         this.dataRepository = new DataRepository();
+        this.page = 1;
+        this._data = [];
         this.state = {
             noNetWork: false,
             noData: false,
@@ -56,33 +59,71 @@ export default class Monitor extends Component {
         )
     }
 
-    /***
-     * 获取站点列表
+    /**
+     * 刷新重新渲染第一页数据
      * @private
      */
-    _getList() {
+    _onRefresh() {
+        this.page = 1;
+        this._data = [];
         // 开启加载动画
         this.setState({
             isLoading: true
         });
         let url = this.props.url;
         let params = this.props.params;
-        params.page = 1;
+        params.page = this.page;
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
             if (result.success === true) {
+                // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
+                    alert(page);
                     this.setState({
                         isLoading: false,
                         noNetWord: false,
                         noData: true
                     })
                 } else {
-                    console.log(JSON.stringify(result));
+                    // 将请求数据保存到内存
+                    this._data = this._data.concat(result.data);
                     this.setState({
-                        result: JSON.stringify(result),
-                        dataSource: this.state.dataSource.cloneWithRows(result.data),
+                        result: result,
+                        dataSource: this.state.dataSource.cloneWithRows(this._data),
                         isLoading: false,
                         noData: false,
+                    })
+                }
+            } else {
+                console.log('连接服务失败')
+            }
+        }).catch(error => {
+            this.setState({
+                result: JSON.stringify(error)
+            });
+        })
+    }
+
+    /**
+     * 上拉加载更多
+     * @private
+     */
+    _onLoadMore() {
+        this.page++;
+        let url = this.props.url;
+        let params = this.props.params;
+        params.page = this.page;
+        this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
+            if (result.success === true) {
+                // mock数据
+                // result.data = this._data;
+                // 如果第一页没有数据，显示没有数据提示页面
+                if ((this.page > 1 && (!result.data || result.data.length === 0))) {
+                    this.refs.toast.show(this.props.alertText);
+                } else {
+                    // 将请求数据保存到内存
+                    this._data = this._data.concat(result.data);
+                    this.setState({
+                        dataSource: this.state.dataSource.cloneWithRows(this._data),
                     })
                 }
             } else {
@@ -99,7 +140,7 @@ export default class Monitor extends Component {
         InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {
                 if (isConnectedNet) {
-                    this._getList();
+                    this._onRefresh();
                 } else {
                     this.setState({
                         noNetWork: true
@@ -116,13 +157,12 @@ export default class Monitor extends Component {
                 : this.state.noData ? <NoContentPage type='noData'/> : <ListView
                     dataSource={this.state.dataSource}
                     renderRow={
-                        this.props.renderRow ? this.props.renderRow.bind(this)
+                        this.props.renderRow ? this.props.renderRow
                             : this._renderDefaultRow.bind(this)
                     }
-                    onEndReachedThreshold={50}
+                    onEndReachedThreshold={100}
                     onEndReached={() => {
-                        alert('到底了');
-                        this._getList()
+                        this._onLoadMore();
                     }}
                     refreshControl={
                         <RefreshControl
@@ -132,16 +172,23 @@ export default class Monitor extends Component {
                             tintColor={this.state.theme.themeColor}
                             refreshing={this.state.isLoading}
                             onRefresh={() => {
-                                // 刷新的时候重新获取数据
-                                this._getList();
+                                // 刷新的时候从第一页重新获取数据
+                                this._onRefresh();
                             }}/>
                     }/>;
-
-
         return (
             <View style={styles.container}>
                 {content}
-                {/*<Text>{this.state.result}</Text>*/}
+                <Toast
+                    ref="toast"
+                    style={{backgroundColor:'rgba(0,0,0,0.3)'}}
+                    position='bottom'
+                    positionValue={200}
+                    // fadeInDuration={0}
+                    // fadeOutDuration={1000}
+                    opacity={0.8}
+                    textStyle={{color:'#000000'}}
+                />
             </View>
         )
     }

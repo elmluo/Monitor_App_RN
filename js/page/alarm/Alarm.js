@@ -18,7 +18,7 @@ import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import Storage from '../../common/StorageClass'
-
+import CustomListView from '../../common/CustomListView'
 let storage = new Storage();
 
 export default class Alarm extends Component {
@@ -158,7 +158,6 @@ class AlarmTab extends Component {
                 break;
             default:
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
-
         }
 
         return (
@@ -179,8 +178,8 @@ class AlarmTab extends Component {
                             alignItems: 'center',
                             marginBottom: 10
                         }}>
-                            <Text style={{color: '#444444', fontSize: 16}}>告警名称******</Text>
-                            <Text style={{color: '#7E7E7E', fontSize: 12}}>2017-10-10 15：30</Text>
+                            <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{rowData.siteId}</Text>
                         </View>
                         <View>
                             <Text style={{color: '#7E7E7E', fontSize: 14}}>站点名称********</Text>
@@ -206,24 +205,23 @@ class AlarmTab extends Component {
     }
 
     render() {
+        let url = '/app/v2/site/model/list';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            page: 1,
+            size: 20,
+        };
+        let content = <CustomListView
+            {...this.props}
+            url={url}
+            params={params}
+            // bind(this)机制需要熟悉
+            renderRow={this._renderRow.bind(this)}
+            alertText={'没有更多数据了~'}
+        />;
         return (
             <View style={styles.container}>
-                {/*<Text>{this.state.result}</Text>*/}
-                <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
-                    refreshControl={
-                        <RefreshControl
-                            title='加载中...'
-                            titleColor={this.props.theme.themeColor}
-                            colors={[this.props.theme.themeColor]}
-                            tintColor={this.props.theme.themeColor}
-                            refreshing={this.state.isLoading}
-                            onRefresh={() => {
-                                // 刷新的时候重新获取数据
-                                this._getAlarmList()
-                            }}/>
-                    }/>
+                {content}
             </View>
         )
     }

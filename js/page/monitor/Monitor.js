@@ -7,9 +7,6 @@ import {
     StyleSheet,
     Text,
     View,
-    Image,
-    ListView,
-    RefreshControl,
     TouchableOpacity,
     InteractionManager
 } from 'react-native'
@@ -20,18 +17,16 @@ import Storage from '../../common/StorageClass'
 import CustomListView from  '../../common/CustomListView'
 
 let storage = new Storage();
-
+let dataRepository = new DataRepository();
 export default class Monitor extends Component {
     constructor(props) {
         super(props);
         // 初始化类实例
-        this.dataRepository = new DataRepository();
         this.state = {
             noNetWork: false,
             noData: false,
             isLoading: false,
             theme: this.props.theme,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         }
     }
 
@@ -45,9 +40,6 @@ export default class Monitor extends Component {
      * @private
      */
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
-        let onlineStyle = {
-            backgroundColor: this.state.theme.themeColor,
-        };
         let fusOnline =
             rowData.fsuOnline ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
                 : <Text style={styles.onlineState}>离线</Text>;
@@ -60,12 +52,11 @@ export default class Monitor extends Component {
         } else if (rowData.operationState === '交维态') {
             operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(107, 92, 245)'}]}>交维态</Text>
         }
-
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                    this._pushToDetail(rowData)
+                    this._pushToDetail(rowData);
                 }}>
                 <View style={styles.row}>
                     <View style={styles.rowTop}>
@@ -109,6 +100,8 @@ export default class Monitor extends Component {
                 title={'监控页面'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
+
+
         let url = '/app/v2/site/model/list';
         let params = {
             stamp: storage.getLoginInfo().stamp,
@@ -119,10 +112,9 @@ export default class Monitor extends Component {
                 {...this.props}
                 url={url}
                 params={params}
-                renderRow={this._renderRow}
-                onPressCell={(data)=>{
-                    alert(data)
-                }}
+                // bind(this)机制需要熟悉
+                renderRow={this._renderRow.bind(this)}
+                alertText={'没有更多数据了~'}
             />;
         return (
             <View style={styles.container}>
@@ -130,6 +122,12 @@ export default class Monitor extends Component {
                 {content}
             </View>
         )
+    }
+
+    componentDidMount() {
+        InteractionManager.runAfterInteractions(()=> {
+
+        })
     }
 }
 const styles = StyleSheet.create({

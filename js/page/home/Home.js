@@ -72,7 +72,6 @@ export default class Monitor extends Component {
                 storage.setLoginInfo(result);   // 保存loginInfo到单例
                 resolve(result)
             }, (error) => {
-                console.log(error);
                 reject(error)
             })
         })
@@ -207,8 +206,6 @@ export default class Monitor extends Component {
                 // this.setState({
                 //     allCount: allCount
                 // });
-
-                console.log(this.state);
                 resolve(result);
             }, (error) => {
                 reject(error)
@@ -226,7 +223,6 @@ export default class Monitor extends Component {
             stamp: storage.getLoginInfo().stamp,
             userId: storage.getLoginInfo().userId
         };
-        console.log(params);
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             alert(JSON.stringify(result));
             if (result.data === 0 || result.data === null) {
@@ -254,8 +250,6 @@ export default class Monitor extends Component {
                 this._getWeekFsuCount(stamp),
                 this._getAlarmCount(stamp),
             ]).then((results) => {
-                console.log(results);
-
                 // 计算告警数量总和
                 let allCount = 0;
                 for (let i = 0; i < results[0].data.length; i++) {
@@ -343,9 +337,9 @@ export default class Monitor extends Component {
 
                         {this._renderBulletinSlideBar()}
 
-                        {/*<HomeStatisticChart chartData={this.state.fsuWeekCount}*/}
-                        {/*width={width}*/}
-                        {/*height={height * 0.4}/>*/}
+                        <HomeStatisticChart chartData={this.state.fsuWeekCount}
+                                            width={width}
+                                            height={height * 0.4}/>
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
@@ -391,7 +385,7 @@ export default class Monitor extends Component {
         // 页面加载完成再去渲染数据，减缓卡顿问题
         InteractionManager.runAfterInteractions(() => {
             this._refreshData();
-            this._getStamp().then((stamp)=> {
+            this._getStamp().then((stamp) => {
                 this._getNoticeNotReadCount(stamp);
             })
         });

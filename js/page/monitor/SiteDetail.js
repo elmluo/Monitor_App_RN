@@ -13,6 +13,10 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 // import FlatListDemo from '../demo/FlatList'
 import CustomListView from '../../common/CustomListView'
+
+import CustomListViewBetterLoadMore from '../demo/CustomListViewBetterLoadMore'
+
+// import RefreshLoadMoreListView from '../demo/swRefresh'
 import Storage from '../../common/StorageClass'
 
 let storage = new Storage();
@@ -72,26 +76,39 @@ export default class SiteDetail extends Component {
                 style={this.state.theme.styles.navBar}
                 leftButton={this._renderLeftButton()}
                 rightButton={this._renderRightButton()}/>;
+
+        let url = '/app/v2/site/model/list';
         let params = {
             stamp: storage.getLoginInfo().stamp,
             page: 1,
             size: 20,
         };
+        let content =
+            <CustomListView
+                {...this.props}
+                url={url}
+                params={params}
+                // bind(this)机制需要熟悉
+                renderRow={this._renderRow.bind(this)}
+                onPressCell={(data) => {
+                    alert(data)
+                }}
+            />;
+
         return (
             <View style={styles.container}>
                 {navigationBar}
-                <View style={{backgroundColor: 'white'}}>
-                    <Text>告警详情页</Text>
-                </View>
-                <CustomListView
-                    {...this.props}
-                    url={'/app/v2/site/model/list'}
-                    params={params}
-                    renderRow={this._renderRow}
-                    onPressCell={(data)=>{
-                        alert(data)
-                    }}
-                />
+
+                {/*<RefreshLoadMoreListView />*/}
+                {content}
+            </View>
+        )
+    }
+
+    _renderRow(rowRow) {
+        return (
+            <View style={{height: 10}}>
+                <Text>{rowRow.name}</Text>
             </View>
         )
     }
