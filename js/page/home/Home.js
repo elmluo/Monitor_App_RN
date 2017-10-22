@@ -224,7 +224,7 @@ export default class Monitor extends Component {
             userId: storage.getLoginInfo().userId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            alert(JSON.stringify(result));
+            // alert(JSON.stringify(result));
             if (result.data === 0 || result.data === null) {
                 this.setState({
                     isShowNoticeBar: false,
@@ -337,9 +337,9 @@ export default class Monitor extends Component {
 
                         {this._renderBulletinSlideBar()}
 
-                        <HomeStatisticChart chartData={this.state.fsuWeekCount}
-                                            width={width}
-                                            height={height * 0.4}/>
+                        {/*<HomeStatisticChart chartData={this.state.fsuWeekCount}*/}
+                                            {/*width={width}*/}
+                                            {/*height={height * 0.4}/>*/}
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>

@@ -186,9 +186,9 @@ export default class CustomListView extends Component {
                     ref="toast"
                     style={{backgroundColor:'rgba(0,0,0,0.3)'}}
                     position='bottom'
-                    positionValue={200}
-                    // fadeInDuration={0}
-                    // fadeOutDuration={1000}
+                    positionValue={300}
+                    fadeInDuration={500}
+                    fadeOutDuration={1000}
                     opacity={0.8}
                     textStyle={{color:'#000000'}}
                 />

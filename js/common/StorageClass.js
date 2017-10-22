@@ -1,19 +1,37 @@
 let instance = null;
-let  loginInfo= {};
 export default class LocalStorageClass {
+    searchHistoryArr = [];
 
     constructor() {
-        if(!instance){
+        if (!instance) {
             instance = this;
         }
         return instance;
     }
 
-    setLoginInfo(data){
+    // 操作用户登录
+    setLoginInfo(data) {
         this.loginInfo = data;
     }
 
-    getLoginInfo(){
+    getLoginInfo() {
         return this.loginInfo;
+    }
+
+    // 操作搜索历史记录数组
+    addSearchHistory(item) {
+        this.searchHistoryArr.push(item)
+    }
+
+    deleteSearchHistory(item) {
+        this.searchHistoryArr.splice(this.searchHistoryArr.indexOf(item), 1);
+    }
+
+    deleteAllSearchHistory() {
+        this.searchHistoryArr = [];
+    }
+
+    getAllSearchHistory() {
+        return this.searchHistoryArr
     }
 }
