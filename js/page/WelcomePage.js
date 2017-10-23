@@ -8,12 +8,16 @@ import {
     StyleSheet,
     Text,
     Platform,
+    ImageBackground,
+    Dimensions,
 } from 'react-native'
 import Main from './Main'
 import Login from './Login'
 import ThemeDao from '../expand/dao/ThemeDao'
-import SplashScreen from 'react-native-splash-screen'
+// import SplashScreen from 'react-native-splash-screen'
 import DataRepository from '../expand/dao/Data'
+
+let {width,height}=Dimensions.get('window');
 let dataRepository  = new DataRepository();
 export default class WelcomePage extends Component {
     constructor(props) {
@@ -24,6 +28,7 @@ export default class WelcomePage extends Component {
     }
 
     componentDidMount() {
+        // SplashScreen.hide();
         new ThemeDao().getTheme().then((data)=>{
             this.theme=data;
         });
@@ -185,8 +190,12 @@ export default class WelcomePage extends Component {
             });
         return(
             <View style={styles.container}>
-                <Text>检查是否跟新</Text>
-                <Text>老版本信息</Text>
+                <View>
+                    <ImageBackground style ={{width:width,height:height+22}} source={require('../../res/Image/Login/Login_launch.png')}>
+                        <Text style ={{textAlign:'center',top:height - 60,color:'white'}}>检查更新中....</Text>
+                    </ImageBackground>
+                </View>
+
                 <Text>{this.state.result}</Text>
             </View>
         )

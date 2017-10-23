@@ -10,6 +10,7 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
+    Alert,
     ImageBackground,
 
 } from 'react-native'
@@ -21,6 +22,7 @@ import ForgetPasswordPage from './my/ForgetPasswordPage'
 import SetUpServer from './my/SetUpServer'
 import Storage from '../common/StorageClass'
 
+
 let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
 let {width,height} = Dimensions.get('window');
@@ -30,6 +32,7 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state={
+            pushMsg:'',
             username: '',
             userpwd: '',
         }

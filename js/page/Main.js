@@ -9,10 +9,12 @@ import {
     StyleSheet,
     Image,
     View,
+    Alert,
     DeviceEventEmitter
 } from 'react-native';
 
 import TabNavigator from 'react-native-tab-navigator';
+
 // import {Navigator} from 'react-native-deprecated-custom-components'
 import Home from './home/Home'
 import Monitor from './monitor/Monitor'
@@ -43,8 +45,10 @@ export default class Main extends BaseComponent {
         this.state = {
             selectedTab: selectedTab,
             theme:this.props.theme,
-        }
-    }
+}
+}
+
+
 
     /**
      * 向CodePush服务器检查更新
@@ -62,6 +66,7 @@ export default class Main extends BaseComponent {
     //     });
     // }
     componentDidMount(){
+
         super.componentDidMount();
         this.listener = DeviceEventEmitter.addListener('ACTION_HOME',
             (action,params) => this.onAction(action,params));
@@ -129,6 +134,8 @@ export default class Main extends BaseComponent {
                     {this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}
                     {this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}
                 </TabNavigator>
+
+
                 <Toast ref={(toast)=>this.toast=toast}/>
             </View>
         );

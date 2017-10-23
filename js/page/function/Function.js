@@ -6,7 +6,13 @@ import React, {Component} from 'react';
 import {
     StyleSheet,
     Text,
-    View
+    View,
+    Image,
+    Alert,
+    ScrollView,
+    RefreshControl,
+    TouchableOpacity,
+    InteractionManager
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 export default class Function extends Component {
