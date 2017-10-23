@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 
 import Toast,{DURATION} from 'react-native-easy-toast';
-
+import SearchResult from '../page/SearchResultPage';
 let {width} = Dimensions.get('window');
 
 export default class Searchbox extends React.Component {
@@ -89,7 +89,6 @@ export default class Searchbox extends React.Component {
                                 // 如果有内容输入,用trim()去掉空字符。
                                 // 调用方法，并且将搜索内容传递出去
                                 if (this.state.searchText === undefined || this.state.searchText === '') {
-                                    console.log(this.refs.toast);
                                     this.refs.toast.show("内容不可为空");
                                 } else {
                                     if (this.state.searchText.trim() === '') {

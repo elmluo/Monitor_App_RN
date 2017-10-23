@@ -19,10 +19,20 @@ import Storage from '../../common/StorageClass'
 import CustomListView from '../../common/CustomListView'
 import Searchbox from '../../common/Searchbox'
 
+
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
 let dataRepository = new DataRepository();
+
 export default class Monitor extends Component {
+
+    url = '/app/v2/site/model/list';
+    params = {
+        stamp: storage.getLoginInfo().stamp,
+        page: 1,
+        size: 20,
+    };
+
     constructor(props) {
         super(props);
         // 初始化类实例
@@ -45,7 +55,7 @@ export default class Monitor extends Component {
      */
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let fusOnline =
-            rowData.fsuOnline ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
+            rowData.fsuOnline ? <Text style={[styles.onlineState]}>在线</Text>
                 : <Text style={styles.onlineState}>离线</Text>;
 
         let operationState;
@@ -94,7 +104,17 @@ export default class Monitor extends Component {
         })
     }
 
-
+    _pushToSearchPage() {
+        this.props.navigator.push({
+            component: SearchPage,
+            params: {
+                url: this.url,
+                params: this.params,
+                renderRow: this._renderRow.bind(this),
+                ...this.props
+            }
+        });
+    }
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -107,17 +127,12 @@ export default class Monitor extends Component {
                 style={this.state.theme.styles.navBar}/>;
 
 
-        let url = '/app/v2/site/model/list';
-        let params = {
-            stamp: storage.getLoginInfo().stamp,
-            page: 1,
-            size: 20,
-        };
+
         let content =
             <CustomListView
                 {...this.props}
-                url={url}
-                params={params}
+                url={this.url}
+                params={this.params}
                 // bind(this)机制需要熟悉
                 renderRow={this._renderRow.bind(this)}
                 // renderHeader={this._renderHeader.bind(this)}
@@ -128,10 +143,7 @@ export default class Monitor extends Component {
                 <Searchbox
                     placeholder={'请输入站点名称'}
                     onClick={() => {
-                        this.props.navigator.push({
-                            component: SearchPage,
-                            params: {...this.props}
-                        });
+                        this._pushToSearchPage();
                     }}
 
                 />

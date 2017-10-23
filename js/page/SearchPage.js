@@ -11,6 +11,7 @@ import {
 import Storage from '../common/StorageClass'
 import Searchbox from "../common/Searchbox";
 import Toast from 'react-native-easy-toast';
+import SearchResult from './SearchResultPage'
 
 let storage = new Storage();
 
@@ -23,6 +24,7 @@ export default class ComponentName extends React.Component {
             hisArr: storage.getAllSearchHistory(),
         };
     }
+
     _addSearchHistory(item) {
         // 保存到storage中
         storage.addSearchHistory(item);
@@ -31,7 +33,8 @@ export default class ComponentName extends React.Component {
             hisArr: storage.getAllSearchHistory()
         })
     }
-    _deleteHistoryButton(item){
+
+    _deleteHistoryButton(item) {
         // 删除storage中的对应项
         storage.deleteSearchHistory(item);
         // 更新视图
@@ -49,6 +52,16 @@ export default class ComponentName extends React.Component {
         })
     }
 
+    _pushToSearchResult(searchText) {
+        this.props.navigator.push({
+            component: SearchResult,
+            params: {
+                searchText: searchText,
+                ...this.props
+            }
+        })
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -56,9 +69,12 @@ export default class ComponentName extends React.Component {
                 <View style={[this.state.theme.styles.navBar, styles.header]}>
 
                     <Searchbox
+                        {...this.props}
                         placeholder={'请输入站点名称'}
-                        onSearch={(searchText)=>{     // 会拿到子组件返回的数据
+                        onSearch={(searchText) => {     // 会拿到子组件返回的数据
                             this._addSearchHistory(searchText);
+                            // 跳转到搜索结果页面 传入搜索内容
+                            this._pushToSearchResult(searchText);
                         }}/>
 
                     <TouchableOpacity
@@ -75,7 +91,7 @@ export default class ComponentName extends React.Component {
                     <View style={styles.searchHistoryHead}>
                         <Text style={{fontSize: 12, color: '#444444'}}>搜索记录</Text>
                         <TouchableOpacity
-                            onPress={()=> {
+                            onPress={() => {
                                 this._deleteAllHistory();
                             }}>
                             {/*<Image source={require('../../res/Image/')}/>*/}
@@ -88,13 +104,18 @@ export default class ComponentName extends React.Component {
                             {
                                 this.state.hisArr.map((item) => {
                                     // return this._renderHistoryButton(item)
-                                    return <View style={styles.historyButton}>
-                                        <TouchableOpacity style={styles.historyButtonText}>
+                                        return <View style={styles.historyButton}>
+                                        <TouchableOpacity
+                                            onPress={()=> {
+                                                // 点击记录按钮，搜索点击内容
+                                                this._pushToSearchResult(item);
+                                            }}
+                                            style={styles.historyButtonText}>
                                             <Text>{item}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             style={styles.historyButtonClose}
-                                            onPress={()=> {
+                                            onPress={() => {
                                                 this._deleteHistoryButton(item)
                                             }}>
                                             <Image style={{width: 8, height: 8}}
@@ -126,9 +147,7 @@ let styles = new StyleSheet.create({
         paddingTop: 8,
         paddingBottom: 8,
     },
-    searchHistory: {
-
-    },
+    searchHistory: {},
     searchHistoryHead: {
         padding: 16,
         paddingBottom: 0,
