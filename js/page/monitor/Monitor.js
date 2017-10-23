@@ -7,74 +7,75 @@ import {
     StyleSheet,
     Text,
     View,
-    Image,
-    ListView,
-    RefreshControl,
     TouchableOpacity,
-    InteractionManager
+    InteractionManager,
+    Dimensions,
 } from 'react-native'
+import SearchPage from '../SearchPage'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import SiteDetail from './SiteDetail'
-// import DataRepository from '../../expand/dao/DataRepository'
+import Storage from '../../common/StorageClass'
+import CustomListView from '../../common/CustomListView'
+import Searchbox from '../../common/Searchbox'
 
+let {width, height} = Dimensions.get('window');
+let storage = new Storage();
+let dataRepository = new DataRepository();
 export default class Monitor extends Component {
     constructor(props) {
         super(props);
         // 初始化类实例
-        this.dataRepository = new DataRepository();
         this.state = {
+            noNetWork: false,
+            noData: false,
             isLoading: false,
             theme: this.props.theme,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         }
     }
 
-    _onLoad() {
-        // 开启加载动画
-        this.setState({
-            isLoading: true
-        });
-        let url = '/app/v2/site/model/list';
-        let params = {
-            stamp: 'Skongtrolink',
-            page: 1,
-            size: 20,
-        };
-        this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
-            this.setState({
-                result: JSON.stringify(result),
-                dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
-                isLoading: false   // 关闭加载动画
-            })
-        }).catch(error => {
-            this.setState({
-                result: JSON.stringify(error)
-            });
-        })
-    }
-
+    /**
+     * 渲染cell
+     * @param rowData
+     * @param sectionID
+     * @param rowID
+     * @param hightlightRow
+     * @returns {XML}
+     * @private
+     */
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
-        let onlineStyle = {
-            backgroundColor: this.state.theme.themeColor,
-        };
-        let fusState = rowData.fsuOnline
-            ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
-            : <Text style={styles.onlineState}>离线</Text>;
+        let fusOnline =
+            rowData.fsuOnline ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
+                : <Text style={styles.onlineState}>离线</Text>;
+
+        let operationState;
+        if (rowData.operationState === '工程态') {
+            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(141, 135, 179)'}]}>工程态</Text>
+        } else if (rowData.operationState === '测试态') {
+            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(136, 121, 232)'}]}>测试态</Text>
+        } else if (rowData.operationState === '交维态') {
+            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(107, 92, 245)'}]}>交维态</Text>
+        }
         return (
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                    this._pushToDetail(rowData)
+                    this._pushToDetail(rowData);
                 }}>
                 <View style={styles.row}>
                     <View style={styles.rowTop}>
                         <Text style={styles.name}>{rowData.name}</Text>
-                        <Text style={styles.deviceCount}>设备数量： {rowData.deviceCount}</Text>
+                        <View style={styles.rowTopRight}>
+                            <Text style={styles.rowTopRightText}>设备数量：</Text>
+                            <Text style={styles.rowTopRightText}>{rowData.deviceCount ? rowData.deviceCount : 0}</Text>
+                        </View>
                     </View>
                     <View style={styles.rowBottom}>
-                        {fusState}
                         <Text style={styles.tier}>{rowData.tier}</Text>
+                        <View style={styles.rowBottomRight}>
+                            {operationState}
+                            {fusOnline}
+                        </View>
                     </View>
                 </View>
 
@@ -93,13 +94,6 @@ export default class Monitor extends Component {
         })
     }
 
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(()=> {
-            // 组件装载完，获取数据
-            this._onLoad()
-        });
-
-    }
 
     render() {
         let statusBar = {
@@ -111,26 +105,45 @@ export default class Monitor extends Component {
                 title={'监控页面'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
+
+
+        let url = '/app/v2/site/model/list';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            page: 1,
+            size: 20,
+        };
+        let content =
+            <CustomListView
+                {...this.props}
+                url={url}
+                params={params}
+                // bind(this)机制需要熟悉
+                renderRow={this._renderRow.bind(this)}
+                // renderHeader={this._renderHeader.bind(this)}
+                alertText={'没有更多数据了~'}/>;
         return (
             <View style={styles.container}>
                 {navigationBar}
-                <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
-                    refreshControl={
-                        <RefreshControl
-                            title='加载中...'
-                            titleColor={this.state.theme.themeColor}
-                            colors={[this.state.theme.themeColor]}
-                            tintColor={this.state.theme.themeColor}
-                            refreshing={this.state.isLoading}
-                            onRefresh={() => {
-                                // 刷新的时候重新获取数据
-                                this._onLoad()
-                            }}/>
-                    }/>
+                <Searchbox
+                    placeholder={'请输入站点名称'}
+                    onClick={() => {
+                        this.props.navigator.push({
+                            component: SearchPage,
+                            params: {...this.props}
+                        });
+                    }}
+
+                />
+                {content}
             </View>
         )
+    }
+
+    componentDidMount() {
+        InteractionManager.runAfterInteractions(() => {
+
+        })
     }
 }
 const styles = StyleSheet.create({
@@ -152,33 +165,52 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 7
     },
+    rowTopRight: {
+        width: 90,
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
     name: {
         color: '#444444',
         fontSize: 14
     },
-    deviceCount: {
+    rowTopRightText: {
         color: '#7E7E7E',
-        fontSize: 12
+        fontSize: 12,
     },
     rowBottom: {
         flexDirection: 'row',
-        justifyContent: 'flex-start',
+        justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    rowBottomRight: {
+        flexDirection: 'row'
+    },
+    tier: {
+        fontSize: 12,
+        color: '#7E7E7E',
     },
     onlineState: {
         backgroundColor: '#949494',
         color: '#FFFFFF',
         fontSize: 12,
-        paddingTop: 1,
-        paddingBottom: 1,
+        // paddingTop: 1,
+        // paddingBottom: 1,
         paddingLeft: 6,
         paddingRight: 6,
         borderRadius: 3,
     },
-    tier: {
+    operationState: {
+        backgroundColor: '#949494',
+        color: '#FFFFFF',
         fontSize: 12,
-        color: '#7E7E7E',
-        marginLeft: 8
+        // paddingTop: 1,
+        // paddingBottom: 1,
+        paddingLeft: 6,
+        paddingRight: 6,
+        borderRadius: 3,
+        marginRight: 4,
     }
 
 });

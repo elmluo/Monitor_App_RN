@@ -12,7 +12,6 @@ import {
     TouchableOpacity,
     ScrollView,
     RefreshControl,
-    Alert,
     Platform,
     Dimensions,
     InteractionManager,
@@ -22,6 +21,7 @@ import BulletinList from './BulletinList'
 import MyInfoPage from '../my/MyInfoPage'
 import HomeAlarmCell from './HomeAlarmCell'
 import HomeStatisticChart from './HomeStatisticChart'
+import BulletinSlideBar from './BulletinSlideBar'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
 import JPushModule from 'jpush-react-native';
@@ -29,12 +29,15 @@ import JPushModule from 'jpush-react-native';
 let storage = new Storage();
 let dataRepository = new DataRepository();
 let {width, height} = Dimensions.get('window');
+
 export default class Monitor extends Component {
     constructor(props) {
         super(props);
         this.state = {
             theme: this.props.theme,
             isLoading: false,
+            noticeCount: 6,
+            isShowNoticeBar: false,
             fsuCount: [
                 {item: "在线", count: 1}
             ],
@@ -74,9 +77,8 @@ export default class Monitor extends Component {
         return new Promise((resolve, reject) => {
             dataRepository.fetchLocalRepository('/app/v2/user/login').then((result) => {
                 storage.setLoginInfo(result);   // 保存loginInfo到单例
-                resolve(result.stamp)
+                resolve(result)
             }, (error) => {
-                console.log(error);
                 reject(error)
             })
         })
@@ -88,6 +90,9 @@ export default class Monitor extends Component {
      * @private
      */
     _renderRightButton() {
+        let image = this.state.isShowNoticeBar
+            ? <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_selected.png')}/>
+            : <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_nor.png')}/>;
         return (
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
@@ -98,10 +103,7 @@ export default class Monitor extends Component {
                         })
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
-                        <Image
-                            style={{width: 24, height: 24}}
-                            source={require('../../../res/Image/Nav/ic_notice_nor.png')}
-                        />
+                        {image}
                     </View>
                 </TouchableOpacity>
             </View>
@@ -141,11 +143,11 @@ export default class Monitor extends Component {
      * @returns {Promise}
      * @private
      */
-    _getFsuCount(stamp) {
-        return new Promise((resolve, reject)=> {
+    _getFsuCount(data) {
+        return new Promise((resolve, reject) => {
             let URL = '/app/v2/statistics/count/fsu';
             let params = {
-                stamp: stamp
+                stamp: data.stamp
             };
             dataRepository.fetchNetRepository('POST', URL, params).then(result => {
                 // console.log(result);
@@ -154,7 +156,7 @@ export default class Monitor extends Component {
                 //     fsuCount: result.data
                 // })
                 resolve(result);
-            }, (error)=> {
+            }, (error) => {
                 reject(error);
             })
         })
@@ -164,11 +166,11 @@ export default class Monitor extends Component {
      * 一周FSU数量
      * @private
      */
-    _getWeekFsuCount(stamp) {
-        return new Promise((resolve,reject)=> {
+    _getWeekFsuCount(data) {
+        return new Promise((resolve, reject) => {
             let URL = '/app/v2/statistics/counts/fsu/week';
             let params = {
-                stamp: stamp
+                stamp: data.stamp
             };
             dataRepository.fetchNetRepository('POST', URL, params).then((result) => {
                 // console.log(result);
@@ -179,7 +181,7 @@ export default class Monitor extends Component {
                 //     fsuWeekCount: result.data
                 // })
                 resolve(result);
-            },(error)=> {
+            }, (error) => {
                 reject(error);
             })
         });
@@ -190,11 +192,11 @@ export default class Monitor extends Component {
      * @param stamp
      * @private
      */
-    _getAlarmCount(stamp) {
-        return new Promise((resolve, reject)=> {
+    _getAlarmCount(data) {
+        return new Promise((resolve, reject) => {
             let URL = '/app/v2/statistics/count/alarm';
             let params = {
-                stamp: stamp,
+                stamp: data.stamp,
                 status: 2,
                 type: 1
             };
@@ -211,12 +213,35 @@ export default class Monitor extends Component {
                 // this.setState({
                 //     allCount: allCount
                 // });
-
-                console.log(this.state);
                 resolve(result);
-            }, (error)=> {
+            }, (error) => {
                 reject(error)
             })
+        })
+    }
+
+    /**
+     * 获取公告未读数量
+     * @private
+     */
+    _getNoticeNotReadCount() {
+        let url = '/app/v2/notice/unread/count';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            userId: storage.getLoginInfo().userId
+        };
+        dataRepository.fetchNetRepository('POST', url, params).then((result) => {
+            alert(JSON.stringify(result));
+            if (result.data === 0 || result.data === null) {
+                this.setState({
+                    isShowNoticeBar: false,
+                })
+            } else {
+                this.setState({
+                    isShowNoticeBar: true,
+                    noticeCount: result.data,
+                })
+            }
         })
     }
 
@@ -227,14 +252,11 @@ export default class Monitor extends Component {
     _refreshData() {
         this._getStamp().then((stamp) => {
             // 三个请求操作都是promise操作的话，用Promise.all()
-            //
             Promise.all([
                 this._getFsuCount(stamp),
                 this._getWeekFsuCount(stamp),
-                this._getAlarmCount(stamp)
-            ]).then((results)=> {
-                console.log(results);
-
+                this._getAlarmCount(stamp),
+            ]).then((results) => {
                 // 计算告警数量总和
                 let allCount = 0;
                 for (let i = 0; i < results[0].data.length; i++) {
@@ -252,6 +274,35 @@ export default class Monitor extends Component {
             // this._getWeekFsuCount(stamp);
             // this._getAlarmCount(stamp);
         });
+    }
+
+    /**
+     * 公告页提示条
+     * @private
+     */
+    _renderBulletinSlideBar() {
+        if (this.state.isShowNoticeBar) {
+            return (
+                <BulletinSlideBar
+                    style={{}}
+                    isClose={this.state.isShowNoticeBar}
+                    text={`您有${this.state.noticeCount}个公告信息，请点击查看`}
+                    onPressText={() => {
+                        this.props.navigator.push({
+                            component: BulletinList,
+                            params: {...this.props}
+                        })
+                    }}
+                    onPressClose={() => {
+                        this.setState({
+                            isShowNoticeBar: true,
+                        })
+                    }}/>
+            )
+        } else {
+            return null
+        }
+
     }
 
     render() {
@@ -289,11 +340,13 @@ export default class Monitor extends Component {
                 <View style={{flex: 1}}>
                     <ImageBackground
                         style={styles.gb}
-                        source={require('../../../res/Image/Login/ic_login_bg.png')}
-                    >
-                        {/*<HomeStatisticChart chartData={this.state.fsuWeekCount}*/}
-                                            {/*width={width}*/}
-                                            {/*height={height * 0.4}/>*/}
+                        source={require('../../../res/Image/Login/ic_login_bg.png')}>
+
+                        {this._renderBulletinSlideBar()}
+
+                        <HomeStatisticChart chartData={this.state.fsuWeekCount}
+                                            width={width}
+                                            height={height * 0.4}/>
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
@@ -441,7 +494,10 @@ export default class Monitor extends Component {
         });
         // 页面加载完成再去渲染数据，减缓卡顿问题
         InteractionManager.runAfterInteractions(() => {
-            this._refreshData()
+            this._refreshData();
+            this._getStamp().then((stamp) => {
+                this._getNoticeNotReadCount(stamp);
+            })
         });
     }
 }

@@ -780,7 +780,7 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
      * @DEPRECATED
      */
     echartsProto.setTheme = function () {
-        console.log('ECharts#setTheme() is DEPRECATED in ECharts 3.0');
+        // console.log('ECharts#setTheme() is DEPRECATED in ECharts 3.0');
     };
     /**
      * @return {module:echarts/model/Global}
@@ -974,7 +974,7 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
             }
         }
         if (true) {
-            console.warn('No coordinate system that supports ' + methodName + ' found by the given finder.');
+            // console.warn('No coordinate system that supports ' + methodName + ' found by the given finder.');
         }
     }
     /**
@@ -1009,12 +1009,12 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
                         result |= view.containPoint(value, model);
                     } else {
                         if (true) {
-                            console.warn(key + ': ' + (view ? 'The found component do not support containPoint.' : 'No view mapping to the found component.'));
+                            // console.warn(key + ': ' + (view ? 'The found component do not support containPoint.' : 'No view mapping to the found component.'));
                         }
                     }
                 } else {
                     if (true) {
-                        console.warn(key + ': containPoint is not supported');
+                        // console.warn(key + ': containPoint is not supported');
                     }
                 }
             }, this);
@@ -1042,7 +1042,7 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
         var seriesModel = finder.seriesModel;
         if (true) {
             if (!seriesModel) {
-                console.warn('There is no specified seires model');
+                // console.warn('There is no specified seires model');
             }
         }
         var data = seriesModel.getData();
@@ -1227,7 +1227,7 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
         this.hideLoading();
         if (!loadingEffects[name]) {
             if (true) {
-                console.warn('Loading effects ' + name + ' not exists.');
+                // console.warn('Loading effects ' + name + ' not exists.');
             }
             return;
         }
@@ -1613,7 +1613,7 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
     echartsProto.dispose = function () {
         if (this._disposed) {
             if (true) {
-                console.warn('Instance ' + this.id + ' has been disposed');
+                // console.warn('Instance ' + this.id + ' has been disposed');
             }
             return;
         }
@@ -1677,7 +1677,7 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
         var blendMode = seriesModel.get('blendMode') || null;
         if (true) {
             if (!env.canvasSupported && blendMode && blendMode !== 'source-over') {
-                console.warn('Only canvas support blendMode');
+                // console.warn('Only canvas support blendMode');
             }
         }
         chartView.group.traverse(function (el) {
@@ -1829,13 +1829,13 @@ define('echarts/echarts', ['require', 'zrender/core/env', './model/Global', './E
         var existInstance = echarts.getInstanceByDom(dom);
         if (existInstance) {
             if (true) {
-                console.warn('There is a chart instance already initialized on the dom.');
+                // console.warn('There is a chart instance already initialized on the dom.');
             }
             return existInstance;
         }
         if (true) {
             if (zrUtil.isDom(dom) && dom.nodeName.toUpperCase() !== 'CANVAS' && (!dom.clientWidth && (!opts || opts.width == null) || !dom.clientHeight && (!opts || opts.height == null))) {
-                console.warn('Can\'t get dom width or height');
+                // console.warn('Can\'t get dom width or height');
             }
         }
         var chart = new ECharts(dom, theme, opts);
@@ -2950,7 +2950,7 @@ define('echarts/chart/line/LineView', ['require', 'zrender/core/util', '../helpe
         }
         if (!visualMeta || coordSys.type !== 'cartesian2d') {
             if (true) {
-                console.warn('Visual map on line style only support x or y dimension.');
+                // console.warn('Visual map on line style only support x or y dimension.');
             }
             return;
         }
@@ -4141,11 +4141,11 @@ define('echarts/util/graphic', ['require', 'zrender/core/util', 'zrender/tool/pa
      * @example
      *     graphic.updateProps(el, {
      *         position: [100, 100]
-     *     }, seriesModel, dataIndex, function () { console.log('Animation done!'); });
+     *     }, seriesModel, dataIndex, function () { // console.log('Animation done!'); });
      *     // Or
      *     graphic.updateProps(el, {
      *         position: [100, 100]
-     *     }, seriesModel, function () { console.log('Animation done!'); });
+     *     }, seriesModel, function () { // console.log('Animation done!'); });
      */
     graphic.updateProps = function (el, props, animatableModel, dataIndex, cb) {
         animateOrSetProps(true, el, props, animatableModel, dataIndex, cb);
@@ -14328,7 +14328,7 @@ define('echarts/util/clazz', ['require', 'zrender/core/util'], function (require
             if (true) {
                 zrUtil.each(mandatoryMethods, function (method) {
                     if (!proto[method]) {
-                        console.warn('Method `' + method + '` should be implemented' + (proto.type ? ' in ' + proto.type : '') + '.');
+                        // console.warn('Method `' + method + '` should be implemented' + (proto.type ? ' in ' + proto.type : '') + '.');
                     }
                 });
             }
@@ -14386,7 +14386,7 @@ define('echarts/util/clazz', ['require', 'zrender/core/util'], function (require
                 if (!componentType.sub) {
                     if (true) {
                         if (storage[componentType.main]) {
-                            console.warn(componentType.main + ' exists.');
+                            // console.warn(componentType.main + ' exists.');
                         }
                     }
                     storage[componentType.main] = Clazz;
@@ -18877,7 +18877,7 @@ define('zrender/core/log', ['require', '../config'], function (require) {
             }
         } else if (config.debugMode > 1) {
             for (var k in arguments) {
-                console.log(arguments[k]);
+                // console.log(arguments[k]);
             }
         }
     };    /* for debug
@@ -19446,7 +19446,7 @@ define('zrender/core/curve', ['require', './vector'], function (require) {
             out[0] = cubicAt(x0, x1, x2, x3, t);
             out[1] = cubicAt(y0, y1, y2, y3, t);
         }
-        // console.log(interval, i);
+        // // console.log(interval, i);
         return mathSqrt(d);
     }
     /**
@@ -19618,7 +19618,7 @@ define('zrender/core/curve', ['require', './vector'], function (require) {
             out[0] = quadraticAt(x0, x1, x2, t);
             out[1] = quadraticAt(y0, y1, y2, t);
         }
-        // console.log(interval, i);
+        // // console.log(interval, i);
         return mathSqrt(d);
     }
     return {
@@ -23280,7 +23280,7 @@ define('echarts/coord/axisHelper', ['require', '../scale/Ordinal', '../scale/Int
             }
             if (typeof boundaryGap[0] === 'boolean') {
                 if (true) {
-                    console.warn('Boolean type for boundaryGap is only ' + 'allowed for ordinal axis. Please use string in ' + 'percentage instead, e.g., "20%". Currently, ' + 'boundaryGap is set to be 0.');
+                    // console.warn('Boolean type for boundaryGap is only ' + 'allowed for ordinal axis. Please use string in ' + 'percentage instead, e.g., "20%". Currently, ' + 'boundaryGap is set to be 0.');
                 }
                 boundaryGap = [
                     0,

@@ -8,27 +8,37 @@ import {
     Text,
     View,
     TouchableOpacity,
-    Image
+    Image,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
+// import FlatListDemo from '../demo/FlatList'
+import CustomListView from '../../common/CustomListView'
+
+import CustomListViewBetterLoadMore from '../demo/CustomListViewBetterLoadMore'
+
+// import RefreshLoadMoreListView from '../demo/swRefresh'
+import Storage from '../../common/StorageClass'
+
+let storage = new Storage();
+
 export default class SiteDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            theme:this.props.theme,
+            theme: this.props.theme,
         }
     }
 
     _renderLeftButton() {
-        return(
-            <View style={{flexDirection:'row'}}>
+        return (
+            <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
-                    onPress={()=>{
+                    onPress={() => {
                         this.props.navigator.pop();
                     }}>
-                    <View style={{padding:5,marginRight:8}}>
+                    <View style={{padding: 5, marginRight: 8}}>
                         <Image
-                            style={{width:24,height:24}}
+                            style={{width: 24, height: 24}}
                             source={require('../../../res/Image/Nav/ic_backItem.png')}
                         />
                     </View>
@@ -38,10 +48,10 @@ export default class SiteDetail extends Component {
     }
 
     _renderRightButton() {
-        return(
+        return (
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
-                    onPress={()=>{
+                    onPress={() => {
                         alert('还不能打开地图功能')
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
@@ -67,12 +77,38 @@ export default class SiteDetail extends Component {
                 leftButton={this._renderLeftButton()}
                 rightButton={this._renderRightButton()}/>;
 
-        return(
+        let url = '/app/v2/site/model/list';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            page: 1,
+            size: 20,
+        };
+        let content =
+            <CustomListView
+                {...this.props}
+                url={url}
+                params={params}
+                // bind(this)机制需要熟悉
+                renderRow={this._renderRow.bind(this)}
+                onPressCell={(data) => {
+                    alert(data)
+                }}
+            />;
+
+        return (
             <View style={styles.container}>
                 {navigationBar}
-                <View style={{flex: 1, backgroundColor: 'white'}}>
-                    <Text>告警详情页</Text>
-                </View>
+
+                {/*<RefreshLoadMoreListView />*/}
+                {content}
+            </View>
+        )
+    }
+
+    _renderRow(rowRow) {
+        return (
+            <View style={{height: 10}}>
+                <Text>{rowRow.name}</Text>
             </View>
         )
     }

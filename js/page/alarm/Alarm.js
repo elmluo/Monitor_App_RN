@@ -10,14 +10,15 @@ import {
     Image,
     TouchableOpacity,
     ListView,
-    RefreshControl,
 } from 'react-native'
-import SearchPage from '../SearchPage'
+import SearchPage from '../SearchPage01'
 import AlarmDetail from './AlarmDetail'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
-import Storage from '../../common/StorageClass'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
+import Storage from '../../common/StorageClass'
+import CustomListView from '../../common/CustomListView'
+let storage = new Storage();
 
 let StorageFunction = new Storage();
 export default class Alarm extends Component {
@@ -39,7 +40,7 @@ export default class Alarm extends Component {
         return (
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
-                    onPress={()=> {
+                    onPress={() => {
                         this.props.navigator.push({
                             component: SearchPage,
                             params: {
@@ -47,7 +48,7 @@ export default class Alarm extends Component {
                             }
                         })
                     }}>
-                    <View style={{padding:5,marginRight:8}}>
+                    <View style={{padding: 5, marginRight: 8}}>
                         <Text style={{color: '#FFFFFF'}}>
                             筛选
                         </Text>
@@ -96,7 +97,7 @@ export default class Alarm extends Component {
 
 
     render() {
-        let statusBar={
+        let statusBar = {
             backgroundColor: this.state.theme.themeColor,
             barStyle: 'light-content'
         };
@@ -109,7 +110,7 @@ export default class Alarm extends Component {
         let content =
             <ScrollableTabView
                 ref='scrollableTabView'
-                tabBarUnderlineStyle={{backgroundColor:'white', height: 2}}
+                tabBarUnderlineStyle={{backgroundColor: 'white', height: 2}}
                 tabBarInactiveTextColor='mintcream'
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
@@ -118,7 +119,7 @@ export default class Alarm extends Component {
                 <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1,true)} url={'/app/v2/alarm/list'}>实时告警</AlarmTab>
                 <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2,false)} url={'/app/v2/alarm/list'}>历史告警</AlarmTab>
             </ScrollableTabView>;
-        return(
+        return (
             <View style={styles.container}>
                 {navigationBar}
                 {content}
@@ -139,16 +140,16 @@ class AlarmTab extends Component {
         this.state = {
             isLoading: false,
             dataSource: new ListView.DataSource({
-                rowHasChanged: (r1, r2)=> r1 !==r2
+                rowHasChanged: (r1, r2) => r1 !== r2
             })
         }
     }
 
     componentDidMount() {
-        this._loadData();
+        // this._getAlarmList();
     }
 
-    _loadData() {
+    _getAlarmList() {
         this.setState({
             isLoading: true
         });
@@ -162,8 +163,6 @@ class AlarmTab extends Component {
 
         this.dataRepository.fetchNetRepository('POST',url,params)
             .then(result=>{
-                // alert(JSON.stringify(result));
-
                 this.setState({
                     result: JSON.stringify(result),
                     dataSource: this.state.dataSource.cloneWithRows(result.data),
@@ -184,7 +183,7 @@ class AlarmTab extends Component {
     }
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let alarmIconSource;
-        switch(rowData.level) {
+        switch (rowData.level) {
             case '1':
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_oneAlarm_nor.png');
                 break;
@@ -239,26 +238,18 @@ class AlarmTab extends Component {
     }
 
     render() {
+
+        let content = <CustomListView
+            {...this.props}
+            url={this.props.url}
+            params={this.props.params}
+            // bind(this)机制需要熟悉
+            renderRow={this._renderRow.bind(this)}
+            alertText={'没有更多数据了~'}
+        />;
         return (
             <View style={styles.container}>
-                {/*<Text>{this.state.result}</Text>*/}
-                <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
-                    refreshControl={
-                        <RefreshControl
-                            title='加载中...'
-                            titleColor={this.props.theme.themeColor}
-                            colors={[this.props.theme.themeColor]}
-                            tintColor={this.props.theme.themeColor}
-                            refreshing={this.state.isLoading}
-                            onRefresh={()=>{
-                                // 刷新的时候重新获取数据
-                                this._loadData()
-                            }}/>
-                    }
-                    style = {{backgroundColor:'rgb(243,243,243)'}}
-                />
+                {content}
             </View>
         )
     }
@@ -277,9 +268,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'white'
     },
-    cellLeft: {
-
-    },
+    cellLeft: {},
     cellRight: {
         flex: 1,
         marginLeft: 14,

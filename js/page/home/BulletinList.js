@@ -28,6 +28,7 @@ export default class BulletinList extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            noNetWork: false,
             noData: false,
             isLoading: false,
             theme: this.props.theme,
@@ -57,7 +58,7 @@ export default class BulletinList extends Component {
 
                 // mock模拟数据
                 let result = {
-                    data: new Array(10).join(' ').split(' ').map((v)=> {
+                    data: new Array(10).join(' ').split(' ').map((v) => {
                         return {
                             noticeId: "（公告ID【String】",
                             title: "九和路数据中心",
@@ -174,11 +175,9 @@ export default class BulletinList extends Component {
                 leftButton={this._renderLeftButton()}/>;
 
         // 判断数据是否为空，若为空，返回提示页面,若不为空
-        let content = this.state.noNetWork
-            ? <NoContentPage type='noNetWork'/>
-            : this.state.noData
-                ? <NoContentPage type='noData'/>
-                : <ListView
+        let content =
+            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
+                : this.state.noData ? <NoContentPage type='noData'/> : <ListView
                     dataSource={this.state.dataSource}
                     renderRow={this._renderRow.bind(this)}
                     refreshControl={
@@ -218,7 +217,7 @@ export default class BulletinList extends Component {
     }
 
     componentDidMount() {
-        InteractionManager.runAfterInteractions(()=> {
+        InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {
                 if (isConnectedNet) {
                     this._getBulletinList();
