@@ -104,33 +104,15 @@ export default class Login extends Component {
                                                 })
                                                     .then(() => {
 
-                                                    let tag = companyResponse.data.stamp;
                                                     let alias = response.data.userId;
-                                                        JPushModule.setTags()
-                                                        {
 
-                                                            if (tag !== undefined) {
-                                                                /*
-                                                                * 请注意这个接口要传一个数组过去，这里只是个简单的示范
-                                                                */
-                                                                JPushModule.setTags([tag], () => {
-                                                                    console.log("Set tag succeed");
-                                                                }, () => {
-                                                                    console.log("Set tag failed");
-                                                                });
-                                                            }
+                                                        if (alias !== undefined) {
+                                                            JPushModule.setAlias(alias, () => {
+                                                                console.log("Set alias succeed");
+                                                            }, () => {
+                                                                console.log("Set alias failed");
+                                                            });
                                                         }
-                                                        JPushModule.setAlias()
-                                                        {
-                                                            if (alias !== undefined) {
-                                                                JPushModule.setAlias(alias, () => {
-                                                                    console.log("Set alias succeed");
-                                                                }, () => {
-                                                                    console.log("Set alias failed");
-                                                                });
-                                                            }
-                                                        }
-
 
                                                         this._pushToMainPage();
                                                     })
