@@ -106,7 +106,7 @@ export default class Login extends Component {
 
                                                     let userId = response.data.userId;
 
-                                                        this._JPushSetAliasAndTag(userId)
+                                                        this._JPushSetAlias(userId)
 
                                                     })
                                                     .catch(error => {
@@ -143,19 +143,16 @@ export default class Login extends Component {
      * @param userId
      * @private
      */
-    _JPushSetAliasAndTag(userId) {
+    _JPushSetAlias(userId) {
 
         let alias = userId;
 
-        JPushModule.setAlias()
-        {
-            if (alias !== undefined) {
-                JPushModule.setAlias(alias, () => {
-                    console.log("Set alias succeed");
-                }, () => {
-                    console.log("Set alias failed");
-                });
-            }
+        if (alias !== undefined) {
+            JPushModule.setAlias(alias, () => {
+                console.log("Set alias succeed");
+            }, () => {
+                console.log("Set alias failed");
+            });
         }
         this._pushToMainPage();
 
