@@ -89,7 +89,7 @@ export default class ResetPasswordPage extends React.Component {
                     </View>
                 </View>
 
-                <View style = {{marginTop:60,width:200,height:50,backgroundColor:'#FFF'}}>
+                <View style = {{marginTop:60,width:width,height:50,backgroundColor:'#FFF'}}>
 
 
                     <TouchableOpacity onPress={() => {

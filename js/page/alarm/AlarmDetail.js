@@ -49,6 +49,41 @@ export default class AlarmDetail extends Component {
     getItem(tag, leftIcon,text, rightIcon, rightText) {
         return ViewUtils.getCellItem(() => this.onClick(tag), leftIcon,text, rightIcon, rightText);
     }
+
+    _Time(strTime) {
+        let d = new Date();
+        d.setTime(strTime);
+        let time =`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}  ${d.getHours()}:${d.getMinutes()}`
+
+        // alert(time);
+
+        return  time;
+    }
+
+
+    alarmLevelName(level){
+        let alarmLevelName;
+        switch (level){
+            case '1':
+                alarmLevelName ='一级告警';
+                break;
+            case '2':
+                alarmLevelName ='二级告警';
+                break;
+            case '3':
+                alarmLevelName ='三级告警';
+                break;
+            case '4':
+                alarmLevelName ='四级告警';
+                break;
+            default:
+                ;
+
+        }
+        return alarmLevelName;
+
+    }
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -63,7 +98,8 @@ export default class AlarmDetail extends Component {
         let cell;
         let line;
         if(this.state.isAlarmHis === true){
-            cell = this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'),'恢复时间', null, null);
+
+            cell = this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'),'恢复时间', null, this._Time(this.props.item.tRecover));
             line = <View style={styles.line}/>
         }
         return(
@@ -76,13 +112,15 @@ export default class AlarmDetail extends Component {
                             {navigationBar}
                             <View style = {{backgroundColor:'rgba(0,0,0,0)',top:58}}>
                                 <Text style = {{fontSize:30,fontWeight:'800',color:'#FFF',textAlign:'center'}}>
-                                    烟雾告警
+                                    {this.props.item.name}
+                                    {/*烟雾告警*/}
                                 </Text>
                             </View>
 
                             <View style = {{backgroundColor:'rgba(0,0,0,0)',top:70}}>
                                 <Text style = {{fontSize:14,color:'#FFF',textAlign:'center'}}>
-                                    国家大学科技园站
+                                    {this.props.item.siteName}
+                                    {/*国家大学科技园站*/}
                                 </Text>
                             </View>
                             <View style = {{backgroundColor:'rgba(0,0,0,0)',top:90,alignItems: 'center'}}>
@@ -90,19 +128,20 @@ export default class AlarmDetail extends Component {
                                 <ImageBackground style={{height:30,width:92,justifyContent: 'center'}}
                                                  source={require('../../../res/Image/Alarm/ic_alarmDetail_btnBg.png')} resizeMode='cover'>
                                     <Text style = {{fontSize:12,color:'#FFF',textAlign:'center'}}>
-                                        一级告警
+                                        {this.alarmLevelName(this.props.item.level)}
+                                        {/*一级告警*/}
                                     </Text>
                                 </ImageBackground>
                             </View>
                         </ImageBackground>
                         <View style={{position: 'relative',top:50}}>
-                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_turned.png'),'设备名称', null, null)}
+                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_turned.png'),'设备名称', null, this.props.item.deviceName)}
                             <View style={styles.line}/>
-                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'),'告警时间', null, null)}
+                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'),'告警时间', null, this.props.item.reportTime)}
                             <View style={styles.line}/>
-                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_notifications.png'),'告警详情', null, null)}
+                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_notifications.png'),'告警详情', null, this.props.item.detail)}
                             <View style={styles.line}/>
-                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_loyalty.png'),'告警阈值', null, null)}
+                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_loyalty.png'),'告警阈值', null, this.props.item.threshold)}
                             <View style={styles.line}/>
                                 {cell}
                                 {line}

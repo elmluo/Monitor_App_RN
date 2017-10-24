@@ -10,7 +10,6 @@ import {
     Image,
     TouchableOpacity,
     ListView,
-    RefreshControl
 } from 'react-native'
 import SearchPage from '../SearchPage01'
 import AlarmDetail from './AlarmDetail'
@@ -21,12 +20,19 @@ import Storage from '../../common/StorageClass'
 import CustomListView from '../../common/CustomListView'
 let storage = new Storage();
 
+let StorageFunction = new Storage();
 export default class Alarm extends Component {
     constructor(props) {
         super(props);
         this.dataRepository = new DataRepository();
         this.state = {
-            theme: this.props.theme
+            theme: this.props.theme,
+            initialPage:1,
+            isHisAlarm: true,
+            focusPage:1,
+            alarmPage: 1,
+            historyPage:1,
+
         }
     }
 
@@ -51,6 +57,44 @@ export default class Alarm extends Component {
             </View>
         )
     }
+    //筛选条件
+    //站点 siteId 数组
+    //设备类型 deviceType 数组
+    //告警等级 level 数组
+    //默认不传，返回所有数据
+
+    _this_Params(initialPage,isHisAlarm){
+        let params={
+            stamp:StorageFunction.getLoginInfo().stamp,
+            userId:StorageFunction.getLoginInfo().userId,
+            size:20,
+        };
+        //参数逻辑判断
+        if (initialPage === 0){
+            //关注告警参数
+            // page = this.setState.focusPage ++;
+            params.page = this.state.focusPage;
+
+        }else {
+            if(isHisAlarm === true){
+                params.status = 2;
+                params.page = this.state.alarmPage;
+
+
+            }else{
+                params.status = 1;
+                params.page = this.state.historyPage;
+
+
+            }
+        }
+
+
+        return params;
+
+
+    }
+
 
     render() {
         let statusBar = {
@@ -70,11 +114,10 @@ export default class Alarm extends Component {
                 tabBarInactiveTextColor='mintcream'
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
-                initialPage={1} // 默认加载哪一个tab
-            >
-                <AlarmTab tabLabel='关注告警' {...this.props} >关注告警</AlarmTab>
-                <AlarmTab tabLabel='实时告警' {...this.props} status={2}>实时告警</AlarmTab>
-                <AlarmTab tabLabel='历史告警' {...this.props} status={1}>历史告警</AlarmTab>
+                initialPage={1}>
+                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0,true)} url={'/app/v2/alarm/focus/change'}>关注告警</AlarmTab>
+                <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1,true)} url={'/app/v2/alarm/list'}>实时告警</AlarmTab>
+                <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2,false)} url={'/app/v2/alarm/list'}>历史告警</AlarmTab>
             </ScrollableTabView>;
         return (
             <View style={styles.container}>
@@ -103,39 +146,23 @@ class AlarmTab extends Component {
     }
 
     componentDidMount() {
-        this._getAlarmList();
+        // this._getAlarmList();
     }
 
     _getAlarmList() {
         this.setState({
             isLoading: true
         });
-        let url = '/app/v2/site/model/list';
-        let params = {
-            stamp: 'Skongtrolink',
-            page: 1,
-            size: 20,
-        }
-        // let params = {
-        //     stamp: storage.getLoginInfo().stamp,
-        //     userId: storage.getLoginInfo().userId,
-        //     siteId: [],
-        //     level: [],
-        //     deviceType: [],
-        //     page: 1,
-        //     size: 20,
-        //     status: this.props.status
-        // };
+        let url = this.props.url;
+        let params=this.props.params;
+
 
         // 切换不同标签页，通过tabBle
-        // if (this.props.tabLabel === '历史告警') {
-        //     let status = 2
-        // } else {
-        //     let status = 1
-        // }
+        // alert(JSON.stringify(url));
+        // alert(JSON.stringify(params));
 
-        this.dataRepository.fetchNetRepository('POST', url, params)
-            .then(result => {
+        this.dataRepository.fetchNetRepository('POST',url,params)
+            .then(result=>{
                 this.setState({
                     result: JSON.stringify(result),
                     dataSource: this.state.dataSource.cloneWithRows(result.data),
@@ -144,6 +171,16 @@ class AlarmTab extends Component {
             })
     }
 
+
+    _Time(strTime) {
+        let d = new Date();
+        d.setTime(strTime);
+        let time =`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}  ${d.getHours()}:${d.getMinutes()}`
+
+        // alert(time);
+
+        return  time;
+    }
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let alarmIconSource;
         switch (rowData.level) {
@@ -158,6 +195,7 @@ class AlarmTab extends Component {
                 break;
             default:
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
+
         }
 
         return (
@@ -172,20 +210,15 @@ class AlarmTab extends Component {
                             source={alarmIconSource}/>
                     </View>
                     <View style={styles.cellRight}>
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: 10
-                        }}>
+                        <View style={{flexDirection: 'row',justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
                             <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
-                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{rowData.siteId}</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{this._Time(rowData.reportTime)}</Text>
                         </View>
                         <View>
-                            <Text style={{color: '#7E7E7E', fontSize: 14}}>站点名称********</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
                         </View>
                         <View>
-                            <Text style={{color: '#7E7E7E', fontSize: 14}}>设备名称*******</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.deviceName}</Text>
                         </View>
                     </View>
                 </View>
@@ -205,16 +238,11 @@ class AlarmTab extends Component {
     }
 
     render() {
-        let url = '/app/v2/site/model/list';
-        let params = {
-            stamp: storage.getLoginInfo().stamp,
-            page: 1,
-            size: 20,
-        };
+
         let content = <CustomListView
             {...this.props}
-            url={url}
-            params={params}
+            url={this.props.url}
+            params={this.props.params}
             // bind(this)机制需要熟悉
             renderRow={this._renderRow.bind(this)}
             alertText={'没有更多数据了~'}
@@ -238,7 +266,7 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
-        borderColor: 'black'
+        borderColor: 'white'
     },
     cellLeft: {},
     cellRight: {

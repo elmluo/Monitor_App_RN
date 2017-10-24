@@ -1,5 +1,7 @@
 package com.yiyi_scloud_app;
 
+import android.os.Bundle;
+import cn.jpush.android.api.JPushInterface;
 import com.facebook.react.ReactActivity;
 
 public class MainActivity extends ReactActivity {
@@ -11,5 +13,23 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "YIYI_Scloud_App";
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        JPushInterface.init(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JPushInterface.onPause(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        JPushInterface.onResume(this);
     }
 }
