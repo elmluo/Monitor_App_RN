@@ -11,6 +11,7 @@ import {
     Image,
     InteractionManager,
     Dimensions,
+    Alert,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import CustomListView from '../../common/CustomListView'
@@ -18,6 +19,7 @@ import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import Searchbox from '../../common/Searchbox'
 import Storage from '../../common/StorageClass'
+
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
 let dataRepository = new DataRepository();
@@ -180,26 +182,27 @@ const styles = StyleSheet.create({
 });
 
 
-
-
-
-
-
-
 /**
  * 设备列表tab页面，
  * 充当scrollableTabView的tab页面
  */
 
 import SearchPage from '../../page/SearchPage';
+
 class AlarmTabDevice extends Component {
+
+    isSelected = false;
+
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            selectedSystem: '全部系统',
+            systemList: ['全部系统', '动环系统', '蓄电池系统']
+        }
     }
 
     /**
-     * 更具typeCode，
+     * 根据typeCode，
      * @param typeCode
      * @returns {string}
      * @private
@@ -302,9 +305,30 @@ class AlarmTabDevice extends Component {
     render() {
         let header =
             <View style={deviceCellStyles.searchHeader}>
-                <View>
-                    <Text>设备系统选择</Text>
-                </View>
+                <TouchableOpacity
+                    onPress={()=> {
+                        this.isSelected = !this.isSelected;
+                        this.setState({
+                            isSelected: this.isSelected
+                        })
+                    }}>
+                    <View style={{
+                        backgroundColor: 'red',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <Text style={{color: '#3C7FFC'}}>{this.state.selectedSystem}</Text>
+                        {
+                            this.state.isSelected
+                                ? <Image style={{width: 12, height: 6, tintColor: '#3C7FFC', color: 'red',}}
+                                         source={require('../../../res/Image/BaseIcon/ic_triangle_nor.png')}/>
+                                : <Image style={{width: 12, height: 6, tintColor: '#3C7FFC'}}
+                                         source={require('../../../res/Image/BaseIcon/ic_triangle_nor.png')}/>
+                        }
+                    </View>
+                </TouchableOpacity>
+
                 <View style={{width: width * 0.65}}>
                     <Searchbox
                         {...this.props}
@@ -314,6 +338,29 @@ class AlarmTabDevice extends Component {
                         placeholder={'请输入设备名称'}/>
                 </View>
             </View>;
+        let selectList =
+            this.state.isSelected ? <View style={{
+                    backgroundColor: 'rgba(0,0,0,0.3)',
+                    zIndex: 3,
+                    position: 'absolute'}}>
+                    {
+                        this.state.systemList.map((item, i, arr) => {    // .map 中item === arr[i]
+                            return <TouchableOpacity
+                                key={i}
+                                onPress={() => {
+                                    this.setState({
+                                        selectedSystem: arr[i]
+                                    })
+                                }}
+                                underlayColor='transparent'>
+                                <View>
+                                    <Text>{arr[i]}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        })
+                    }
+                </View>
+                : null;
         let list =
             <CustomListView
                 {...this.props}
@@ -326,7 +373,10 @@ class AlarmTabDevice extends Component {
         return (
             <View style={{flex: 1, backgroundColor: '#F3F3F3'}}>
                 {header}
-                {list}
+                <View style={{flex: 1, backgroundColor: '#F3F3F3'}}>
+                    {list}
+                    {selectList}
+                </View>
             </View>
         )
     }
@@ -371,21 +421,13 @@ const deviceCellStyles = StyleSheet.create({
 });
 
 
-
-
-
-
-
-
-
-
-
 /**
  * 告警列表ab页面，
  * 充当scrollableTabView的tab页面
  */
 import Utils from '../../util/Utils';
 import AlarmDetail from '../../page/alarm/AlarmDetail'
+
 class AlarmTabAlarm extends Component {
     constructor(props) {
         super(props);
@@ -424,7 +466,12 @@ class AlarmTabAlarm extends Component {
                             source={alarmIconSource}/>
                     </View>
                     <View style={styles.cellRight}>
-                        <View style={{flexDirection: 'row',justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: 10
+                        }}>
                             <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
                             <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
                         </View>

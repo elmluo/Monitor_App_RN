@@ -10,7 +10,7 @@ const TAG_NETWORK_CHANGE = "NetworkChange";
  * @param callback
  */
 const checkNetworkState = (callback) => {
-    NetInfo.isConnected.fetch().done((isConnected) => {
+    NetInfo.fetch().done((isConnected) => {
         callback(isConnected);
     });
 };
@@ -21,7 +21,7 @@ const checkNetworkState = (callback) => {
  * @param handler
  */
 const addEventListener = (tag, handler) => {
-    NetInfo.isConnected.addEventListener(tag, handler);
+    NetInfo.addEventListener(tag, handler);
 };
 
 
@@ -31,7 +31,7 @@ const addEventListener = (tag, handler) => {
  * @param handler
  */
 const removeEventListener = (tag, handler) => {
-    NetInfo.isConnected.removeEventListener(tag, handler);
+    NetInfo.removeEventListener(tag, handler);
 };
 
 

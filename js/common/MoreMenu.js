@@ -23,6 +23,7 @@ import AboutPage from '../page/about/AboutPage'
 import AboutMePage from '../page/about/AboutMePage'
 import UShare from '../common/UShare'
 import share from '../../res/data/share.json'
+
 export const MORE_MENU = {
     Custom_Language: '自定义语言',
     Sort_Language: '语言排序',
@@ -61,7 +62,7 @@ export default class MoreMenu extends Component {
     }
 
     showPopover() {
-        if (!this.props.anchorView)return;
+        if (!this.props.anchorView) return;
         let anchorView = this.props.anchorView();
         anchorView.measure((ox, oy, width, height, px, py) => {
             this.setState({
@@ -77,7 +78,7 @@ export default class MoreMenu extends Component {
 
     onMoreMenuSelect(tab) {
         this.closePopover();
-        if(typeof(this.props.onMoreMenuSelect)=='function')this.props.onMoreMenuSelect(tab)
+        if (typeof(this.props.onMoreMenuSelect) == 'function') this.props.onMoreMenuSelect(tab)
         let TargetComponent, params = {...this.props, menuType: tab};
         switch (tab) {
             case MORE_MENU.Custom_Language:
@@ -90,7 +91,7 @@ export default class MoreMenu extends Component {
                 break;
             case MORE_MENU.Remove_Key:
                 TargetComponent = CustomKeyPage;
-                params.isRemoveKey=true;
+                params.isRemoveKey = true;
                 params.flag = FLAG_LANGUAGE.flag_key;
                 break;
             case MORE_MENU.Sort_Language:
@@ -111,7 +112,7 @@ export default class MoreMenu extends Component {
                 TargetComponent = AboutPage;
                 break;
             case MORE_MENU.Feedback:
-                var url='mailto://crazycodeboy@gmail.com';
+                var url = 'mailto://crazycodeboy@gmail.com';
                 Linking.canOpenURL(url).then(supported => {
                     if (!supported) {
                         console.log('Can\'t handle url: ' + url);
@@ -121,9 +122,11 @@ export default class MoreMenu extends Component {
                 }).catch(err => console.error('An error occurred', err));
                 break;
             case MORE_MENU.Share:
-                var shareApp=share.share_app;
+                var shareApp = share.share_app;
                 UShare.share(shareApp.title, shareApp.content,
-                    shareApp.imgUrl,shareApp.url,()=>{},()=>{})
+                    shareApp.imgUrl, shareApp.url, () => {
+                    }, () => {
+                    })
                 break;
         }
         if (TargetComponent) {
@@ -141,12 +144,12 @@ export default class MoreMenu extends Component {
             fromRect={this.state.buttonRect}
             placement="bottom"
             contentMarginRight={20}
-            onClose={()=>this.closePopover()}
+            onClose={() => this.closePopover()}
             contentStyle={{opacity: 0.82, backgroundColor: '#343434'}}
             style={{backgroundColor: 'red'}}>
             <View style={{alignItems: 'center'}}>
                 {this.props.menus.map((result, i, arr) => {
-                    return <TouchableOpacity key={i} onPress={()=>this.onMoreMenuSelect(arr[i])}
+                    return <TouchableOpacity key={i} onPress={() => this.onMoreMenuSelect(arr[i])}
                                              underlayColor='transparent'>
                         <Text
                             style={{fontSize: 18, color: 'white', padding: 8, fontWeight: '400'}}>

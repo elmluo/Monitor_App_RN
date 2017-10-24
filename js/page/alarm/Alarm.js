@@ -30,11 +30,11 @@ export default class Alarm extends Component {
         this.dataRepository = new DataRepository();
         this.state = {
             theme: this.props.theme,
-            initialPage:1,
+            initialPage: 1,
             isHisAlarm: true,
-            focusPage:1,
+            focusPage: 1,
             alarmPage: 1,
-            historyPage:1,
+            historyPage: 1,
 
         }
     }
@@ -60,31 +60,32 @@ export default class Alarm extends Component {
             </View>
         )
     }
+
     //筛选条件
     //站点 siteId 数组
     //设备类型 deviceType 数组
     //告警等级 level 数组
     //默认不传，返回所有数据
 
-    _this_Params(initialPage,isHisAlarm){
-        let params={
-            stamp:StorageFunction.getLoginInfo().stamp,
-            userId:StorageFunction.getLoginInfo().userId,
-            size:20,
+    _this_Params(initialPage, isHisAlarm) {
+        let params = {
+            stamp: StorageFunction.getLoginInfo().stamp,
+            userId: StorageFunction.getLoginInfo().userId,
+            size: 20,
         };
         //参数逻辑判断
-        if (initialPage === 0){
+        if (initialPage === 0) {
             //关注告警参数
             // page = this.setState.focusPage ++;
             params.page = this.state.focusPage;
 
-        }else {
-            if(isHisAlarm === true){
+        } else {
+            if (isHisAlarm === true) {
                 params.status = 2;
                 params.page = this.state.alarmPage;
 
 
-            }else{
+            } else {
                 params.status = 1;
                 params.page = this.state.historyPage;
 
@@ -118,9 +119,12 @@ export default class Alarm extends Component {
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
                 initialPage={1}>
-                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0,true)} url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
-                <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1,true)} url={'/app/v2/alarm/list'}>实时告警</AlarmTab>
-                <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2,false)} url={'/app/v2/alarm/list'}>历史告警</AlarmTab>
+                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0, true)} isAlarm = {false}
+                          url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
+                <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1, true)} isAlarm = {false}
+                          url={'/app/v2/alarm/list'}>实时告警</AlarmTab>
+                <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2, false)} isAlarm = {true}
+                          url={'/app/v2/alarm/list'}>历史告警</AlarmTab>
             </ScrollableTabView>;
         return (
             <View style={styles.container}>
@@ -157,15 +161,15 @@ class AlarmTab extends Component {
             isLoading: true
         });
         let url = this.props.url;
-        let params=this.props.params;
+        let params = this.props.params;
 
 
         // 切换不同标签页，通过tabBle
         // alert(JSON.stringify(url));
         // alert(JSON.stringify(params));
 
-        this.dataRepository.fetchNetRepository('POST',url,params)
-            .then(result=>{
+        this.dataRepository.fetchNetRepository('POST', url, params)
+            .then(result => {
                 this.setState({
                     result: JSON.stringify(result),
                     dataSource: this.state.dataSource.cloneWithRows(result.data),
@@ -195,7 +199,7 @@ class AlarmTab extends Component {
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={() => {
-                    this._pushToDetail(rowData)
+                    this._pushToDetail(rowData,this.props.isAlarm)
                 }}>
                 <View style={styles.cell}>
                     <View style={styles.cellLeft}>
@@ -203,7 +207,12 @@ class AlarmTab extends Component {
                             source={alarmIconSource}/>
                     </View>
                     <View style={styles.cellRight}>
-                        <View style={{flexDirection: 'row',justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: 10
+                        }}>
                             <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
                             <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
                         </View>
@@ -220,11 +229,12 @@ class AlarmTab extends Component {
         )
     }
 
-    _pushToDetail(rowData) {
+    _pushToDetail(rowData, isHisAlarm) {
         this.props.navigator.push({
             component: AlarmDetail,
             params: {
                 item: rowData,
+                isHisAlarm: isHisAlarm,
                 ...this.props
             }
         })

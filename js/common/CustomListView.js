@@ -78,6 +78,7 @@ export default class CustomListView extends Component {
                 // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
                     // alert(page);
+                    console.log('第一页');
                     this.setState({
                         isLoading: false,
                         noNetWord: false,
