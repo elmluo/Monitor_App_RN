@@ -151,8 +151,7 @@ export default class WelcomePage extends Component {
             dataRepository.fetchNetRepository('POST', url, params)
                 .then((response) => {
                     if (response['success'] === true) {
-                        this._JPushSetAliasAndTag();
-                        // this._pushToMainPage();
+                        this._JPushSetAlias();
 
                     } else {
                         console.log('response.info')
@@ -175,12 +174,12 @@ export default class WelcomePage extends Component {
     }
 
 
-    _JPushSetAliasAndTag() {
+    _JPushSetAlias() {
 
-        let alias = StorageClass.userId;
+        dataRepository.fetchLocalRepository('/app/v2/user/login').then((userData) => {
 
-        JPushModule.setAlias()
-        {
+            let alias = userData.userId;
+
             if (alias !== undefined) {
                 JPushModule.setAlias(alias, () => {
                     console.log("Set alias succeed");
@@ -188,7 +187,7 @@ export default class WelcomePage extends Component {
                     console.log("Set alias failed");
                 });
             }
-        }
+        });
         this._pushToMainPage();
 
 
