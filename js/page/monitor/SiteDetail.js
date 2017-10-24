@@ -306,7 +306,7 @@ class AlarmTabDevice extends Component {
         let header =
             <View style={deviceCellStyles.searchHeader}>
                 <TouchableOpacity
-                    onPress={()=> {
+                    onPress={() => {
                         this.isSelected = !this.isSelected;
                         this.setState({
                             isSelected: this.isSelected
@@ -321,10 +321,10 @@ class AlarmTabDevice extends Component {
                         <Text style={{color: '#3C7FFC'}}>{this.state.selectedSystem}</Text>
                         {
                             this.state.isSelected
-                                ? <Image style={{width: 12, height: 6, tintColor: '#3C7FFC', color: 'red',}}
-                                         source={require('../../../res/Image/BaseIcon/ic_triangle_nor.png')}/>
+                                ? <Image style={{width: 12, height: 6, tintColor: '#3C7FFC'}}
+                                         source={require('../../../res/Image/BaseIcon/ic_triangle_up_nor.png')}/>
                                 : <Image style={{width: 12, height: 6, tintColor: '#3C7FFC'}}
-                                         source={require('../../../res/Image/BaseIcon/ic_triangle_nor.png')}/>
+                                         source={require('../../../res/Image/BaseIcon/ic_triangle_up_nor.png')}/>
                         }
                     </View>
                 </TouchableOpacity>
@@ -342,7 +342,8 @@ class AlarmTabDevice extends Component {
             this.state.isSelected ? <View style={{
                     backgroundColor: 'rgba(0,0,0,0.3)',
                     zIndex: 3,
-                    position: 'absolute'}}>
+                    position: 'absolute'
+                }}>
                     {
                         this.state.systemList.map((item, i, arr) => {    // .map 中item === arr[i]
                             return <TouchableOpacity
@@ -353,9 +354,18 @@ class AlarmTabDevice extends Component {
                                     })
                                 }}
                                 underlayColor='transparent'>
-                                <View>
-                                    <Text>{arr[i]}</Text>
-                                </View>
+
+                                {
+                                    this.state.selectedSystem === item
+                                        ? <View>
+                                            <Text style={{color: '#3C7FFC'}}>{arr[i]}</Text>
+                                            <Image source={require('../../../res/Image/BaseIcon/ic_select.png')}/>
+                                        </View>
+                                        : <View>
+                                            <Text>{arr[i]}</Text>
+                                        </View>
+                                }
+
                             </TouchableOpacity>
                         })
                     }

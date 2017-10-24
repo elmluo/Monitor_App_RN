@@ -54,14 +54,16 @@ export default class Searchbox extends React.Component {
                 </TouchableOpacity>
         } else {
             searchBox =
-                <View onPress={this.props.onClick}>
-                    <View style={{
-                        flexDirection: 'row',
-                        backgroundColor: '#F3F3F3',
-                        width: '100%',
-                        alignItems: 'center',
-                        borderRadius: 2
-                    }}>
+                <View style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    backgroundColor: '#F3F3F3',
+                    alignItems: 'center',
+                    width: width * 0.8,
+                    height: 28,
+                    borderRadius: 2
+                }}>
+                    <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                         <Image
                             style={{width: 10, height: 10, marginLeft: 16, marginRight: 15}}
                             source={require('../../res/Image/BaseIcon/ic_search_nor.png')}/>
@@ -80,24 +82,25 @@ export default class Searchbox extends React.Component {
                                 })
                             }}
                             value={this.state.searchText}/>
+                    </View>
 
-                        <TouchableOpacity
-                            onPress={() => {
-                                // 如果有内容输入,用trim()去掉空字符。
-                                // 调用方法，并且将搜索内容传递出去
-                                if (this.state.searchText === undefined || this.state.searchText === '') {
+
+                    <TouchableOpacity
+                        onPress={() => {
+                            // 如果有内容输入,用trim()去掉空字符。
+                            // 调用方法，并且将搜索内容传递出去
+                            if (this.state.searchText === undefined || this.state.searchText === '') {
+                                return
+                            } else {
+                                if (this.state.searchText.trim() === '') {
                                     return
                                 } else {
-                                    if (this.state.searchText.trim() === '') {
-                                        return
-                                    } else {
-                                        this.props.onSearch(this.state.searchText.trim());
-                                    }
+                                    this.props.onSearch(this.state.searchText.trim());
                                 }
-                            }}>
-                            <Text style={{marginRight: 10}}>搜索</Text>
-                        </TouchableOpacity>
-                    </View>
+                            }
+                        }}>
+                        <Text style={{marginRight: 10}}>搜索</Text>
+                    </TouchableOpacity>
                 </View>
         }
 
@@ -110,19 +113,9 @@ export default class Searchbox extends React.Component {
 }
 
 let styles = new StyleSheet.create({
-    searchBox: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingLeft: 16,
-        paddingRight: 16,
-        paddingTop: 8,
-        paddingBottom: 8,
-        backgroundColor: '#FFFFFF',
-        marginBottom: 6
-    },
     TextInput: {
         padding: 1,
-        width: width * 0.63,
+        width: width*0.5,
         color: '#9C9C9C',
         fontSize: 12
     }

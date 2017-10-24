@@ -6,6 +6,8 @@ import {
     TouchableOpacity,
     ScrollView,
     Image,
+    StatusBar,
+    Platform,
 } from 'react-native';
 
 import Storage from '../common/StorageClass'
@@ -63,11 +65,11 @@ export default class ComponentName extends React.Component {
     }
 
     render() {
+
         return (
             <View style={styles.container}>
 
                 <View style={[this.state.theme.styles.navBar, styles.header]}>
-
                     <Searchbox
                         {...this.props}
                         placeholder={this.props.title}
@@ -104,9 +106,9 @@ export default class ComponentName extends React.Component {
                             {
                                 this.state.hisArr.map((item) => {
                                     // return this._renderHistoryButton(item)
-                                        return <View style={styles.historyButton}>
+                                    return <View style={styles.historyButton}>
                                         <TouchableOpacity
-                                            onPress={()=> {
+                                            onPress={() => {
                                                 // 点击记录按钮，搜索点击内容
                                                 this._pushToSearchResult(item);
                                             }}
@@ -144,7 +146,7 @@ let styles = new StyleSheet.create({
         alignItems: 'center',
         paddingLeft: 16,
         paddingRight: 16,
-        paddingTop: 8,
+        paddingTop: Platform.OS === 'ios' ? 28 : 8,
         paddingBottom: 8,
     },
     searchHistory: {},
