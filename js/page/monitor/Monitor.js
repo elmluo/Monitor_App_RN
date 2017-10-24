@@ -44,8 +44,8 @@ export default class Monitor extends Component {
      * @private
      */
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
-        let fusOnline =
-            rowData.fsuOnline ? <Text style={[styles.onlineState, onlineStyle]}>在线</Text>
+        let fsuOnline =
+            rowData.fsuOnline ? <Text style={[styles.onlineState,]}>在线</Text>
                 : <Text style={styles.onlineState}>离线</Text>;
 
         let operationState;
@@ -74,7 +74,7 @@ export default class Monitor extends Component {
                         <Text style={styles.tier}>{rowData.tier}</Text>
                         <View style={styles.rowBottomRight}>
                             {operationState}
-                            {fusOnline}
+                            {fsuOnline}
                         </View>
                     </View>
                 </View>
