@@ -16,13 +16,15 @@ import Login from './Login'
 import ThemeDao from '../expand/dao/ThemeDao'
 import JPushModule from 'jpush-react-native';
 import DataRepository from '../expand/dao/Data'
+import Storage from '../../common/StorageClass'
 
-let {width,height}=Dimensions.get('window');
-let dataRepository  = new DataRepository();
+let StorageClass = new Storage();
+let {width, height} = Dimensions.get('window');
+let dataRepository = new DataRepository();
 export default class WelcomePage extends Component {
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             result: null,
 
         }
@@ -30,8 +32,8 @@ export default class WelcomePage extends Component {
 
     componentDidMount() {
         // SplashScreen.hide();
-        new ThemeDao().getTheme().then((data)=>{
-            this.theme=data;
+        new ThemeDao().getTheme().then((data) => {
+            this.theme = data;
         });
         // this.timer=setTimeout(()=> {
         //     // SplashScreen.hide();
@@ -44,13 +46,13 @@ export default class WelcomePage extends Component {
         //     });
         // }, 1000);
 
-        this._checkNeedUpdate().then((isUpdate)=>{
+        this._checkNeedUpdate().then((isUpdate) => {
             if (isUpdate === false) {
                 return this._checkUser()
             } else {
                 // 欢迎页面有关跟新交互代码逻辑
             }
-        }).then((isSaved)=> {
+        }).then((isSaved) => {
             isSaved
                 ? this._toLogin()
                 // ? this._pushToLoginPage()
@@ -58,7 +60,7 @@ export default class WelcomePage extends Component {
         })
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         // 组件卸载后取消定时器，防止多余异常出现
         // this.timer && clearTimeout(this.timer);
     }
@@ -69,38 +71,38 @@ export default class WelcomePage extends Component {
      * @private
      */
     _checkNeedUpdate() {
-        let url='/app/v2/version/get';
+        let url = '/app/v2/version/get';
         let params = {
             appId: 'YiYi',
             os: Platform.OS,
         };
-        return new Promise((resolve, reject)=> {
+        return new Promise((resolve, reject) => {
             dataRepository.fetchNetRepository('POST', url, params)
-                .then(response=>{
-                    dataRepository.fetchLocalRepository(url).then((localData)=> {
-                            console.log(localData);
-                            console.log(response.data);
-                            if (localData) {
-                                // 若之前登陆过，比较、跟新本地版本信息
-                                if (response.data.version === localData.version){
-                                    resolve(false);
-                                } else {
-                                    dataRepository.saveRepository(url, response.data)
-                                        .then((error)=>{
-                                            reject(error);
-                                        });
-                                }
+                .then(response => {
+                    dataRepository.fetchLocalRepository(url).then((localData) => {
+                        console.log(localData);
+                        console.log(response.data);
+                        if (localData) {
+                            // 若之前登陆过，比较、跟新本地版本信息
+                            if (response.data.version === localData.version) {
+                                resolve(false);
                             } else {
-                                // 若首次打开，保存版本信息,进入登陆页面
                                 dataRepository.saveRepository(url, response.data)
-                                    .then((error)=>{
-                                        resolve(false);
+                                    .then((error) => {
+                                        reject(error);
                                     });
                             }
+                        } else {
+                            // 若首次打开，保存版本信息,进入登陆页面
+                            dataRepository.saveRepository(url, response.data)
+                                .then((error) => {
+                                    resolve(false);
+                                });
+                        }
 
 
-                        })
-                        .catch(error=>{
+                    })
+                        .catch(error => {
                             reject(error)
                         });
 
@@ -116,10 +118,10 @@ export default class WelcomePage extends Component {
      * @returns {Promise}
      * @private
      */
-    _checkUser(){
-        return new Promise((resolve, reject)=> {
+    _checkUser() {
+        return new Promise((resolve, reject) => {
             dataRepository.fetchLocalRepository('user')
-                .then((userData)=>{
+                .then((userData) => {
                     // console.log(userData, '获取本地用户信息');
                     if (userData) {
                         resolve(true);
@@ -127,7 +129,7 @@ export default class WelcomePage extends Component {
                         resolve(false);
                     }
                 })
-                .catch(error=>{
+                .catch(error => {
                     reject(error)
                 })
         })
@@ -138,8 +140,8 @@ export default class WelcomePage extends Component {
      * @private
      */
 
-    _toLogin(){
-        dataRepository.fetchLocalRepository('user').then((userData)=>{
+    _toLogin() {
+        dataRepository.fetchLocalRepository('user').then((userData) => {
             let url = '/app/v2/user/login';
             let params = {
                 appId: 'YiYi',
@@ -147,8 +149,8 @@ export default class WelcomePage extends Component {
                 password: userData.password
             };
             dataRepository.fetchNetRepository('POST', url, params)
-                .then((response)=> {
-                    if (response['success'] === true){
+                .then((response) => {
+                    if (response['success'] === true) {
                         this._JPushSetAliasAndTag();
                         // this._pushToMainPage();
 
@@ -156,13 +158,13 @@ export default class WelcomePage extends Component {
                         console.log('response.info')
                     }
                 })
-                .catch(error=> {
+                .catch(error => {
                     console.log(error);
                 })
         });
     }
 
-    _pushToMainPage(){
+    _pushToMainPage() {
         this.props.navigator.resetTo({
             component: Main,
             params: {
@@ -173,26 +175,12 @@ export default class WelcomePage extends Component {
     }
 
 
-    _JPushSetAliasAndTag(){
+    _JPushSetAliasAndTag() {
 
-        dataRepository.fetchLocalRepository('/app/v2/user/login').then((userData)=>{
-            console.log(userData.userId);
+        let alias = StorageClass.userId;
 
-            let tag = userData.stamp;
-            let alias = userData.userId;
-
-            if (tag!== undefined) {
-                console.log('进入设置 tag');
-
-                /*
-                * 请注意这个接口要传一个数组过去，这里只是个简单的示范
-                */
-                JPushModule.setTags([tag,tag], () => {
-                    console.log("Set tag succeed");
-                }, () => {
-                    console.log("Set tag failed");
-                });
-            }
+        JPushModule.setAlias()
+        {
             if (alias !== undefined) {
                 JPushModule.setAlias(alias, () => {
                     console.log("Set alias succeed");
@@ -200,16 +188,13 @@ export default class WelcomePage extends Component {
                     console.log("Set alias failed");
                 });
             }
-            this._pushToMainPage();
-
-
-
-        });
+        }
+        this._pushToMainPage();
 
 
     }
 
-    _pushToLoginPage(){
+    _pushToLoginPage() {
 
         this.props.navigator.resetTo({
             component: Login,
@@ -223,17 +208,18 @@ export default class WelcomePage extends Component {
     render() {
         // return null;
         let newVersion = JSON.stringify(this.state.result);
-        let  oldVersion;
+        let oldVersion;
         dataRepository.fetchLocalRepository('/app/v2/version/get')
-            .then((result)=>{
+            .then((result) => {
                 oldVersion = result;
                 // alert(JSON.stringify(oldVersion));
             });
-        return(
+        return (
             <View style={styles.container}>
                 <View>
-                    <ImageBackground style ={{width:width,height:height+22}} source={require('../../res/Image/Login/Login_launch.png')}>
-                        <Text style ={{textAlign:'center',top:height - 60,color:'white'}}>检查更新中....</Text>
+                    <ImageBackground style={{width: width, height: height + 22}}
+                                     source={require('../../res/Image/Login/Login_launch.png')}>
+                        <Text style={{textAlign: 'center', top: height - 60, color: 'white'}}>检查更新中....</Text>
                     </ImageBackground>
                 </View>
 
