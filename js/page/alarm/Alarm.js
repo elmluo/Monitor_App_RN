@@ -18,6 +18,9 @@ import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import Storage from '../../common/StorageClass'
 import CustomListView from '../../common/CustomListView'
+import Utils from '../../util/Utils'
+
+// let utils = new Utils();
 let storage = new Storage();
 
 let StorageFunction = new Storage();
@@ -171,16 +174,6 @@ class AlarmTab extends Component {
             })
     }
 
-
-    _Time(strTime) {
-        let d = new Date();
-        d.setTime(strTime);
-        let time =`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}  ${d.getHours()}:${d.getMinutes()}`
-
-        // alert(time);
-
-        return  time;
-    }
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let alarmIconSource;
         switch (rowData.level) {
@@ -212,7 +205,7 @@ class AlarmTab extends Component {
                     <View style={styles.cellRight}>
                         <View style={{flexDirection: 'row',justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
                             <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
-                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{this._Time(rowData.reportTime)}</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
                         </View>
                         <View>
                             <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>

@@ -2505,6 +2505,10 @@ istanbul-reports@^1.1.2:
   dependencies:
     handlebars "^4.0.3"
 
+jcore-react-native@^1.1.8-beta2:
+  version "1.1.8"
+  resolved "http://registry.npm.taobao.org/jcore-react-native/download/jcore-react-native-1.1.8.tgz#c9ef7eb7d2bc55576a2a69c02b9687ab7a865117"
+
 jest-changed-files@^21.2.0:
   version "21.2.0"
   resolved "http://registry.npm.taobao.org/jest-changed-files/download/jest-changed-files-21.2.0.tgz#5dbeecad42f5d88b482334902ce1cba6d9798d29"
@@ -2763,6 +2767,10 @@ jest@21.2.1:
   resolved "http://registry.npm.taobao.org/jest/download/jest-21.2.1.tgz#c964e0b47383768a1438e3ccf3c3d470327604e1"
   dependencies:
     jest-cli "^21.2.1"
+
+jpush-react-native@^2.1.0:
+  version "2.1.1"
+  resolved "http://registry.npm.taobao.org/jpush-react-native/download/jpush-react-native-2.1.1.tgz#aed87d19e12d00dbfb0238545108e839e1bf840b"
 
 js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"

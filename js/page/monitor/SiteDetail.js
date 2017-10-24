@@ -131,14 +131,16 @@ export default class SiteDetail extends Component {
                 </AlarmTabDevice>
                 <AlarmTabAlarm tabLabel='告警'
                                {...this.props}
-                               url={'/app/v2/device/list'}
+                               url={'/app/v2/alarm/list'}
                                params={{
                                    stamp: storage.getLoginInfo().stamp,
-                                   siteId: this.props.item.siteId,
+                                   userId: storage.getLoginInfo().userId,
+                                   siteId: [this.props.item.siteId],
                                    // system: '',
                                    // keyword: '',
                                    page: 1,
                                    size: 20,
+                                   status: 2,
                                }}>
                     告警
                 </AlarmTabAlarm>
@@ -161,6 +163,20 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    cell: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 2,
+        padding: 16,
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: 'white'
+    },
+    cellLeft: {},
+    cellRight: {
+        flex: 1,
+        marginLeft: 14,
+    }
 });
 
 
@@ -189,9 +205,7 @@ class AlarmTabDevice extends Component {
      * @private
      */
     _getImageIcon(typeCode) {
-        console.log(typeof(typeCode));
         let imageIcon;
-        !typeCode && (imageIcon = require("../../../res/Image/Monitor/ic_XX_nor.png"));
         switch (typeCode) {
             case '002':
                 imageIcon = <Image source={require("../../../res/Image/Monitor/ic_GGD_nor.png")}/>;
@@ -236,7 +250,7 @@ class AlarmTabDevice extends Component {
                 imageIcon = <Image source={require("../../../res/Image/Monitor/ic_EN_MG_nor.png")}/>;
                 break;
             default:
-                break;
+                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_XX_nor.png")}/>;
         }
         return imageIcon
     }
@@ -360,11 +374,18 @@ const deviceCellStyles = StyleSheet.create({
 
 
 
+
+
+
+
+
+
 /**
  * 告警列表ab页面，
  * 充当scrollableTabView的tab页面
  */
-
+import Utils from '../../util/Utils';
+import AlarmDetail from '../../page/alarm/AlarmDetail'
 class AlarmTabAlarm extends Component {
     constructor(props) {
         super(props);
@@ -374,15 +395,60 @@ class AlarmTabAlarm extends Component {
     /**
      * 渲染列表cell
      */
-    _renderRow(rowData) {
+    _renderRow(rowData, sectionID, rowID, hightlightRow) {
+        let alarmIconSource;
+        switch (rowData.level) {
+            case '1':
+                alarmIconSource = require('../../../res/Image/BaseIcon/ic_oneAlarm_nor.png');
+                break;
+            case '2':
+                alarmIconSource = require('../../../res/Image/BaseIcon/ic_twoAlarm_nor.png');
+                break;
+            case '3':
+                alarmIconSource = require('../../../res/Image/BaseIcon/ic_threeAlarm_nor.png');
+                break;
+            default:
+                alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
+
+        }
+
         return (
-            <View>
-                <Text style={{backgroundColor: 'red'}}>{rowData.deviceId}</Text>
-                <Text>{rowData.type}</Text>
-                <Text>{rowData.typeCode}</Text>
-                <Text>{rowData.name}</Text>
-            </View>
+            <TouchableOpacity
+                activeOpacity={0.5}
+                onPress={() => {
+                    this._pushToDetail(rowData)
+                }}>
+                <View style={styles.cell}>
+                    <View style={styles.cellLeft}>
+                        <Image
+                            source={alarmIconSource}/>
+                    </View>
+                    <View style={styles.cellRight}>
+                        <View style={{flexDirection: 'row',justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
+                            <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
+                        </View>
+                        <View>
+                            <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
+                        </View>
+                        <View>
+                            <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.deviceName}</Text>
+                        </View>
+                    </View>
+                </View>
+
+            </TouchableOpacity>
         )
+    }
+
+    _pushToDetail(rowData) {
+        this.props.navigator.push({
+            component: AlarmDetail,
+            params: {
+                item: rowData,
+                ...this.props
+            }
+        })
     }
 
     render() {
