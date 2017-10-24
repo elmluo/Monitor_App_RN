@@ -11,12 +11,7 @@ import {
     Image,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
-// import FlatListDemo from '../demo/FlatList'
 import CustomListView from '../../common/CustomListView'
-
-import CustomListViewBetterLoadMore from '../demo/CustomListViewBetterLoadMore'
-
-// import RefreshLoadMoreListView from '../demo/swRefresh'
 import Storage from '../../common/StorageClass'
 
 let storage = new Storage();

@@ -14,7 +14,7 @@ import {
 import Main from './Main'
 import Login from './Login'
 import ThemeDao from '../expand/dao/ThemeDao'
-// import SplashScreen from 'react-native-splash-screen'
+import JPushModule from 'jpush-react-native';
 import DataRepository from '../expand/dao/Data'
 
 let {width,height}=Dimensions.get('window');
@@ -24,6 +24,7 @@ export default class WelcomePage extends Component {
         super(props);
         this.state={
             result: null,
+
         }
     }
 
@@ -148,7 +149,9 @@ export default class WelcomePage extends Component {
             dataRepository.fetchNetRepository('POST', url, params)
                 .then((response)=> {
                     if (response['success'] === true){
-                        this._pushToMainPage();
+                        this._JPushSetAliasAndTag();
+                        // this._pushToMainPage();
+
                     } else {
                         console.log('response.info')
                     }
@@ -169,7 +172,45 @@ export default class WelcomePage extends Component {
         })
     }
 
+
+    _JPushSetAliasAndTag(){
+
+        dataRepository.fetchLocalRepository('/app/v2/user/login').then((userData)=>{
+            console.log(userData.userId);
+
+            let tag = userData.stamp;
+            let alias = userData.userId;
+
+            if (tag!== undefined) {
+                console.log('进入设置 tag');
+
+                /*
+                * 请注意这个接口要传一个数组过去，这里只是个简单的示范
+                */
+                JPushModule.setTags([tag,tag], () => {
+                    console.log("Set tag succeed");
+                }, () => {
+                    console.log("Set tag failed");
+                });
+            }
+            if (alias !== undefined) {
+                JPushModule.setAlias(alias, () => {
+                    console.log("Set alias succeed");
+                }, () => {
+                    console.log("Set alias failed");
+                });
+            }
+            this._pushToMainPage();
+
+
+
+        });
+
+
+    }
+
     _pushToLoginPage(){
+
         this.props.navigator.resetTo({
             component: Login,
             params: {
