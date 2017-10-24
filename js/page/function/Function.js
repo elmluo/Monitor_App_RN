@@ -8,7 +8,6 @@ import {
     Text,
     View,
     Image,
-    Alert,
     ScrollView,
     RefreshControl,
     TouchableOpacity,
@@ -32,6 +31,7 @@ export default class Function extends Component {
                 title={'服务页'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
+        
         return(
             <View style={styles.container}>
                 {navigationBar}
