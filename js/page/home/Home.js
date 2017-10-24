@@ -397,7 +397,7 @@ export default class Monitor extends Component {
             //这是默认的通知消息
 
               this.setState({pushMsg:message});
-              Alert.alert(message);
+              alert('默认推送消息'+message);
 
         });
 
@@ -489,9 +489,10 @@ export default class Monitor extends Component {
 
         JPushModule.addGetRegistrationIdListener((registrationId) => {
             console.log("Device register succeed, registrationId " + registrationId);
-            Alert.alert("Device register succeed, registrationId " + registrationId);
+            alert("Device register succeed, registrationId " + registrationId);
 
         });
+        JPushModule.add
         // 页面加载完成再去渲染数据，减缓卡顿问题
         InteractionManager.runAfterInteractions(() => {
             this._refreshData();

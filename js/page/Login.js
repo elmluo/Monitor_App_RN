@@ -21,20 +21,22 @@ import CompanyPage from './my/CompanyListPage'
 import ForgetPasswordPage from './my/ForgetPasswordPage'
 import SetUpServer from './my/SetUpServer'
 import Storage from '../common/StorageClass'
-
+import JPushModule from 'jpush-react-native';
 
 let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
-let {width,height} = Dimensions.get('window');
+let {width, height} = Dimensions.get('window');
 let storage = new Storage();
 
 export default class Login extends Component {
     constructor(props) {
         super(props);
-        this.state={
-            pushMsg:'',
+        this.state = {
+            pushMsg: '',
             username: '',
             userpwd: '',
+
+
         }
     }
 
@@ -48,24 +50,24 @@ export default class Login extends Component {
         //进行登录
 
         dataRepository.fetchNetRepository('POST', url, params)
-            .then((response)=> {
+            .then((response) => {
 
-                if (response['success'] === true){
+                if (response['success'] === true) {
 
                     // 保存用户登录信息
                     dataRepository.saveRepository('user', params)
-                        .then(()=> {
+                        .then(() => {
                             console.log('用户信息已经保存');
                         });
                     //根据登录返回 classes 判断是代理商还是普通用户
                     // alert('登录成功');
 
-                    if (response.data.classes === '代理商用户'){
+                    if (response.data.classes === '代理商用户') {
                         // alert('代理商');
 
                         this._pushToCompanyPage();
 
-                    }else {
+                    } else {
                         alert('普通用户');
                         // 获取用户信息 主要保存：companyId、userId
                         //
@@ -91,6 +93,10 @@ export default class Login extends Component {
                                             if (companyResponse['success'] === true) {
                                                 // 保存用户登录返回信息
                                                 // alert(JSON.stringify(companyResponse.data));
+                                                this.setState({
+                                                   tag: companyResponse.data.stamp,
+                                                   alias:  companyResponse.data.userId,
+                                                });
                                                 dataRepository.saveRepository(url, {
                                                     companyId: response.data.companyId,
                                                     stamp: companyResponse.data.stamp,
@@ -98,16 +104,26 @@ export default class Login extends Component {
                                                 })
                                                     .then(() => {
 
+                                                    let alias = response.data.userId;
+
+                                                        if (alias !== undefined) {
+                                                            JPushModule.setAlias(alias, () => {
+                                                                console.log("Set alias succeed");
+                                                            }, () => {
+                                                                console.log("Set alias failed");
+                                                            });
+                                                        }
+
                                                         this._pushToMainPage();
                                                     })
                                                     .catch(error => {
                                                         alert(error)
                                                     });
-                                            }else {
+                                            } else {
                                                 console.log('获取数据失败')
 
                                             }
-                                            });
+                                        });
 
                                 } else {
                                     console.log('获取数据失败')
@@ -124,7 +140,7 @@ export default class Login extends Component {
                 }
 
             })
-            .catch(error=> {
+            .catch(error => {
                 console.log(error);
             })
     }
@@ -136,7 +152,7 @@ export default class Login extends Component {
     _pushToMainPage() {
         this.props.navigator.replace({
             component: Main,
-            params:{
+            params: {
                 theme: this.theme,
                 ...this.props
             }
@@ -150,7 +166,7 @@ export default class Login extends Component {
     _pushToCompanyPage() {
         this.props.navigator.push({
             component: CompanyPage,
-            params:{
+            params: {
                 theme: this.theme,
                 ...this.props
             }
@@ -164,7 +180,7 @@ export default class Login extends Component {
     _pushToForgetPasswordPage() {
         this.props.navigator.push({
             component: ForgetPasswordPage,
-            params:{
+            params: {
                 theme: this.theme,
                 ...this.props
             }
@@ -178,7 +194,7 @@ export default class Login extends Component {
     _pushToSetUpServerPage() {
         this.props.navigator.push({
             component: SetUpServer,
-            params:{
+            params: {
                 theme: this.theme,
                 ...this.props
             }
@@ -196,9 +212,10 @@ export default class Login extends Component {
                        source={require('../../res/Image/Login/ic_login_logo.png')}/>
                 <Text style={styles.logoText}>义益云监控</Text>
 
-                <View style = {styles.loginTextBg}>
+                <View style={styles.loginTextBg}>
                     <View style={styles.item}>
-                        <Image source={require('../../res/Image/Login/ic_user_key_nor.png')} style={styles.iconKeyStyle}/>
+                        <Image source={require('../../res/Image/Login/ic_user_key_nor.png')}
+                               style={styles.iconKeyStyle}/>
                         <TextInput
                             ref="inputLoginName"
                             // autoFocus={true}
@@ -211,7 +228,8 @@ export default class Login extends Component {
                         </TextInput>
                     </View>
                     <View style={styles.item}>
-                        <Image source={require('../../res/Image/Login/ic_password_key_nor.png')} style={styles.iconKeyStyle}/>
+                        <Image source={require('../../res/Image/Login/ic_password_key_nor.png')}
+                               style={styles.iconKeyStyle}/>
                         <TextInput
                             ref="inputLoginPwd"
                             underlineColorAndroid="transparent"
@@ -226,19 +244,23 @@ export default class Login extends Component {
                 </View>
             </ImageBackground>
 
-            <ImageBackground style={styles.loginBtnBgImg} source={require('../../res/Image/Login/ic_loginBtn_bg.png')} >
+            <ImageBackground style={styles.loginBtnBgImg} source={require('../../res/Image/Login/ic_loginBtn_bg.png')}>
 
                 <TouchableOpacity style={styles.login}
                                   underlayColor='transparent'
-                                  onPress={()=> {this.loginInMainPage()}}>
+                                  onPress={() => {
+                                      this.loginInMainPage()
+                                  }}>
                     <Text style={styles.loginText}>登录</Text>
                 </TouchableOpacity>
             </ImageBackground>
 
             <View style={styles.viewBottomStyle}>
                 <View>
-                    <TouchableOpacity onPress={()=>{this._pushToForgetPasswordPage()}}>
-                        <Text style={styles.textBottomStyle} >忘记密码</Text>
+                    <TouchableOpacity onPress={() => {
+                        this._pushToForgetPasswordPage()
+                    }}>
+                        <Text style={styles.textBottomStyle}>忘记密码</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -246,7 +268,9 @@ export default class Login extends Component {
                     <Text> | </Text>
                 </View>
                 <View>
-                    <TouchableOpacity onPress={()=>{this._pushToSetUpServerPage()}}>
+                    <TouchableOpacity onPress={() => {
+                        this._pushToSetUpServerPage()
+                    }}>
                         <Text style={styles.textBottomStyle}>服务器设置</Text>
                     </TouchableOpacity>
 
@@ -261,15 +285,15 @@ export default class Login extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems:'center',
+        alignItems: 'center',
     },
     item: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginLeft:30,
-        marginRight:30,
-        borderBottomWidth:1,
-        borderBottomColor:'rgb(235,235,235)'
+        marginLeft: 30,
+        marginRight: 30,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgb(235,235,235)'
 
     },
     login: {
@@ -281,64 +305,63 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         color: '#FFF'
     },
-    bgImageSize:{
-        marginTop:0,
-        left:0,
-        right:0,
-        width:width,
-        height:height*0.5,
+    bgImageSize: {
+        marginTop: 0,
+        left: 0,
+        right: 0,
+        width: width,
+        height: height * 0.5,
     },
-    loginImg:{
-        marginTop:60,
+    loginImg: {
+        marginTop: 60,
         alignSelf: 'center',
     },
-    logoText:{
-        fontSize:20,
+    logoText: {
+        fontSize: 20,
         color: '#FFF',
-        textAlign:'center',
+        textAlign: 'center',
         marginTop: 30,
         fontWeight: '600'
     },
-    loginTextBg:{
+    loginTextBg: {
         backgroundColor: 'white',
-        alignSelf:'center',
+        alignSelf: 'center',
         width: width - 30,
         height: height * 0.3,
-        marginTop:49,
+        marginTop: 49,
         borderRadius: 5,
-        shadowColor:'rgba(19,171,228,0.5)',
-        shadowOffset:{h:15,w:20},
-        shadowRadius:20,
-        shadowOpacity:0.7,
+        shadowColor: 'rgba(19,171,228,0.5)',
+        shadowOffset: {h: 15, w: 20},
+        shadowRadius: 20,
+        shadowOpacity: 0.7,
     },
-    loginBtnBgImg:{
-        marginTop:85,
+    loginBtnBgImg: {
+        marginTop: 85,
         width: width * 0.7,
         height: 40,
         alignSelf: 'center',
     },
-    iconKeyStyle:{
-        left:0,
-        marginTop:20,
+    iconKeyStyle: {
+        left: 0,
+        marginTop: 20,
     },
-    textInputSize:{
-        marginTop:20,
-        left:15,
-        width:width*0.69,
-        height:50,
-        textAlign:'left'
+    textInputSize: {
+        marginTop: 20,
+        left: 15,
+        width: width * 0.69,
+        height: 50,
+        textAlign: 'left'
     },
-    viewBottomStyle:{
-        marginTop:width * 0.40,
-        flexDirection:'row',
+    viewBottomStyle: {
+        marginTop: width * 0.40,
+        flexDirection: 'row',
         justifyContent: 'center',
-        alignItems:'center'
+        alignItems: 'center'
     },
-    textBottomStyle:{
-        fontSize:15,
+    textBottomStyle: {
+        fontSize: 15,
         color: 'rgb(102,102,102)'
     }
-
 
 
 });
