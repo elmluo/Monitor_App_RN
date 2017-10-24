@@ -16,7 +16,7 @@ import Login from './Login'
 import ThemeDao from '../expand/dao/ThemeDao'
 import JPushModule from 'jpush-react-native';
 import DataRepository from '../expand/dao/Data'
-import Storage from '../../common/StorageClass'
+import Storage from '../common/StorageClass'
 
 let StorageClass = new Storage();
 let {width, height} = Dimensions.get('window');
