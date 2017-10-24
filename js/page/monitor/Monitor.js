@@ -108,6 +108,7 @@ export default class Monitor extends Component {
         this.props.navigator.push({
             component: SearchPage,
             params: {
+                title: '请输入站点名称',
                 url: this.url,
                 params: this.params,
                 renderRow: this._renderRow.bind(this),
@@ -125,9 +126,6 @@ export default class Monitor extends Component {
                 title={'监控页面'}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}/>;
-
-
-
         let content =
             <CustomListView
                 {...this.props}
@@ -140,13 +138,15 @@ export default class Monitor extends Component {
         return (
             <View style={styles.container}>
                 {navigationBar}
-                <Searchbox
-                    placeholder={'请输入站点名称'}
-                    onClick={() => {
-                        this._pushToSearchPage();
-                    }}
+                <View style={styles.searchBoxWrapper}>
+                    <Searchbox
+                        placeholder={'请输入站点名称'}
+                        onClick={() => {
+                            this._pushToSearchPage();
+                        }}
+                    />
+                </View>
 
-                />
                 {content}
             </View>
         )
@@ -162,14 +162,22 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    searchBoxWrapper: {
+        paddingTop: 8,
+        paddingBottom: 8,
+        paddingLeft: 16,
+        paddingRight: 16,
+        marginBottom: 6,
+        backgroundColor: '#FFFFFF'
+    },
     row: {
         flex: 1,
         justifyContent: 'center',
         borderBottomWidth: 2,
         borderBottomColor: '#EBEBEB',
-        marginLeft: 16,
+        backgroundColor: '#FFFFFF',
+        paddingLeft: 16,
         padding: 15,
-        paddingLeft: 0,
     },
     rowTop: {
         flexDirection: 'row',

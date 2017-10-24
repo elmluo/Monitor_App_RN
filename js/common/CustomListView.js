@@ -94,7 +94,7 @@ export default class CustomListView extends Component {
                     })
                 }
             } else {
-                console.log('连接服务失败')
+                console.log('连接服务失败');
             }
         }).catch(error => {
             this.setState({
@@ -127,7 +127,7 @@ export default class CustomListView extends Component {
                     })
                 }
             } else {
-                console.log('连接服务失败')
+                console.log('连接服务失败');
             }
         }).catch(error => {
             this.setState({
@@ -163,7 +163,7 @@ export default class CustomListView extends Component {
                         this.props.renderRow ? this.props.renderRow
                             : this._renderDefaultRow.bind(this)
                     }
-                    onEndReachedThreshold={100}
+                    onEndReachedThreshold={30}
                     onEndReached={() => {
                         this._onLoadMore();
                     }}
@@ -199,7 +199,7 @@ export default class CustomListView extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#F3F3F3'
     },
     defaultRow: {
         flex: 1,

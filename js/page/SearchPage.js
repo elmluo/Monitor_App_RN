@@ -70,7 +70,7 @@ export default class ComponentName extends React.Component {
 
                     <Searchbox
                         {...this.props}
-                        placeholder={'请输入站点名称'}
+                        placeholder={this.props.title}
                         onSearch={(searchText) => {     // 会拿到子组件返回的数据
                             this._addSearchHistory(searchText);
                             // 跳转到搜索结果页面 传入搜索内容
