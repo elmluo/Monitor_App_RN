@@ -179,12 +179,15 @@ export default class WelcomePage extends Component {
 
         let alias = StorageClass.userId;
 
-        if (alias !== undefined) {
-            JPushModule.setAlias(alias, () => {
-                console.log("Set alias succeed");
-            }, () => {
-                console.log("Set alias failed");
-            });
+        JPushModule.setAlias()
+        {
+            if (alias !== undefined) {
+                JPushModule.setAlias(alias, () => {
+                    console.log("Set alias succeed");
+                }, () => {
+                    console.log("Set alias failed");
+                });
+            }
         }
         this._pushToMainPage();
 

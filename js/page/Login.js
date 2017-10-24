@@ -104,17 +104,10 @@ export default class Login extends Component {
                                                 })
                                                     .then(() => {
 
-                                                    let alias = response.data.userId;
+                                                    let userId = response.data.userId;
 
-                                                        if (alias !== undefined) {
-                                                            JPushModule.setAlias(alias, () => {
-                                                                console.log("Set alias succeed");
-                                                            }, () => {
-                                                                console.log("Set alias failed");
-                                                            });
-                                                        }
+                                                        this._JPushSetAliasAndTag(userId)
 
-                                                        this._pushToMainPage();
                                                     })
                                                     .catch(error => {
                                                         alert(error)
@@ -143,6 +136,30 @@ export default class Login extends Component {
             .catch(error => {
                 console.log(error);
             })
+    }
+
+    /***
+     * 推送注册
+     * @param userId
+     * @private
+     */
+    _JPushSetAliasAndTag(userId) {
+
+        let alias = userId;
+
+        JPushModule.setAlias()
+        {
+            if (alias !== undefined) {
+                JPushModule.setAlias(alias, () => {
+                    console.log("Set alias succeed");
+                }, () => {
+                    console.log("Set alias failed");
+                });
+            }
+        }
+        this._pushToMainPage();
+
+
     }
 
     /**
