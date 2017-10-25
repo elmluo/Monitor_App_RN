@@ -10,7 +10,7 @@ const TAG_NETWORK_CHANGE = "NetworkChange";
  * @param callback
  */
 const checkNetworkState = (callback) => {
-    NetInfo.fetch().done((isConnected) => {
+    NetInfo.getConnectionInfo().done((isConnected) => {
         callback(isConnected);
     });
 };

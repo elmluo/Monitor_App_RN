@@ -18,6 +18,16 @@ export default class LocalStorageClass {
         return this.loginInfo;
     }
 
+    // 保存用户名密码
+    setUserInfo(userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    getUserInfo() {
+        return this.userInfo;
+    }
+
+
     // 操作搜索历史记录数组
     addSearchHistory(item) {
         this.searchHistoryArr.push(item)
@@ -33,5 +43,16 @@ export default class LocalStorageClass {
 
     getAllSearchHistory() {
         return this.searchHistoryArr
+    }
+
+    /**
+     * 设置服务器地址
+     * @param IP
+     */
+    setServerAddress(IP){
+        this.IP = IP;
+    }
+    getServerIP(){
+        return this.IP;
     }
 }

@@ -16,9 +16,7 @@ import Login from './Login'
 import ThemeDao from '../expand/dao/ThemeDao'
 import JPushModule from 'jpush-react-native';
 import DataRepository from '../expand/dao/Data'
-import Storage from '../common/StorageClass'
 
-let StorageClass = new Storage();
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
 export default class WelcomePage extends Component {
@@ -206,7 +204,6 @@ export default class WelcomePage extends Component {
 
     render() {
         // return null;
-        let newVersion = JSON.stringify(this.state.result);
         let oldVersion;
         dataRepository.fetchLocalRepository('/app/v2/version/get')
             .then((result) => {
@@ -222,7 +219,6 @@ export default class WelcomePage extends Component {
                     </ImageBackground>
                 </View>
 
-                <Text>{this.state.result}</Text>
             </View>
         )
 
