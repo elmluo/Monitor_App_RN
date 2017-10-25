@@ -9,7 +9,11 @@ import {
 } from 'react-native';
 import NavigationBar from '../../common/NavigationBar'
 import Btn from '../my/BaseBtn'
+import Storage from '../../common/StorageClass'
+import DataRepository from '../../expand/dao/Data'
 
+let storage = new Storage();
+let dataRepository = new DataRepository();
 let {width,height} = Dimensions.get('window')
 export default class SetUpServer extends React.Component {
     constructor(props) {
@@ -38,6 +42,24 @@ export default class SetUpServer extends React.Component {
             </View>
         )
     }
+
+    _setSeverIP(IP){
+        let url = '/app/timestamp';
+        //进行登录
+        storage.setServerAddress(IP);
+        dataRepository.fetchNetRepository('POST', url, null)
+            .then((response) => {
+                if(response.success == true){
+                     alert('设置成功');
+                    this.props.navigator.pop();
+                }else {
+                    storage.setServerAddress(null);
+                     alert('设置失败');
+
+                }
+            });
+    }
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -77,9 +99,9 @@ export default class SetUpServer extends React.Component {
 
 
                     <TouchableOpacity onPress={() => {
-                        this.props.navigator.pop();
+                        this._setSeverIP(this.state.username);
                     }}>
-                        <Btn text = {this.state.btnText} />
+                        <Btn text = {this.state.btnText}  />
                     </TouchableOpacity>
 
                 </View>

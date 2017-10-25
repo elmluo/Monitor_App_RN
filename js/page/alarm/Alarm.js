@@ -10,7 +10,6 @@ import {
     Image,
     TouchableOpacity,
     ListView,
-    Dimensions,
 } from 'react-native'
 import SearchPage from '../SearchPage01'
 import AlarmDetail from './AlarmDetail'
@@ -21,11 +20,9 @@ import Storage from '../../common/StorageClass'
 import CustomListView from '../../common/CustomListView'
 import Utils from '../../util/Utils'
 
-// let utils = new Utils();
 let storage = new Storage();
 
 let StorageFunction = new Storage();
-let {width, height} = Dimensions.get('window');
 export default class Alarm extends Component {
     constructor(props) {
         super(props);
@@ -144,9 +141,6 @@ export default class Alarm extends Component {
 class AlarmTab extends Component {
 
 
-    alarmIDArr = [];
-    url =  this.props.url;
-    params = this.props.params;
     constructor(props) {
         super(props);
         this.dataRepository = new DataRepository();
@@ -155,13 +149,8 @@ class AlarmTab extends Component {
             dataSource: new ListView.DataSource({
                 rowHasChanged: (r1, r2) => r1 !== r2
             }),
-            url: this.props.url,
-            params: this.props.params,
-        }
-    }
 
-    componentDidMount() {
-        // this._getAlarmList();
+        }
     }
 
     _postSelectedAlarm(alarmId) {
@@ -196,7 +185,7 @@ class AlarmTab extends Component {
                     this.setState({
                         // alarmIDArr: this.alarmIDArr,
                         // success:result.success,
-                        url:this.props.url,
+                        url: this.props.url,
 
 
                     });
@@ -205,13 +194,6 @@ class AlarmTab extends Component {
             })
     }
 
-    _inAlarmIDArr(arr, item) {
-        return arr.indexOf(item) !== -1;
-    }
-
-    // _postSelectedAlarm(alarmId) {
-    //     alert('发送请求' + alarmId);
-    // }
 
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let alarmIconSource;
@@ -230,10 +212,10 @@ class AlarmTab extends Component {
 
         }
 
-        this.setState({
-            focus:rowData.focus,
-
-        });
+        // this.setState({
+        //     focus:rowData.focus,
+        //
+        // });
 
         return (
             <View style={{position: 'relative'}}>
@@ -278,10 +260,10 @@ class AlarmTab extends Component {
                         <View style={{width: 50, height: 50, alignItems: 'center', justifyContent: 'center'}}>
                             {
 
-                                this.state.focus
+                                rowData.focus
                                     ? <Image style={{width: 25, height: 25}}
                                              source={require('../../../res/Image/Alarm/ic_focus.png')}/>
-                                    : <Text>{'取消关注'}</Text>
+                                    : <Text>{'添加告警关注'}</Text>
                             }
 
                         </View>
@@ -309,7 +291,7 @@ class AlarmTab extends Component {
 
         let content = <CustomListView
             {...this.props}
-            url={this.state.url}
+            url={this.props.url}
             params={this.props.params}
             // bind(this)机制需要熟悉
             renderRow={this._renderRow.bind(this)}
