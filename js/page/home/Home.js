@@ -350,26 +350,35 @@ export default class Monitor extends Component {
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
-                            <HomeAlarmCell
-                                count={this.state.levelAlarm[0].count}
-                                allCount={this.state.allCount}
-                                alarmName={this.state.levelAlarm[0].item}
-                                alarmColor='#1CCAEB'/>
-                            <HomeAlarmCell
-                                count={this.state.levelAlarm[1].count}
-                                allCount={this.state.allCount}
-                                alarmName={this.state.levelAlarm[1].item}
-                                alarmColor='#F63232'/>
-                            <HomeAlarmCell
-                                count={this.state.levelAlarm[2].count}
-                                allCount={this.state.allCount}
-                                alarmName={this.state.levelAlarm[2].item}
-                                alarmColor='#F9AE46'/>
-                            <HomeAlarmCell
-                                count={this.state.levelAlarm[3].count}
-                                allCount={this.state.allCount}
-                                alarmName={this.state.levelAlarm[3].item}
-                                alarmColor='#E6CD0D'/>
+                            {/**/}
+                            <TouchableOpacity 
+                                onPress = {() => {this.props.routerChange('tb_alarm', '一级告警');}}>
+                                <HomeAlarmCell
+                                    count={this.state.levelAlarm[0].count}
+                                    allCount={this.state.allCount}
+                                    alarmName={this.state.levelAlarm[0].item}
+                                    alarmColor='#1CCAEB'/></TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress = {() => {this.props.routerChange('tb_alarm', '二级告警');}}>
+                                <HomeAlarmCell
+                                    count={this.state.levelAlarm[1].count}
+                                    allCount={this.state.allCount}
+                                    alarmName={this.state.levelAlarm[1].item}
+                                    alarmColor='#F63232'/></TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress = {() => {this.props.routerChange('tb_alarm', '三级告警');}}>
+                                <HomeAlarmCell
+                                    count={this.state.levelAlarm[2].count}
+                                    allCount={this.state.allCount}
+                                    alarmName={this.state.levelAlarm[2].item}
+                                    alarmColor='#F9AE46'/></TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress = {() => {this.props.routerChange('tb_alarm', '四级告警');}}>
+                                <HomeAlarmCell
+                                    count={this.state.levelAlarm[3].count}
+                                    allCount={this.state.allCount}
+                                    alarmName={this.state.levelAlarm[3].item}
+                                    alarmColor='#E6CD0D'/></TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -379,6 +388,7 @@ export default class Monitor extends Component {
             <View style={styles.container}>
                 {navigationBar}
                 {content}
+
             </View>
         )
     }

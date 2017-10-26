@@ -116,7 +116,13 @@ export default class Main extends BaseComponent {
                 renderSelectedIcon={() =><Image style={[styles.image, this.state.theme.styles.tabBarSelectedIcon]}
                                                 source={renderIcon}/>}
                 onPress={() => this.setState({selectedTab: selectedTab})}>
-                <Component {...this.props} theme={this.state.theme}/>
+                <Component 
+                    {...this.props} 
+                    routerChange = {(nextRouter, args)=>{
+                        this.setState({selectedTab: nextRouter});
+                        alert(args);
+                    }}
+                    theme={this.state.theme}/>
             </TabNavigator.Item>
         )
     }
