@@ -20,7 +20,6 @@ import Storage from '../../common/StorageClass'
 import CustomListView from '../../common/CustomListView'
 import Utils from '../../util/Utils'
 
-// let utils = new Utils();
 let storage = new Storage();
 
 let StorageFunction = new Storage();
@@ -35,7 +34,6 @@ export default class Alarm extends Component {
             focusPage: 1,
             alarmPage: 1,
             historyPage: 1,
-
         }
     }
 
@@ -119,11 +117,11 @@ export default class Alarm extends Component {
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
                 initialPage={1}>
-                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0, true)} isAlarm = {false}
+                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0, true)} isAlarm={false}
                           url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
-                <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1, true)} isAlarm = {false}
+                <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1, true)} isAlarm={false}
                           url={'/app/v2/alarm/list'}>实时告警</AlarmTab>
-                <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2, false)} isAlarm = {true}
+                <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2, false)} isAlarm={true}
                           url={'/app/v2/alarm/list'}>历史告警</AlarmTab>
             </ScrollableTabView>;
         return (
@@ -141,6 +139,8 @@ export default class Alarm extends Component {
  * 充当scrollableTabView的tab页面
  */
 class AlarmTab extends Component {
+
+
     constructor(props) {
         super(props);
         this.dataRepository = new DataRepository();
@@ -148,35 +148,52 @@ class AlarmTab extends Component {
             isLoading: false,
             dataSource: new ListView.DataSource({
                 rowHasChanged: (r1, r2) => r1 !== r2
-            })
+            }),
+
         }
     }
 
-    componentDidMount() {
-        // this._getAlarmList();
-    }
-
-    _getAlarmList() {
+    _postSelectedAlarm(alarmId) {
         this.setState({
             isLoading: true
         });
-        let url = this.props.url;
-        let params = this.props.params;
+        let url = '/app/v2/alarm/focus/change';
+        let params = {
+            userId: storage.getLoginInfo().userId,
+            stamp: storage.getLoginInfo().stamp,
+            alarmId: alarmId,
+        };
 
 
         // 切换不同标签页，通过tabBle
         // alert(JSON.stringify(url));
         // alert(JSON.stringify(params));
-
         this.dataRepository.fetchNetRepository('POST', url, params)
             .then(result => {
-                this.setState({
-                    result: JSON.stringify(result),
-                    dataSource: this.state.dataSource.cloneWithRows(result.data),
-                    isLoading: false
-                })
+
+                if (result.success === true) {
+                    alert(JSON.stringify(result));
+
+                    // let result = this._inAlarmIDArr(this.alarmIDArr, alarmId);
+                    // alert(result);
+                    //
+                    // if (result) {
+                    //     this.alarmIDArr.splice(this.alarmIDArr.indexOf(alarmId), 1);
+                    // } else {
+                    //     this.alarmIDArr.push(alarmId)
+                    // }
+                    this.setState({
+                        // alarmIDArr: this.alarmIDArr,
+                        // success:result.success,
+                        url: this.props.url,
+
+
+                    });
+
+                }
             })
     }
+
 
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let alarmIconSource;
@@ -195,37 +212,67 @@ class AlarmTab extends Component {
 
         }
 
-        return (
-            <TouchableOpacity
-                activeOpacity={0.5}
-                onPress={() => {
-                    this._pushToDetail(rowData,this.props.isAlarm)
-                }}>
-                <View style={styles.cell}>
-                    <View style={styles.cellLeft}>
-                        <Image
-                            source={alarmIconSource}/>
-                    </View>
-                    <View style={styles.cellRight}>
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            marginBottom: 10
-                        }}>
-                            <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
-                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
-                        </View>
-                        <View>
-                            <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
-                        </View>
-                        <View>
-                            <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.deviceName}</Text>
-                        </View>
-                    </View>
-                </View>
+        // this.setState({
+        //     focus:rowData.focus,
+        //
+        // });
 
-            </TouchableOpacity>
+        return (
+            <View style={{position: 'relative'}}>
+                <TouchableOpacity
+                    activeOpacity={0.5}
+                    onPress={() => {
+                        this._pushToDetail(rowData, this.props.isAlarm)
+                    }}>
+                    <View style={styles.cell}>
+                        <View style={styles.cellLeft}>
+                            <Image
+                                source={alarmIconSource}/>
+                        </View>
+                        <View style={styles.cellRight}>
+                            <View style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                marginBottom: 10
+                            }}>
+                                <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
+                                <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
+                            </View>
+                            <View>
+                                <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
+                            </View>
+                            <View>
+                                <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.deviceName}</Text>
+                            </View>
+
+                        </View>
+                    </View>
+
+                </TouchableOpacity>
+
+
+                <View style={{position: 'absolute', right: 25, bottom: 10}}>
+                    <TouchableOpacity onPress={() => {
+
+                        this._postSelectedAlarm(rowData.alarmId);
+                    }}>
+                        <View style={{width: 50, height: 50, alignItems: 'center', justifyContent: 'center'}}>
+                            {
+
+                                rowData.focus
+                                    ? <Image style={{width: 25, height: 25}}
+                                             source={require('../../../res/Image/Alarm/ic_focus.png')}/>
+                                    : <Text>{'添加告警关注'}</Text>
+                            }
+
+                        </View>
+
+                    </TouchableOpacity>
+
+                </View>
+            </View>
+
         )
     }
 
