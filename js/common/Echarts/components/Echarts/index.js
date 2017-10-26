@@ -8,7 +8,6 @@ export default class App extends Component {
   componentWillReceiveProps(nextProps) {    
     if(JSON.stringify(nextProps.option) !== JSON.stringify(this.props.option)) {
       this.refs.chart.reload();
-    console.log(nextProps)
     }
   }
 

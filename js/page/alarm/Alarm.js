@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     ListView,
 } from 'react-native'
-import SearchPage from '../SearchPage01'
+import AlarmFilter from './alarmFilter'
 import AlarmDetail from './AlarmDetail'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -43,7 +43,7 @@ export default class Alarm extends Component {
                 <TouchableOpacity
                     onPress={() => {
                         this.props.navigator.push({
-                            component: SearchPage,
+                            component: AlarmFilter,
                             params: {
                                 ...this.props
                             }

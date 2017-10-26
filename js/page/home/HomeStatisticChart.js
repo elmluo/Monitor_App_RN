@@ -8,6 +8,7 @@ import {
 
 let {width, height} = Dimensions.get('window');
 import Echarts from '../../common/Echarts'
+import Utils from '../../util/Utils.js'
 
 export default class HomeStatisticChart extends Component {
     constructor(props) {
@@ -16,7 +17,7 @@ export default class HomeStatisticChart extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        console.log(this.refs.echarts);
+        // console.log(this.refs.echarts);
         if (nextProps.isReload) {
             this.refs.echarts.refs.chart.reload();
         }
@@ -24,18 +25,81 @@ export default class HomeStatisticChart extends Component {
 
     render() {
 
+        let onlineRate = new Array(28).join('.').split('.').map(function (v) {
+            return;
+        });
+
+        let scope = this;
+
+        var today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
+
+        var hour = 1000 * 60 * 60;
+
+        let monday3 = new Date(today.getTime() - hour * 24 * (new Date().getDay() - 2) - 21 * hour).getTime();
+        this.props.chartData.forEach(function (v) {
+            var id = (v.recordTime - monday3) / (4 * hour);
+            id = Math.round(id);
+            onlineRate[id] = v;
+        });
+
+        let lastValid = this.props.chartData[0];
+        let lastValidIndex = onlineRate.indexOf(lastValid);
+        let nextValid = this.props.chartData[1];
+        let nextValidIndex = onlineRate.indexOf(nextValid);
+
+        for (let itr = 0; itr < onlineRate.length; itr++) {
+            if (!onlineRate[itr]) {
+                onlineRate[itr] = {};
+                onlineRate[itr].name = monday3 + itr * 6 * hour;
+                if (itr === 0) {
+                    onlineRate[itr].data = lastValid.onlineCount / (lastValid.onlineCount + lastValid.offlineCount);
+                    lastValidIndex = 0;
+                } else if (itr < nextValidIndex) {
+                    let d0 = lastValid.onlineCount / (lastValid.onlineCount + lastValid.offlineCount);
+                    let d1 = nextValid.onlineCount / (nextValid.onlineCount + nextValid.offlineCount);
+                    onlineRate[itr].data = (d1 - d0) / (nextValidIndex - lastValidIndex) * (itr - lastValidIndex) + d0;
+                    // console.log(d0, d1, lastValidIndex, nextValidIndex);
+                } else {
+                    onlineRate[itr].data = null;
+                }
+            } else {
+                let temp = onlineRate[itr];
+                onlineRate[itr] = {};
+                onlineRate[itr].name = temp.recordTime;
+                onlineRate[itr].data = temp.onlineCount / (temp.onlineCount + temp.offlineCount);
+                onlineRate[itr].origin = true;
+
+                lastValid = temp;
+                lastValidIndex = itr;
+                nextValid = this.props.chartData[this.props.chartData.indexOf(lastValid) + 1];
+                if (nextValid) {
+                    nextValidIndex = onlineRate.indexOf(nextValid);
+                }
+                // console.log(nextValidIndex, nextValid);
+
+            }
+        }
+
+        let minData = onlineRate.reduce(function (v,o) {
+            return (v.data < o.data || !o.data) ? v : o;
+        }).data * 0.95;
+
+
         // 获取获取7天时间数组
         //[10-1,10-2,10-3.....]
         let xAxisData = this.props.chartData.map((item) => {
-            let d = new Date();
+            let d = new Date(item.recordTime);
             d.setTime(item.recordTime);
-            // console.log(d);
             // return d.getMonth() + 1 + ' -' + d.getDate()
 
             return d;
         });
 
-        console.log(this.props.chartData);
+        // console.log(this.props.chartData);
         let option = {
             backgroundColor: {
                 type: 'linear',
@@ -92,7 +156,9 @@ export default class HomeStatisticChart extends Component {
                 {
                     type: 'category',
                     // boundaryGap : false,
-                    data: xAxisData,  //list.map(v=>new Date(v.time).Format('hh:mm:ss')),
+                    data: onlineRate.map(function (v) {
+                        return '            ' + Utils.FormatTime(new Date(v.name), 'MM-dd');
+                    }),
                     boundaryGap: false,
                     axisTick: {
                         show: false
@@ -104,8 +170,11 @@ export default class HomeStatisticChart extends Component {
                         }
                     },
                     axisLabel: {
+                        interval:3,
+
                     },
                     splitLine: {
+                        interval:3,
                         show: true,
                         lineStyle: {
                             color: "rgba(255,255,255,0.1)"
@@ -122,7 +191,7 @@ export default class HomeStatisticChart extends Component {
                             color: "rgba(255,255,255,0.1)"
                         }
                     },
-
+                    min: minData,
                     axisTick: {
                         show: false
                     },
@@ -178,7 +247,9 @@ export default class HomeStatisticChart extends Component {
                         }
                     },
 
-                    data: this.props.chartData.map(v => (v.onlineCount / (v.onlineCount + v.offlineCount))),//list.map(v=>v.value),
+                    data: onlineRate.map(function (v) {
+                        return v.data;
+                    }),
                     markPoint: {
                         symbol: 'rect',
                         symbolSize: 100
