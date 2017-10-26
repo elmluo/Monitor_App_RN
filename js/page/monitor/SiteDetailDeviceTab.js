@@ -14,7 +14,7 @@ import SearchPage from '../../page/SearchPage';
 import Storage from '../../common/StorageClass'
 import DataRepository from '../../expand/dao/Data'
 import Searchbox from '../../common/Searchbox'
-
+import SignalList from './SiteDetailSignalList';
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
 let dataRepository = new DataRepository();
@@ -34,28 +34,48 @@ export default class DeviceTab extends Component {
     }
 
     /**
+     * 路由跳转到信号列表
+     * @private
+     */
+    _pushToSignalList(rowData) {
+        this.props.navigator.push({
+            component: SignalList,
+            params: {
+                deviceInfo: rowData,
+                ...this.props
+            }
+        })
+    }
+
+    /**
      * 渲染列表cell
      */
     _renderRow(rowData) {
         return (
-            <View style={styles.cell}>
-                <View style={styles.cellLeft}>
-                    <View>
-                        {this._getImageIcon(rowData.typeCode)}
+            <TouchableOpacity
+                onPress={()=> {
+                    this._pushToSignalList(rowData)
+                }}>
+                <View style={styles.cell}>
+                    <View style={styles.cellLeft}>
+                        <View>
+                            {this._getImageIcon(rowData.typeCode)}
+                        </View>
+                        <View>
+                            <Text style={{fontSize: 14, color: '#444444', paddingLeft: 16}}>{rowData.name}</Text>
+                        </View>
                     </View>
                     <View>
-                        <Text style={{fontSize: 14, color: '#444444', paddingLeft: 16}}>{rowData.name}</Text>
+                        {/*{fusOnline}*/}
                     </View>
                 </View>
-                <View>
-                    {/*{fusOnline}*/}
-                </View>
-            </View>
+            </TouchableOpacity>
+
         )
     }
 
     /**
-     * 选人设备列表
+     * 设备列表
      * @returns {XML}
      * @private
      */
@@ -65,7 +85,6 @@ export default class DeviceTab extends Component {
         return (
             <CustomListView
                 {...this.props}
-                isAutoRefresh={true}
                 url={this.props.url}
                 params={params}
                 alertText={'没有更多数据了~'}
@@ -227,33 +246,49 @@ export default class DeviceTab extends Component {
     _renderSelectOptionList() {
         return (
             <View style={styles.selectList}>
-                {
-                    this.state.systemList.map((item, i, arr) => {
-                        return <TouchableOpacity
-                            key={i}
-                            activeOpacity={1}
-                            underlayColor='transparent'
-                            onPress={() => {
-                                this.isSelected = false;
-                                this.setState({
-                                    isSelected: this.isSelected,
-                                    selectedSystem: item,
-                                });
-                            }}>
-                            {
-                                this.state.selectedSystem === item
-                                    ? <View style={styles.selectCell}>
-                                        <Text style={{color: '#3C7FFC'}}>{arr[i]}</Text>
-                                        <Image style={{width: 25, height: 25, tintColor: '#3C7FFC'}}
-                                               source={require('../../../res/Image/BaseIcon/ic_select.png')}/>
-                                    </View>
-                                    : <View style={styles.selectCell}>
-                                        <Text>{arr[i]}</Text>
-                                    </View>
-                            }
-                        </TouchableOpacity>
-                    })
-                }
+                <View>
+                    {
+                        this.state.systemList.map((item, i, arr) => {
+                            return <TouchableOpacity
+                                key={i}
+                                activeOpacity={1}
+                                underlayColor='transparent'
+                                onPress={() => {
+                                    this.isSelected = false;
+                                    this.setState({
+                                        isSelected: this.isSelected,
+                                        selectedSystem: item,
+                                    });
+                                }}>
+                                {
+                                    this.state.selectedSystem === item
+                                        ? <View style={styles.selectCell}>
+                                            <Text style={{color: '#3C7FFC'}}>{arr[i]}</Text>
+                                            <Image style={{width: 25, height: 25, tintColor: '#3C7FFC'}}
+                                                   source={require('../../../res/Image/BaseIcon/ic_select.png')}/>
+                                        </View>
+                                        : <View style={styles.selectCell}>
+                                            <Text>{arr[i]}</Text>
+                                        </View>
+                                }
+                            </TouchableOpacity>
+                        })
+                    }
+                </View>
+
+                {/*半透明遮罩层部分*/}
+                <TouchableOpacity
+                    activeOpacity={1}
+                    style={{backgroundColor: 'rgba(0, 0, 0, 0.3)', flex: 1,}}
+                    onPress={() => {
+                        // 关闭optionList
+                        this.isSelected = false;
+                        this.setState({
+                            isSelected: this.isSelected,
+                        });
+                    }}>
+                </TouchableOpacity>
+
             </View>
         )
     }

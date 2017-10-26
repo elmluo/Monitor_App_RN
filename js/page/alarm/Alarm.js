@@ -209,7 +209,6 @@ class AlarmTab extends Component {
                 break;
             default:
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
-
         }
 
         // this.setState({
