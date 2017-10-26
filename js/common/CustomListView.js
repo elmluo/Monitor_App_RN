@@ -84,7 +84,7 @@ export default class CustomListView extends Component {
     _onRefresh() {
         this.page = 1;
         this._data = [];
-        // 开启加载动画
+        //开启加载动画
         this.setState({
             isLoading: true
         });
@@ -161,10 +161,10 @@ export default class CustomListView extends Component {
      */
     componentWillReceiveProps(nextProps) {
         // 如果传入自动刷新，组件每次加载都会自动加载数据一次。
-        if (this.props.isAutoRefresh) {
-            // console.log(this.props);
+        // if (this.props.isAutoRefresh) {
+        //     console.log(this.props);
             this._onRefresh()
-        }
+        // }
     }
 
 
@@ -200,6 +200,9 @@ export default class CustomListView extends Component {
                     onEndReached={() => {
                         this._onLoadMore();
                     }}
+                    refreshControl={
+                        this._renderRefreshControl()
+                    }
                 />
             )
         }
