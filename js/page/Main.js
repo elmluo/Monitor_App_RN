@@ -116,18 +116,25 @@ export default class Main extends BaseComponent {
                 renderSelectedIcon={() =><Image style={[styles.image, this.state.theme.styles.tabBarSelectedIcon]}
                                                 source={renderIcon}/>}
                 renderBadge={()=>{
-                    let textData = badge;
-                    if (textData) {
-                        return (
-                            <View style={styles.badge}>
-                                <Text style={styles.badgeText}>{textData}</Text>
-                            </View>
-                        )
-                    }
+                let textData = badge;
+                if (textData) {
+                    return (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{textData}</Text>
+                        </View>
+                    )
+                }
 
-                }}
-                    onPress={() => this.setState({selectedTab: selectedTab})}>
-                <Component {...this.props} theme={this.state.theme}/>
+            }}
+                onPress={() => this.setState({selectedTab: selectedTab})}>
+
+            <Component
+                    {...this.props}
+                    routerChange = {(nextRouter, args)=>{
+                        this.setState({selectedTab: nextRouter});
+                        alert(args);
+                    }}
+                    theme={this.state.theme}/>
             </TabNavigator.Item>
         )
     }

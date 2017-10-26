@@ -11,7 +11,7 @@ import {
     TouchableOpacity,
     ListView,
 } from 'react-native'
-import SearchPage from '../SearchPage01'
+import AlarmFilter from './alarmFilter'
 import AlarmDetail from './AlarmDetail'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -43,7 +43,7 @@ export default class Alarm extends Component {
                 <TouchableOpacity
                     onPress={() => {
                         this.props.navigator.push({
-                            component: SearchPage,
+                            component: AlarmFilter,
                             params: {
                                 ...this.props
                             }
@@ -209,7 +209,6 @@ class AlarmTab extends Component {
                 break;
             default:
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
-
         }
 
         // this.setState({
@@ -298,6 +297,7 @@ class AlarmTab extends Component {
 
         let content = <CustomListView
             {...this.props}
+            isAutoRefresh={true}
             url={this.props.url}
             params={this.props.params}
             // bind(this)机制需要熟悉

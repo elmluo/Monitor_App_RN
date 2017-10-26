@@ -115,7 +115,7 @@ export default class Searchbox extends React.Component {
 let styles = new StyleSheet.create({
     TextInput: {
         padding: 1,
-        width: width*0.5,
+        width: width * 0.5,
         color: '#9C9C9C',
         fontSize: 12
     }
