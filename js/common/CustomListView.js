@@ -37,6 +37,24 @@ export default class CustomListView extends Component {
     }
 
     /**
+     *
+     */
+    _renderRefreshControl() {
+        return (
+            <RefreshControl
+                title='加载中...'
+                titleColor={this.state.theme.themeColor}
+                colors={[this.state.theme.themeColor]}
+                tintColor={this.state.theme.themeColor}
+                refreshing={this.state.isLoading}
+                onRefresh={() => {
+                    // 刷新的时候从第一页重新获取数据
+                    this._onRefresh();
+                }}/>
+        )
+    }
+
+    /**
      * 渲染默认的cell
      * @param rowData
      * @param sectionID
@@ -137,6 +155,19 @@ export default class CustomListView extends Component {
         })
     }
 
+    /**
+     * 一旦传入属性变化。
+     * @param nextProps
+     */
+    componentWillReceiveProps(nextProps) {
+        // 如果传入自动刷新，组件每次加载都会自动加载数据一次。
+        if (this.props.isAutoRefresh) {
+            // console.log(this.props);
+            this._onRefresh()
+        }
+    }
+
+
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {
@@ -152,10 +183,10 @@ export default class CustomListView extends Component {
 
     }
 
-    render() {
-        let content =
-            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
-                : this.state.noData ? <NoContentPage type='noData'/> : <ListView
+    _renderListView() {
+        if (this.props.isAutoRefresh) {
+            return (
+                <ListView
                     dataSource={this.state.dataSource}
                     renderHeader={
                         this.props.renderHeader ? this.props.renderHeader : null
@@ -165,33 +196,52 @@ export default class CustomListView extends Component {
                             : this._renderDefaultRow.bind(this)
                     }
                     onEndReachedThreshold={30}
+                    removeClippedSubviews={false}
                     onEndReached={() => {
                         this._onLoadMore();
                     }}
-                    refreshControl={
-                        <RefreshControl
-                            title='加载中...'
-                            titleColor={this.state.theme.themeColor}
-                            colors={[this.state.theme.themeColor]}
-                            tintColor={this.state.theme.themeColor}
-                            refreshing={this.state.isLoading}
-                            onRefresh={() => {
-                                // 刷新的时候从第一页重新获取数据
-                                this._onRefresh();
-                            }}/>
-                    }/>;
+                />
+            )
+        }
+        return (
+            <ListView
+                dataSource={this.state.dataSource}
+                renderHeader={
+                    this.props.renderHeader ? this.props.renderHeader : null
+                }
+                renderRow={
+                    this.props.renderRow ? this.props.renderRow
+                        : this._renderDefaultRow.bind(this)
+                }
+                onEndReachedThreshold={30}
+                removeClippedSubviews={false}
+                onEndReached={() => {
+                    this._onLoadMore();
+                }}
+                refreshControl={
+                    this._renderRefreshControl()
+                }
+            />
+        )
+    }
+
+    render() {
+        let content =
+            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
+                : this.state.noData ?
+                <NoContentPage type='noData'/> : this._renderListView();
         return (
             <View style={styles.container}>
                 {content}
                 <Toast
                     ref="toast"
-                    style={{backgroundColor:'rgba(0,0,0,0.3)'}}
+                    style={{backgroundColor: 'rgba(0,0,0,0.3)'}}
                     position='bottom'
                     positionValue={300}
                     fadeInDuration={500}
                     fadeOutDuration={1000}
                     opacity={0.8}
-                    textStyle={{color:'#000000'}}
+                    textStyle={{color: '#000000'}}
                 />
             </View>
         )

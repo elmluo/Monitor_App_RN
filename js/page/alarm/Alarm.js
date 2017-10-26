@@ -291,6 +291,7 @@ class AlarmTab extends Component {
 
         let content = <CustomListView
             {...this.props}
+            isAutoRefresh={true}
             url={this.props.url}
             params={this.props.params}
             // bind(this)机制需要熟悉

@@ -30,7 +30,6 @@ export default class DeviceTab extends Component {
             theme: this.props.theme,
             selectedSystem: '',
             systemList: [],
-            params: this.props.params
         }
     }
 
@@ -61,11 +60,14 @@ export default class DeviceTab extends Component {
      * @private
      */
     _renderListView() {
+        let params = this.props.params;
+        params.system = this.state.selectedSystem;
         return (
             <CustomListView
                 {...this.props}
+                isAutoRefresh={true}
                 url={this.props.url}
-                params={this.state.params}
+                params={params}
                 alertText={'没有更多数据了~'}
                 // bind(this)机制需要熟悉
                 renderRow={this._renderRow.bind(this)}
@@ -157,7 +159,7 @@ export default class DeviceTab extends Component {
             siteId: this.props.item.siteId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            alert(JSON.stringify(result.data));
+            // alert(JSON.stringify(result.data));
 
             // 默认显示系统列表下第一个系统下设备
             let params = this.props.params;
@@ -183,6 +185,7 @@ export default class DeviceTab extends Component {
                 <TouchableOpacity
                     activeOpacity={0.5}
                     onPress={() => {
+                        // 遮罩层的显示和隐藏
                         this.isSelected = !this.isSelected;
                         this.setState({
                             isSelected: this.isSelected
@@ -232,12 +235,9 @@ export default class DeviceTab extends Component {
                             underlayColor='transparent'
                             onPress={() => {
                                 this.isSelected = false;
-                                let params = this.props.params;
-                                params.system = this.state.selectedSystem;
                                 this.setState({
-                                    selectedSystem: item,
                                     isSelected: this.isSelected,
-                                    params: params,
+                                    selectedSystem: item,
                                 });
                             }}>
                             {
@@ -260,7 +260,7 @@ export default class DeviceTab extends Component {
 
     render() {
         let selectList = this.state.isSelected ? this._renderSelectOptionList() : null;
-        let list = this.isSelected ? null : this._renderListView();
+        let list = this._renderListView();
 
         return (
             <View style={{flex: 1, backgroundColor: '#F3F3F3'}}>
@@ -270,15 +270,7 @@ export default class DeviceTab extends Component {
                     {selectList}
                 </View>
 
-                <TouchableOpacity
-                    onPress={()=> {
-                        this.forceUpdate();
-                        this.isRefresh = !this.isRefresh
-                        // this.render();
-                    }}>
-                    <Text>点击刷新</Text>
-                </TouchableOpacity>
-                <Text>{JSON.stringify(this.state.params)}</Text>
+                {/*<Text>{JSON.stringify(this.state.params)}</Text>*/}
             </View>
         )
     }
