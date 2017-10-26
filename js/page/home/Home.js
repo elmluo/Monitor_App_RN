@@ -492,7 +492,6 @@ export default class Monitor extends Component {
             alert("Device register succeed, registrationId " + registrationId);
 
         });
-        JPushModule.add
         // 页面加载完成再去渲染数据，减缓卡顿问题
         InteractionManager.runAfterInteractions(() => {
             this._refreshData();
