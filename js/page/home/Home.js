@@ -344,9 +344,9 @@ export default class Monitor extends Component {
 
                         {this._renderBulletinSlideBar()}
 
-                        {/*<HomeStatisticChart chartData={this.state.fsuWeekCount}*/}
-                                            {/*width={width}*/}
-                                            {/*height={height * 0.4}/>*/}
+                        <HomeStatisticChart chartData={this.state.fsuWeekCount}
+                                            width={width}
+                                            height={height * 0.4}/>
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
