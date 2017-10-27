@@ -9,7 +9,7 @@ import {
     StyleSheet,
     Image,
     View,
-    Alert,
+    Text,
     DeviceEventEmitter
 } from 'react-native';
 
@@ -105,7 +105,7 @@ export default class Main extends BaseComponent {
             }
         })
     }
-    _renderTab(Component, selectedTab, title, renderIcon) {
+    _renderTab(Component, selectedTab, title, renderIcon,badge) {
         return (
             <TabNavigator.Item
                 selected={this.state.selectedTab === selectedTab}
@@ -115,9 +115,21 @@ export default class Main extends BaseComponent {
                                          source={renderIcon}/>}
                 renderSelectedIcon={() =><Image style={[styles.image, this.state.theme.styles.tabBarSelectedIcon]}
                                                 source={renderIcon}/>}
+                renderBadge={()=>{
+                let textData = badge;
+                if (textData) {
+                    return (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{textData}</Text>
+                        </View>
+                    )
+                }
+
+            }}
                 onPress={() => this.setState({selectedTab: selectedTab})}>
-                <Component 
-                    {...this.props} 
+
+            <Component
+                    {...this.props}
                     routerChange = {(nextRouter, args)=>{
                         this.setState({selectedTab: nextRouter});
                         alert(args);
@@ -131,10 +143,10 @@ export default class Main extends BaseComponent {
         return (
             <View style={styles.container}>
                 <TabNavigator>
-                    {this._renderTab(Home,'tb_home','首页',require('../../res/Image/Tab/tab_home_nor.png'))}
-                    {this._renderTab(Monitor,'tb_monitor','监控',require('../../res/Image/Tab/tab_monitor_nor.png'))}
-                    {this._renderTab(Alarm,'tb_alarm','告警',require('../../res/Image/Tab/tab_alarm_nor.png'))}
-                    {this._renderTab(Function,'tb_function','功能',require('../../res/Image/Tab/tab_subsystem_nor.png'))}
+                    {this._renderTab(Home,'tb_home','首页',require('../../res/Image/Tab/tab_home_nor.png'),2)}
+                    {this._renderTab(Monitor,'tb_monitor','监控',require('../../res/Image/Tab/tab_monitor_nor.png'),null)}
+                    {this._renderTab(Alarm,'tb_alarm','告警',require('../../res/Image/Tab/tab_alarm_nor.png'),123)}
+                    {this._renderTab(Function,'tb_function','功能',require('../../res/Image/Tab/tab_subsystem_nor.png'),null)}
                     {/*{this._renderTab(PopularPage,'tb_popular','告警',require('../../res/images/ic_polular.png'))}*/}
                     {/*{this._renderTab(TrendingPage,'tb_trending','趋势',require('../../res/images/ic_trending.png'))}*/}
                     {/*{this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}*/}
@@ -155,6 +167,22 @@ const styles = StyleSheet.create({
     image: {
         height: 22,
         width: 22,
+    },
+    badge: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        top: -2,
+        right: -5,
+        minWidth: 14,
+        height: 14,
+        borderRadius: 7,
+        backgroundColor: 'red',
+    },
+    badgeText:{
+        fontSize:10,
+        color:'white'
     }
 });
 

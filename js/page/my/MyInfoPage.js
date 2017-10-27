@@ -19,6 +19,10 @@ import DataRepository from '../../expand/dao/Data'
 import ViewUtils from '../../util/ViewUtils'
 import LoginPage from '../Login'
 import SetPasswordPage from '../my/SetPasswordPage'
+import Storage from '../../common/StorageClass'
+import JPushModule from 'jpush-react-native';
+
+let storage = new Storage();
 
 export const MORE_INFO = {
     User_Info: '个人信息',
@@ -169,7 +173,15 @@ export default class MyInfoPage extends Component {
                             {text: '取消', onPress: () => console.log('Foo Pressed!')},
                             {text: '退出', onPress:() => {
                             ///退出登录操作
-                             this.dataRepository.removeLocalRepository('user')
+                               let alias = storage.getLoginInfo().userId;
+                                if (alias !== undefined) {
+                                    JPushModule.deleteAlias(alias, () => {
+                                        console.log("Delete alias succeed");
+                                    }, () => {
+                                        console.log("Delete alias failed");
+                                    });
+                                }
+                             this.dataRepository.removeLocalRepository('user');
                              this.dataRepository.removeLocalRepository('/app/v2/user/info/get')
                                  .then(()=> {
 

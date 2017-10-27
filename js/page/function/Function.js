@@ -21,6 +21,7 @@ export default class Function extends Component {
             theme: this.props.theme
         }
     }
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -35,7 +36,11 @@ export default class Function extends Component {
         return(
             <View style={styles.container}>
                 {navigationBar}
-                <Text>functionPage</Text>
+                <View>
+                    <View>
+
+                    </View>
+                </View>
             </View>
         )
     }
