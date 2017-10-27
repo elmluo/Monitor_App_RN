@@ -21,8 +21,6 @@ import CustomListView from '../../common/CustomListView'
 import Utils from '../../util/Utils'
 
 let storage = new Storage();
-
-let StorageFunction = new Storage();
 export default class Alarm extends Component {
     constructor(props) {
         super(props);
@@ -67,8 +65,8 @@ export default class Alarm extends Component {
 
     _this_Params(initialPage, isHisAlarm) {
         let params = {
-            stamp: StorageFunction.getLoginInfo().stamp,
-            userId: StorageFunction.getLoginInfo().userId,
+            stamp: storage.getLoginInfo().stamp,
+            userId: storage.getLoginInfo().userId,
             size: 20,
         };
         //参数逻辑判断
@@ -86,7 +84,6 @@ export default class Alarm extends Component {
             } else {
                 params.status = 1;
                 params.page = this.state.historyPage;
-
 
             }
         }

@@ -460,47 +460,19 @@ export default class Monitor extends Component {
         //
         //         console.log("content: " + JSON.stringify(message));
         //     });
-        //下面的json就是我在极光推送上的附件字段内容就是上面的log打印出来的东西
-
-        // {
-
-        //    "_j_msgid": 4572771355, 
-
-        //    "content": "日志第一天", 
-
-        //    "time": "2016-11-18/13:11:09", 
-
-        //    "aps": {
-
-        //        "sound": "default",  
-
-        //        "badge": 1, 
-
-        //        "alert": "测试ios1" 
-
-        //    }, 
-
-        //    "name": "刘成",
-
-        //    "age": "28", 
-
-        //    "性别": "男",
-
-        //"qq":"674668211"，
-
-        //"手机号":"674668211"，
-
-        // } console.log("_j_msgid:" + message._j_msgid);
-
-        //这个是极光的消息id console.log("content:" + message.content);
-
-        //这是标题 console.log("aps:" + message.aps.sound);
-
-        //这是声音 console.log("aps:" + message.aps.badge);
-
-        //这是上标 console.log("aps:" + message.aps.alert);
-
-        //这是发送通知的主内容 this.storeDB(message); } );
+        // 下面的json就是我在极光推送上的附件字段内容就是上面的log打印出来的东西
+        //
+        // console.log("_j_msgid:" + message._j_msgid);
+        //
+        // 这个是极光的消息id console.log("content:" + message.content);
+        //
+        // 这是标题 console.log("aps:" + message.aps.sound);
+        //
+        // 这是声音 console.log("aps:" + message.aps.badge);
+        //
+        // 这是上标 console.log("aps:" + message.aps.alert);
+        //
+        // 这是发送通知的主内容 this.storeDB(message);
 
         //---------------------------------ios end---------------------------------
 
@@ -551,6 +523,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingLeft: 16,
         paddingRight: 16,
+
     },
 
 });
