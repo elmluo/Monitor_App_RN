@@ -9,7 +9,7 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ListView,
+    ListView
 } from 'react-native'
 import AlarmFilter from './alarmFilter'
 import AlarmDetail from './AlarmDetail'
@@ -32,18 +32,31 @@ export default class Alarm extends Component {
             focusPage: 1,
             alarmPage: 1,
             historyPage: 1,
-        }
+            // 告警筛选条件
+            filter: {       
+                level: [],
+                deviceType: [],
+                siteId: []
+            }
+        };
     }
 
     _renderRightButton() {
+        let scope = this;
         return (
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
                     onPress={() => {
-                        this.props.navigator.push({
+                        scope.props.navigator.push({
                             component: AlarmFilter,
                             params: {
-                                ...this.props
+                                ...scope.props,
+                                setFilter: (v) => {
+                                    scope.setState({
+                                        filter: v
+                                    })
+                                },
+                                filter: scope.state.filter
                             }
                         })
                     }}>
@@ -96,6 +109,14 @@ export default class Alarm extends Component {
 
 
     render() {
+        // this.state.filter.level = this.props.crossPageData ? this.props.crossPageData.level || [] : [];
+        // this.props.setCrossPageData(null);
+        if (this.props.crossPageData && this.props.crossPageData.level) {
+            // alert(JSON.stringify(this.props.crossPageData.level))
+            this.state.filter.level = this.props.crossPageData.level;
+            this.props.setCrossPageData(null, false);
+        }
+        // alert(JSON.stringify(this.state.filter))
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
             barStyle: 'light-content'
@@ -114,12 +135,12 @@ export default class Alarm extends Component {
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
                 initialPage={1}>
-                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0, true)} isAlarm={false}
+                <AlarmTab tabLabel='关注告警' {...this.props} params={{...this._this_Params(0, true), ...this.state.filter}} isAlarm={false}
                           url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
-                <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1, true)} isAlarm={false}
-                          url={'/app/v2/alarm/list'}>实时告警</AlarmTab>
-                <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2, false)} isAlarm={true}
-                          url={'/app/v2/alarm/list'}>历史告警</AlarmTab>
+                <AlarmTab tabLabel='实时告警' {...this.props} params={{...this._this_Params(1, true), ...this.state.filter}} isAlarm={false}
+                          url={'/app/v2/alarm/list'} filter = {this.state.filter}>实时告警</AlarmTab>
+                <AlarmTab tabLabel='历史告警' {...this.props} params={{...this._this_Params(2, false), ...this.state.filter}} isAlarm={true}
+                          url={'/app/v2/alarm/list'} filter = {this.state.filter}>历史告警</AlarmTab>
             </ScrollableTabView>;
         return (
             <View style={styles.container}>
@@ -306,12 +327,24 @@ class AlarmTab extends Component {
     }
 
     render() {
-
+        // this.props.params.level = ['2', '1'];
+        // this.props.params.siteId = ['57abe9d355545eeda80722e5']
+        // this.props.params.deviceType = ['烟雾传感器']
+        if (this.props.params.level && this.props.params.level.length === 0) {
+            this.props.params.level = undefined;
+        }
+        if (this.props.params.siteId && this.props.params.siteId.length === 0) {
+            this.props.params.siteId = undefined;
+        }
+        if (this.props.params.deviceType && this.props.params.deviceType.length === 0) {
+            this.props.params.deviceType = undefined;
+        }
+        // alert(JSON.stringify(this.props.params))
         let content = <CustomListView
             {...this.props}
             isAutoRefresh={true}
             url={this.props.url}
-            params={this.props.params}
+            params={{...this.props.params, ...this.state.filter}}
             // bind(this)机制需要熟悉
             renderRow={this._renderRow.bind(this)}
             alertText={'没有更多数据了~'}
