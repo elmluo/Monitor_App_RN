@@ -62,13 +62,12 @@ export default class Monitor extends Component {
     }
 
 
-
-
-    componentWillUnmount(){
+    componentWillUnmount() {
         JPushModule.removeReceiveCustomMsgListener();
         JPushModule.removeReceiveNotificationListener();
     }
-        /**
+
+    /**
      * 从本地获取登录信息，同时保存到单例，全局使用
      * @returns {Promise}
      * @private
@@ -351,29 +350,37 @@ export default class Monitor extends Component {
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
                             {/**/}
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '一级告警');}}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', '一级告警');
+                                }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[0].count}
                                     allCount={this.state.allCount}
                                     alarmName={this.state.levelAlarm[0].item}
                                     alarmColor='#1CCAEB'/></TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '二级告警');}}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', '二级告警');
+                                }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[1].count}
                                     allCount={this.state.allCount}
                                     alarmName={this.state.levelAlarm[1].item}
                                     alarmColor='#F63232'/></TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '三级告警');}}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', '三级告警');
+                                }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[2].count}
                                     allCount={this.state.allCount}
                                     alarmName={this.state.levelAlarm[2].item}
                                     alarmColor='#F9AE46'/></TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '四级告警');}}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', '四级告警');
+                                }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[3].count}
                                     allCount={this.state.allCount}
@@ -406,8 +413,8 @@ export default class Monitor extends Component {
 
             //这是默认的通知消息
 
-              this.setState({pushMsg:message});
-              alert('默认推送消息'+message);
+            this.setState({pushMsg: message});
+            alert('默认推送消息' + message);
 
         });
 
@@ -431,13 +438,13 @@ export default class Monitor extends Component {
 
         //点击通知进入应用的主页，相当于跳转到制定的页面
 
-        // JPushModule.addReceiveOpenNotificationListener((map) => {
-        //
-        //     //console.log("Opening notification!");
-        //
-        //     this.props.navigator.replace({name: "HomePage",component:HomePage});
-        //
-        // })
+        JPushModule.addReceiveOpenNotificationListener((map) => {
+
+            //console.log("Opening notification!");
+
+            this.props.navigator.replace({name: "HomePage", component: HomePage});
+
+        })
 
         //---------------------------------android end---------------------------------
 
@@ -453,49 +460,49 @@ export default class Monitor extends Component {
         //
         //         console.log("content: " + JSON.stringify(message));
         //     });
-                //下面的json就是我在极光推送上的附件字段内容就是上面的log打印出来的东西
+        //下面的json就是我在极光推送上的附件字段内容就是上面的log打印出来的东西
 
-                // {
+        // {
 
-                //    "_j_msgid": 4572771355, 
+        //    "_j_msgid": 4572771355, 
 
-                //    "content": "日志第一天", 
+        //    "content": "日志第一天", 
 
-                //    "time": "2016-11-18/13:11:09", 
+        //    "time": "2016-11-18/13:11:09", 
 
-                //    "aps": {
+        //    "aps": {
 
-                //        "sound": "default",  
+        //        "sound": "default",  
 
-                //        "badge": 1, 
+        //        "badge": 1, 
 
-                //        "alert": "测试ios1" 
+        //        "alert": "测试ios1" 
 
-                //    }, 
+        //    }, 
 
-                //    "name": "刘成",
+        //    "name": "刘成",
 
-                //    "age": "28", 
+        //    "age": "28", 
 
-                //    "性别": "男",
+        //    "性别": "男",
 
-                //"qq":"674668211"，
+        //"qq":"674668211"，
 
-                //"手机号":"674668211"，
+        //"手机号":"674668211"，
 
-                // } console.log("_j_msgid:" + message._j_msgid);
+        // } console.log("_j_msgid:" + message._j_msgid);
 
-                //这个是极光的消息id console.log("content:" + message.content);
+        //这个是极光的消息id console.log("content:" + message.content);
 
-                //这是标题 console.log("aps:" + message.aps.sound);
+        //这是标题 console.log("aps:" + message.aps.sound);
 
-                //这是声音 console.log("aps:" + message.aps.badge);
+        //这是声音 console.log("aps:" + message.aps.badge);
 
-                //这是上标 console.log("aps:" + message.aps.alert);
+        //这是上标 console.log("aps:" + message.aps.alert);
 
-                //这是发送通知的主内容 this.storeDB(message); } );
+        //这是发送通知的主内容 this.storeDB(message); } );
 
-                //---------------------------------ios end---------------------------------
+        //---------------------------------ios end---------------------------------
 
         JPushModule.addGetRegistrationIdListener((registrationId) => {
             console.log("Device register succeed, registrationId " + registrationId);
