@@ -273,29 +273,44 @@ class AlarmTab extends Component {
 
 
                 <View style={{position: 'absolute', right: 10, bottom: 10}}>
-                    <TouchableOpacity onPress={() => {
+                    {!this.props.isAlarm ?
+                        <TouchableOpacity onPress={() => {
 
-                        this._postSelectedAlarm(rowData.alarmId);
-                    }}>
-                        <View style={{width: 100, height: 50, alignItems: 'center', justifyContent: 'center'}}>
-                            {
+                            this._postSelectedAlarm(rowData.alarmId);
+                        }}>
+                            <View style={{width: 100, height: 50, alignItems: 'center', justifyContent: 'center'}}>
+                                {
 
-                                rowData.focus
-                                    ? <View style ={{width: 100,alignItems: 'center', justifyContent: 'center',flexDirection:'row',backgroundColor:'rgba(0,0,0,0)'}} >
-                                        <Image style={{width: 10, height: 10}}
-                                               source={require('../../../res/Image/Alarm/ic_focus_selected.png')}/>
-                                        <Text style = {{left:5,fontSize:12,color:'rgb(126,126,126)'}}>已关注</Text>
-                                    </View>
-                                    : <View  style ={{width: 100,alignItems: 'center', justifyContent: 'center',flexDirection:'row',backgroundColor:'rgba(0,0,0,0)'}}>
-                                        <Image style={{width: 10, height: 10}}
-                                               source={require('../../../res/Image/Alarm/ic_focus_nor.png')}/>
-                                        <Text style = {{left:5,fontSize:12,color:'rgb(126,126,126)'}}>未关注</Text>
-                                    </View>
-                            }
+                                    rowData.focus
+                                        ? <View style={{
+                                            width: 100,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexDirection: 'row',
+                                            backgroundColor: 'rgba(0,0,0,0)'
+                                        }}>
+                                            <Image style={{width: 10, height: 10}}
+                                                   source={require('../../../res/Image/Alarm/ic_focus_selected.png')}/>
+                                            <Text style={{left: 5, fontSize: 12, color: 'rgb(126,126,126)'}}>已关注</Text>
+                                        </View>
+                                        : <View style={{
+                                            width: 100,
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexDirection: 'row',
+                                            backgroundColor: 'rgba(0,0,0,0)'
+                                        }}>
+                                            <Image style={{width: 10, height: 10}}
+                                                   source={require('../../../res/Image/Alarm/ic_focus_nor.png')}/>
+                                            <Text style={{left: 5, fontSize: 12, color: 'rgb(126,126,126)'}}>未关注</Text>
+                                        </View>
+                                }
 
-                        </View>
+                            </View>
 
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                        :<View></View>
+                    }
 
                 </View>
             </View>
