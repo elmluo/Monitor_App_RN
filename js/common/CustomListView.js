@@ -84,7 +84,7 @@ export default class CustomListView extends Component {
     _onRefresh() {
         this.page = 1;
         this._data = [];
-        //开启加载动画
+        // 开启加载动画
         this.setState({
             isLoading: true
         });
