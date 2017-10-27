@@ -12,10 +12,14 @@ import {
     TouchableOpacity,
     Dimensions
 } from 'react-native'
+import StorageClass from '../../common/StorageClass'
 import NavigationBar from '../../common/NavigationBar'
+import DataRepository from '../../expand/dao/Data'
+import AlarmFilterSite from './alarmFilterSite'
 import ViewUtils from '../../util/ViewUtils'
 import Utils from '../../util/Utils'
 
+let storageClass = new StorageClass();
 let {width, height} = Dimensions.get('window')
 export default class AlarmFilter extends Component {
 
@@ -27,6 +31,18 @@ export default class AlarmFilter extends Component {
             theme: this.props.theme,
             selectedArr: []
         }
+        let dataRepository = new DataRepository();
+        dataRepository.fetchNetRepository('POST', '/app/v2/alarm/condition', {stamp: storageClass.getLoginInfo().stamp}).then(result => {
+            if (result.success === true) {
+                this.deviceTypeList = result.data.deviceType.map(function (v) {
+                    return v.desc;
+                });
+                this.alarmTypeList = result.data.level;
+                this.setState({});
+            }
+        }).catch(error => {
+            // alert(JSON.stringify(error));
+        })
     }
 
 
@@ -65,6 +81,11 @@ export default class AlarmFilter extends Component {
         )
     }
 
+    deviceTypeList = [];
+    alarmTypeList = [];
+
+
+
     // 从外部传入的告警等级的筛选条件。使页面默认选择一种告警
     selectedAlarmLevels = this.props.filter ? (this.props.filter.level || []) : [];
 
@@ -84,25 +105,8 @@ export default class AlarmFilter extends Component {
             let selected = function (d) {
                 
             }
-            let deviceTypeList = [
-                "BBDS",
-                "摄像头",
-                "普通空调",
-                "配电柜",
-                "非智能门禁",
-                "门磁",
-                "智能电表（交流）",
-                "FSU",
-                "红外传感器",
-                "智能灯控",
-                "开关电源",
-                "烟雾传感器",
-                "温湿度传感器",
-                "UPS",
-                "水浸传感器",
-                "列头柜"
-            ];
-            return deviceTypeList.map(function (v, i) {
+
+            return scope.deviceTypeList.map(function (v, i) {
                 return <TouchableOpacity style = {[styles.deviceType, scope.selectedDevices.indexOf(v) > -1 ? {backgroundColor: "rgba(235,235,235,1)"}:{}]}
                     key = {i}
                     activeOpacity={0.5}
@@ -141,7 +145,12 @@ export default class AlarmFilter extends Component {
                     <TouchableOpacity  style={styles.site}
                         activeOpacity={0.5}
                         onPress={() => {
-                            // this._pushToDetail(rowData);
+                            scope.props.navigator.push({
+                                component: AlarmFilterSite,
+                                params: {
+                                    ...scope.props
+                                }
+                            })
                         }}>
                         <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={styles.siteLeft}>
@@ -166,14 +175,14 @@ export default class AlarmFilter extends Component {
                                 paddingBottom: 10
                             }}>告警等级</Text>
                         <View style={{flexDirection: 'row'}}>
-                            {['1', '2', '3', '4'].map(function (v) {
-                                const str = ['一级告警', '二级告警', '三级告警', '四级告警'];
-                                return <TouchableOpacity style={[styles.alarmLevelItem, scope.selectedAlarmLevels.indexOf(v) > -1 ? {backgroundColor: "rgba(235,235,235,1)"} : {}]}
+                            {scope.alarmTypeList.map(function (v) {
+
+                                return <TouchableOpacity style={[styles.alarmLevelItem, scope.selectedAlarmLevels.indexOf(v.value) > -1 ? {backgroundColor: "rgba(235,235,235,1)"} : {}]}
                                     activeOpacity={0.5}
                                     onPress={() => {
-                                        onPressHandler(v, 'selectedAlarmLevels')
+                                        onPressHandler(v.value, 'selectedAlarmLevels')
                                     }}>
-                                    <Text>{str[Number(v) - 1]}</Text>
+                                    <Text>{v.desc}</Text>
                                 </TouchableOpacity>
                             })}   
                         </View>

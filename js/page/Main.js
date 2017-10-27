@@ -45,7 +45,8 @@ export default class Main extends BaseComponent {
         this.state = {
             selectedTab: selectedTab,
             theme:this.props.theme,
-}
+            crossPageData: null
+        }
 }
 
 
@@ -127,13 +128,22 @@ export default class Main extends BaseComponent {
 
             }}
                 onPress={() => this.setState({selectedTab: selectedTab})}>
-
+                <Component
                     {...this.props}
-                    routerChangeArgs = {this.state.routerChangeArgs}
-                    routerChange = {(nextRouter, args)=>{
+                    crossPageData = {this.state.crossPageData}
+                    setCrossPageData = {(v, refresh)=>{
+                        if (refresh) {
+                            this.setState({
+                                crossPageData: v
+                            });
+                        } else {
+                            this.state.crossPageData = v;
+                        }
+                    }}
+                    routerChange = {(nextRouter, arg)=>{
                         this.setState({
                             selectedTab: nextRouter,
-                            routerChangeArgs: args
+                            crossPageData :arg
                         });
                     }}
                     theme={this.state.theme}/>

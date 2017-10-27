@@ -9,7 +9,7 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ListView,
+    ListView
 } from 'react-native'
 import AlarmFilter from './alarmFilter'
 import AlarmDetail from './AlarmDetail'
@@ -52,14 +52,13 @@ export default class Alarm extends Component {
                         scope.props.navigator.push({
                             component: AlarmFilter,
                             params: {
-                                ...scope.props, ...{
-                                    setFilter: (v) => {
-                                        scope.setState({
-                                            filter: v
-                                        })
-                                    },
-                                    filter: scope.state.filter
-                                }
+                                ...scope.props,
+                                setFilter: (v) => {
+                                    scope.setState({
+                                        filter: v
+                                    })
+                                },
+                                filter: scope.state.filter
                             }
                         })
                     }}>
@@ -113,9 +112,13 @@ export default class Alarm extends Component {
 
 
     render() {
-        // alert(JSON.stringify(this.props.routerChangeArgs))
-        this.state.filter.level = this.props.routerChangeArgs ? this.props.routerChangeArgs.level || [] : [];
-        this.props.routerChangeArgs = null;
+        // this.state.filter.level = this.props.crossPageData ? this.props.crossPageData.level || [] : [];
+        // this.props.setCrossPageData(null);
+        if (this.props.crossPageData && this.props.crossPageData.level) {
+            // alert(JSON.stringify(this.props.crossPageData.level))
+            this.state.filter.level = this.props.crossPageData.level;
+            this.props.setCrossPageData(null, false);
+        }
         // alert(JSON.stringify(this.state.filter))
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -324,7 +327,7 @@ class AlarmTab extends Component {
         if (this.props.params.deviceType && this.props.params.deviceType.length === 0) {
             this.props.params.deviceType = undefined;
         }
-        alert(JSON.stringify(this.props.params))
+        // alert(JSON.stringify(this.props.params))
         let content = <CustomListView
             {...this.props}
             isAutoRefresh={true}
