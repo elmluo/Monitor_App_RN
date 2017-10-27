@@ -17,13 +17,16 @@ import NavigationBar from '../../common/NavigationBar'
 import CustomListView from '../../common/CustomListView'
 import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
-import Searchbox from '../../common/Searchbox'
 import Storage from '../../common/StorageClass'
+import DeviceTab from './SiteDetailDeviceTab'
+
 
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
 let dataRepository = new DataRepository();
+
 export default class SiteDetail extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -78,20 +81,7 @@ export default class SiteDetail extends Component {
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             console.log(result);
-        })
-    }
 
-    /**
-     * 获取设备系统分类列表
-     */
-    _getSystemList() {
-        let url = '/app/v2/device/system/list';
-        let params = {
-            stamp: storage.getLoginInfo().stamp,
-            siteId: this.props.item.siteId
-        };
-        dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            console.log(result);
         })
     }
 
@@ -118,19 +108,20 @@ export default class SiteDetail extends Component {
                 tabBarBackgroundColor={this.state.theme.themeColor}
                 initialPage={0} // 默认加载哪一个tab
             >
-                <AlarmTabDevice tabLabel='设备'
-                                {...this.props}
-                                url={'/app/v2/device/list'}
-                                params={{
-                                    stamp: storage.getLoginInfo().stamp,
-                                    siteId: this.props.item.siteId,
-                                    // system: '',
-                                    // keyword: '',
-                                    page: 1,
-                                    size: 20,
-                                }}>
+                <DeviceTab tabLabel='设备'
+                           {...this.props}
+                           url={'/app/v2/device/list'}
+                           params={{
+                               stamp: storage.getLoginInfo().stamp,
+                               siteId: this.props.item.siteId,
+                               // system: '',
+                               // keyword: '',
+                               page: 1,
+                               size: 20,
+                           }}>
                     设备
-                </AlarmTabDevice>
+                </DeviceTab>
+
                 <AlarmTabAlarm tabLabel='告警'
                                {...this.props}
                                url={'/app/v2/alarm/list'}
@@ -146,6 +137,7 @@ export default class SiteDetail extends Component {
                                }}>
                     告警
                 </AlarmTabAlarm>
+
             </ScrollableTabView>;
 
         return (
@@ -157,7 +149,9 @@ export default class SiteDetail extends Component {
     }
 
     componentDidMount() {
+        InteractionManager.runAfterInteractions(()=> {
 
+        })
     }
 }
 
@@ -178,255 +172,6 @@ const styles = StyleSheet.create({
     cellRight: {
         flex: 1,
         marginLeft: 14,
-    }
-});
-
-
-/**
- * 设备列表tab页面，
- * 充当scrollableTabView的tab页面
- */
-
-import SearchPage from '../../page/SearchPage';
-
-class AlarmTabDevice extends Component {
-
-    isSelected = false;
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedSystem: '全部系统',
-            systemList: ['全部系统', '动环系统', '蓄电池系统']
-        }
-    }
-
-    /**
-     * 根据typeCode，
-     * @param typeCode
-     * @returns {string}
-     * @private
-     */
-    _getImageIcon(typeCode) {
-        let imageIcon;
-        switch (typeCode) {
-            case '002':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_GGD_nor.png")}/>;
-                break;
-            case '006':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_SMPS_nor.png")}/>;
-                break;
-            case '007':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_BATT_nor.png")}/>;
-                break;
-            case '008':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_UPS_nor.png")}/>;
-                break;
-            case '015':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_Conditioners_nor.png")}/>;
-                break;
-            case '016':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_SmartMeter_nor.png")}/>;
-                break;
-            case '099':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_RKE_nor.png")}/>;
-                break;
-            case '100':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_Cameras_nor.png")}/>;
-                break;
-            case '107':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_SMPS_nor.png")}/>;
-                break;
-            case '181':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_Infrared_nor.png")}/>;
-                break;
-            case '182':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_SmokeDetector_nor.png")}/>;
-                break;
-            case '183':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_THTB_nor.png")}/>;
-                break;
-            case '184':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_YDN_WDT_nor.png")}/>;
-                break;
-            case '185':
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_EN_MG_nor.png")}/>;
-                break;
-            default:
-                imageIcon = <Image source={require("../../../res/Image/Monitor/ic_XX_nor.png")}/>;
-        }
-        return imageIcon
-    }
-
-    /**
-     * 渲染列表cell
-     */
-    _renderRow(rowData) {
-        return (
-            <View style={deviceCellStyles.cell}>
-
-                <View style={deviceCellStyles.cellLeft}>
-
-                    <View>
-                        {this._getImageIcon(rowData.typeCode)}
-                    </View>
-
-                    <View>
-                        <Text style={{fontSize: 14, color: '#444444', paddingLeft: 16}}>{rowData.name}</Text>
-                    </View>
-
-                </View>
-
-                <View>
-                    {/*{fusOnline}*/}
-                </View>
-            </View>
-
-        )
-    }
-
-    /**
-     * 跳转到搜索页面
-     * @private
-     */
-    _pushToSearchPage() {
-        this.props.navigator.push({
-            component: SearchPage,
-            params: {
-                title: '请输入设备名称',
-                url: this.props.url,
-                params: this.props.params,
-                renderRow: this._renderRow.bind(this),
-                ...this.props
-            }
-        })
-    }
-
-    render() {
-        let header =
-            <View style={deviceCellStyles.searchHeader}>
-                <TouchableOpacity
-                    onPress={() => {
-                        this.isSelected = !this.isSelected;
-                        this.setState({
-                            isSelected: this.isSelected
-                        })
-                    }}>
-                    <View style={{
-                        backgroundColor: 'red',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        <Text style={{color: '#3C7FFC'}}>{this.state.selectedSystem}</Text>
-                        {
-                            this.state.isSelected
-                                ? <Image style={{width: 12, height: 6, tintColor: '#3C7FFC'}}
-                                         source={require('../../../res/Image/BaseIcon/ic_triangle_up_nor.png')}/>
-                                : <Image style={{width: 12, height: 6, tintColor: '#3C7FFC'}}
-                                         source={require('../../../res/Image/BaseIcon/ic_triangle_up_nor.png')}/>
-                        }
-                    </View>
-                </TouchableOpacity>
-
-                <View style={{width: width * 0.65}}>
-                    <Searchbox
-                        {...this.props}
-                        onClick={() => {
-                            this._pushToSearchPage();
-                        }}
-                        placeholder={'请输入设备名称'}/>
-                </View>
-            </View>;
-        let selectList =
-            this.state.isSelected ? <View style={{
-                    backgroundColor: 'rgba(0,0,0,0.3)',
-                    zIndex: 3,
-                    position: 'absolute'
-                }}>
-                    {
-                        this.state.systemList.map((item, i, arr) => {    // .map 中item === arr[i]
-                            return <TouchableOpacity
-                                key={i}
-                                onPress={() => {
-                                    this.setState({
-                                        selectedSystem: arr[i]
-                                    })
-                                }}
-                                underlayColor='transparent'>
-
-                                {
-                                    this.state.selectedSystem === item
-                                        ? <View>
-                                            <Text style={{color: '#3C7FFC'}}>{arr[i]}</Text>
-                                            <Image source={require('../../../res/Image/BaseIcon/ic_select.png')}/>
-                                        </View>
-                                        : <View>
-                                            <Text>{arr[i]}</Text>
-                                        </View>
-                                }
-
-                            </TouchableOpacity>
-                        })
-                    }
-                </View>
-                : null;
-        let list =
-            <CustomListView
-                {...this.props}
-                url={this.props.url}
-                params={this.props.params}
-                alertText={'没有更多数据了~'}
-                // bind(this)机制需要熟悉
-                renderRow={this._renderRow.bind(this)}/>;
-
-        return (
-            <View style={{flex: 1, backgroundColor: '#F3F3F3'}}>
-                {header}
-                <View style={{flex: 1, backgroundColor: '#F3F3F3'}}>
-                    {list}
-                    {selectList}
-                </View>
-            </View>
-        )
-    }
-}
-
-const deviceCellStyles = StyleSheet.create({
-    searchHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        paddingTop: 8,
-        paddingBottom: 8,
-        paddingLeft: 16,
-        paddingRight: 16,
-        marginBottom: 6
-    },
-    cell: {
-        flexDirection: 'row',
-        backgroundColor: '#FFFFFF',
-        paddingTop: 12,
-        paddingBottom: 12,
-        paddingLeft: 16,
-        paddingRight: 16,
-        marginBottom: 4,
-    },
-    onlineState: {
-        backgroundColor: '#949494',
-        color: '#FFFFFF',
-        fontSize: 12,
-        // paddingTop: 1,
-        // paddingBottom: 1,
-        paddingLeft: 6,
-        paddingRight: 6,
-        borderRadius: 3,
-    },
-    cellLeft: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
     }
 });
 

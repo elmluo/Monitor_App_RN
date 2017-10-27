@@ -114,7 +114,6 @@ class FavoriteTab extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.loadData(false);
-
     }
 
     loadData(isShowLoading) {

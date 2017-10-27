@@ -227,7 +227,6 @@ class AlarmTab extends Component {
                 break;
             default:
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
-
         }
 
         // this.setState({
@@ -270,18 +269,25 @@ class AlarmTab extends Component {
                 </TouchableOpacity>
 
 
-                <View style={{position: 'absolute', right: 25, bottom: 10}}>
+                <View style={{position: 'absolute', right: 10, bottom: 10}}>
                     <TouchableOpacity onPress={() => {
 
                         this._postSelectedAlarm(rowData.alarmId);
                     }}>
-                        <View style={{width: 50, height: 50, alignItems: 'center', justifyContent: 'center'}}>
+                        <View style={{width: 100, height: 50, alignItems: 'center', justifyContent: 'center'}}>
                             {
 
                                 rowData.focus
-                                    ? <Image style={{width: 25, height: 25}}
-                                             source={require('../../../res/Image/Alarm/ic_focus.png')}/>
-                                    : <Text>{'添加告警关注'}</Text>
+                                    ? <View style ={{width: 100,alignItems: 'center', justifyContent: 'center',flexDirection:'row',backgroundColor:'rgba(0,0,0,0)'}} >
+                                        <Image style={{width: 10, height: 10}}
+                                               source={require('../../../res/Image/Alarm/ic_focus_selected.png')}/>
+                                        <Text style = {{left:5,fontSize:12,color:'rgb(126,126,126)'}}>已关注</Text>
+                                    </View>
+                                    : <View  style ={{width: 100,alignItems: 'center', justifyContent: 'center',flexDirection:'row',backgroundColor:'rgba(0,0,0,0)'}}>
+                                        <Image style={{width: 10, height: 10}}
+                                               source={require('../../../res/Image/Alarm/ic_focus_nor.png')}/>
+                                        <Text style = {{left:5,fontSize:12,color:'rgb(126,126,126)'}}>未关注</Text>
+                                    </View>
                             }
 
                         </View>
@@ -321,6 +327,7 @@ class AlarmTab extends Component {
         alert(JSON.stringify(this.props.params))
         let content = <CustomListView
             {...this.props}
+            isAutoRefresh={true}
             url={this.props.url}
             params={{...this.props.params, ...this.state.filter}}
             // bind(this)机制需要熟悉
