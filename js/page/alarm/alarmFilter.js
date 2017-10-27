@@ -65,13 +65,10 @@ export default class AlarmFilter extends Component {
         )
     }
 
-    _updateBackgroundColor () {
-        this.render();
-    }
+    // 从外部传入的告警等级的筛选条件。使页面默认选择一种告警
+    selectedAlarmLevels = this.props.filter ? (this.props.filter.level || []) : [];
 
-    selectedAlarmLevels = this.props.selectedAlarmLevels ? [this.props.selectedAlarmLevels] : [];
-
-    selectedDevices = []
+    selectedDevices = this.props.filter ? (this.props.filter.deviceType || []) : []
 
     render() {
         let scope = this;
@@ -129,8 +126,12 @@ export default class AlarmFilter extends Component {
             scope.setState({});            
         }
 
-        let onPressAlarm = function (v) {
-            
+        let onPressComfirm = function () {
+            scope.props.setFilter({
+                level: scope.selectedAlarmLevels,
+                deviceType: scope.selectedDevices
+            })
+            scope.props.navigator.pop();
         }
 
         return (
@@ -165,13 +166,14 @@ export default class AlarmFilter extends Component {
                                 paddingBottom: 10
                             }}>告警等级</Text>
                         <View style={{flexDirection: 'row'}}>
-                            {['一级告警', '二级告警', '三级告警', '四级告警'].map(function (v) {
+                            {['1', '2', '3', '4'].map(function (v) {
+                                const str = ['一级告警', '二级告警', '三级告警', '四级告警'];
                                 return <TouchableOpacity style={[styles.alarmLevelItem, scope.selectedAlarmLevels.indexOf(v) > -1 ? {backgroundColor: "rgba(235,235,235,1)"} : {}]}
                                     activeOpacity={0.5}
                                     onPress={() => {
                                         onPressHandler(v, 'selectedAlarmLevels')
                                     }}>
-                                    <Text>{v}</Text>
+                                    <Text>{str[Number(v) - 1]}</Text>
                                 </TouchableOpacity>
                             })}   
                         </View>
@@ -194,9 +196,7 @@ export default class AlarmFilter extends Component {
                     
                 <TouchableOpacity style = {{backgroundColor: "#FFFFFF"}}
                     activeOpacity={0.5}
-                    onPress={() => {
-                        alert(JSON.stringify({"device": scope.selectedDevices, "alarm": scope.selectedAlarmLevels}))
-                    }}>
+                    onPress={onPressComfirm}>
                     <Text style = {{padding: 14, textAlign: 'center', fontSize: 16}}>确定</Text>
                 </TouchableOpacity>
             </View>

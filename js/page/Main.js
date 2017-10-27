@@ -117,10 +117,13 @@ export default class Main extends BaseComponent {
                                                 source={renderIcon}/>}
                 onPress={() => this.setState({selectedTab: selectedTab})}>
                 <Component 
-                    {...this.props} 
+                    {...this.props}
+                    routerChangeArgs = {this.state.routerChangeArgs}
                     routerChange = {(nextRouter, args)=>{
-                        this.setState({selectedTab: nextRouter});
-                        alert(args);
+                        this.setState({
+                            selectedTab: nextRouter,
+                            routerChangeArgs: args
+                        });
                     }}
                     theme={this.state.theme}/>
             </TabNavigator.Item>
