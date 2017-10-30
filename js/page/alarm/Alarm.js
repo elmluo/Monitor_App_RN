@@ -116,13 +116,13 @@ export default class Alarm extends Component {
                 tabBarInactiveTextColor='mintcream'
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
-                initialPage={1}>
-                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0, true)} isAlarm={false}
-                          url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
+                initialPage={0}>
                 <AlarmTab tabLabel='实时告警' {...this.props} params={this._this_Params(1, true)} isAlarm={false}
                           url={'/app/v2/alarm/list'}>实时告警</AlarmTab>
                 <AlarmTab tabLabel='历史告警' {...this.props} params={this._this_Params(2, false)} isAlarm={true}
                           url={'/app/v2/alarm/list'}>历史告警</AlarmTab>
+                <AlarmTab tabLabel='关注告警' {...this.props} params={this._this_Params(0, true)} isAlarm={false}
+                          url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
             </ScrollableTabView>;
         return (
             <View style={styles.container}>

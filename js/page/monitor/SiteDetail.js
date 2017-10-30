@@ -19,7 +19,7 @@ import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import Storage from '../../common/StorageClass'
 import DeviceTab from './SiteDetailDeviceTab'
-
+import LocationPage from './SiteDetailLocationPage';
 
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
@@ -57,7 +57,8 @@ export default class SiteDetail extends Component {
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
                     onPress={() => {
-                        alert('还不能打开地图功能')
+                        // alert('还不能打开地图功能');
+                        this._pushToLocation()
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
                         <Image
@@ -67,6 +68,16 @@ export default class SiteDetail extends Component {
                 </TouchableOpacity>
             </View>
         )
+    }
+
+
+    _pushToLocation() {
+        this.props.navigator.push({
+            component: LocationPage,
+            params: {
+                ...this.props
+            },
+        })
     }
 
     /**
