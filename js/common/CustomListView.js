@@ -10,7 +10,8 @@ import {
     ListView,
     RefreshControl,
     TouchableOpacity,
-    InteractionManager
+    InteractionManager,
+    DeviceEventEmitter
 } from 'react-native'
 import DataRepository from '../expand/dao/Data'
 import NetInfoUtils from '../util/NetInfoUtils'
@@ -97,7 +98,7 @@ export default class CustomListView extends Component {
                 // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
                     // alert(page);
-                    console.log('第一页');
+                    // console.log('第一页');
                     this.setState({
                         isLoading: false,
                         noNetWord: false,
@@ -165,13 +166,20 @@ export default class CustomListView extends Component {
         // if (this.props.isAutoRefresh) {
         //     console.log(this.props);
         //     alert(JSON.stringify(nextProps.params));
-            this.props = nextProps;
-            this._onRefresh()
+        //     this.props = nextProps;
+        //     this._onRefresh()
         // }
     }
 
-
+    /**
+     * 组件装载，执行监听通知等操作
+     */
     componentDidMount() {
+        // 组件加载完毕，监听事件-重新加载数据。
+        this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
+            this._onRefresh();
+        });
+
         InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {
                 if (isConnectedNet) {
@@ -184,6 +192,15 @@ export default class CustomListView extends Component {
             });
         });
 
+    }
+
+    /**
+     * 组件卸载，清除事件监听
+     */
+    componentWillUnmount() {
+        if (this.listener) {
+            this.listener.remove();
+        }
     }
 
     _renderListView() {
@@ -207,48 +224,6 @@ export default class CustomListView extends Component {
                 }
             />
         )
-        // if (this.props.isAutoRefresh) {
-        //     return (
-        //         <ListView
-        //             dataSource={this.state.dataSource}
-        //             renderHeader={
-        //                 this.props.renderHeader ? this.props.renderHeader : null
-        //             }
-        //             renderRow={
-        //                 this.props.renderRow ? this.props.renderRow
-        //                     : this._renderDefaultRow.bind(this)
-        //             }
-        //             onEndReachedThreshold={30}
-        //             removeClippedSubviews={false}
-        //             onEndReached={() => {
-        //                 this._onLoadMore();
-        //             }}
-        //             refreshControl={
-        //                 this._renderRefreshControl()
-        //             }
-        //         />
-        //     )
-        // }
-        // return (
-        //     <ListView
-        //         dataSource={this.state.dataSource}
-        //         renderHeader={
-        //             this.props.renderHeader ? this.props.renderHeader : null
-        //         }
-        //         renderRow={
-        //             this.props.renderRow ? this.props.renderRow
-        //                 : this._renderDefaultRow.bind(this)
-        //         }
-        //         onEndReachedThreshold={30}
-        //         removeClippedSubviews={false}
-        //         onEndReached={() => {
-        //             this._onLoadMore();
-        //         }}
-        //         refreshControl={
-        //             this._renderRefreshControl()
-        //         }
-        //     />
-        // )
     }
 
     render() {

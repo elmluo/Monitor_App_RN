@@ -9,7 +9,8 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ListView
+    ListView,
+    DeviceEventEmitter,
 } from 'react-native'
 import AlarmFilter from './alarmFilter'
 import AlarmDetail from './AlarmDetail'
@@ -205,9 +206,9 @@ class AlarmTab extends Component {
                         // success:result.success,
                         url: this.props.url,
 
-
                     });
-
+                    // 发送通知，自定义列表刷新
+                    DeviceEventEmitter.emit('custom_listView');
                 }
             })
     }

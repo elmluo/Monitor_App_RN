@@ -7,7 +7,8 @@ import {
     Alert,
     Image,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
+    DeviceEventEmitter,
 } from 'react-native';
 import CustomListView from '../../common/CustomListView'
 import SearchPage from '../../page/SearchPage';
@@ -259,6 +260,8 @@ export default class DeviceTab extends Component {
                                         isSelected: this.isSelected,
                                         selectedSystem: item,
                                     });
+                                    // 发送通知，执行自定义列表组件刷新
+                                    DeviceEventEmitter.emit('custom_listView');
                                 }}>
                                 {
                                     this.state.selectedSystem === item
