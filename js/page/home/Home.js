@@ -350,30 +350,30 @@ export default class Monitor extends Component {
                     </ImageBackground>
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
-                            {/**/}
+                            {/* 通过TouchableOpacity组件将路由切换到告警页 */}
                             <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '一级告警');}}>
+                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['1']}); }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[0].count}
                                     allCount={this.state.allCount}
                                     alarmName={this.state.levelAlarm[0].item}
                                     alarmColor='#1CCAEB'/></TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '二级告警');}}>
+                            <TouchableOpacity
+                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['2']}); }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[1].count}
                                     allCount={this.state.allCount}
                                     alarmName={this.state.levelAlarm[1].item}
                                     alarmColor='#F63232'/></TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '三级告警');}}>
+                            <TouchableOpacity
+                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['3']}); }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[2].count}
                                     allCount={this.state.allCount}
                                     alarmName={this.state.levelAlarm[2].item}
                                     alarmColor='#F9AE46'/></TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm', '四级告警');}}>
+                            <TouchableOpacity
+                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['4']}); }}>
                                 <HomeAlarmCell
                                     count={this.state.levelAlarm[3].count}
                                     allCount={this.state.allCount}

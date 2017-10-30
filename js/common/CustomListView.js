@@ -93,6 +93,7 @@ export default class CustomListView extends Component {
         params.page = this.page;
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
             if (result.success === true) {
+                // alert(JSON.stringify(result.data));
                 // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
                     // alert(page);
@@ -163,6 +164,8 @@ export default class CustomListView extends Component {
         // 如果传入自动刷新，组件每次加载都会自动加载数据一次。
         // if (this.props.isAutoRefresh) {
         //     console.log(this.props);
+        //     alert(JSON.stringify(nextProps.params));
+            this.props = nextProps;
             this._onRefresh()
         // }
     }
@@ -184,28 +187,6 @@ export default class CustomListView extends Component {
     }
 
     _renderListView() {
-        if (this.props.isAutoRefresh) {
-            return (
-                <ListView
-                    dataSource={this.state.dataSource}
-                    renderHeader={
-                        this.props.renderHeader ? this.props.renderHeader : null
-                    }
-                    renderRow={
-                        this.props.renderRow ? this.props.renderRow
-                            : this._renderDefaultRow.bind(this)
-                    }
-                    onEndReachedThreshold={30}
-                    removeClippedSubviews={false}
-                    onEndReached={() => {
-                        this._onLoadMore();
-                    }}
-                    refreshControl={
-                        this._renderRefreshControl()
-                    }
-                />
-            )
-        }
         return (
             <ListView
                 dataSource={this.state.dataSource}
@@ -226,6 +207,48 @@ export default class CustomListView extends Component {
                 }
             />
         )
+        // if (this.props.isAutoRefresh) {
+        //     return (
+        //         <ListView
+        //             dataSource={this.state.dataSource}
+        //             renderHeader={
+        //                 this.props.renderHeader ? this.props.renderHeader : null
+        //             }
+        //             renderRow={
+        //                 this.props.renderRow ? this.props.renderRow
+        //                     : this._renderDefaultRow.bind(this)
+        //             }
+        //             onEndReachedThreshold={30}
+        //             removeClippedSubviews={false}
+        //             onEndReached={() => {
+        //                 this._onLoadMore();
+        //             }}
+        //             refreshControl={
+        //                 this._renderRefreshControl()
+        //             }
+        //         />
+        //     )
+        // }
+        // return (
+        //     <ListView
+        //         dataSource={this.state.dataSource}
+        //         renderHeader={
+        //             this.props.renderHeader ? this.props.renderHeader : null
+        //         }
+        //         renderRow={
+        //             this.props.renderRow ? this.props.renderRow
+        //                 : this._renderDefaultRow.bind(this)
+        //         }
+        //         onEndReachedThreshold={30}
+        //         removeClippedSubviews={false}
+        //         onEndReached={() => {
+        //             this._onLoadMore();
+        //         }}
+        //         refreshControl={
+        //             this._renderRefreshControl()
+        //         }
+        //     />
+        // )
     }
 
     render() {
