@@ -50,7 +50,7 @@ export default class CustomListView extends Component {
                 refreshing={this.state.isLoading}
                 onRefresh={() => {
                     // 刷新的时候从第一页重新获取数据
-                    this._onRefresh();
+                    this._onRefresh(true);
                 }}/>
         )
     }
@@ -78,17 +78,21 @@ export default class CustomListView extends Component {
         )
     }
 
+
     /**
      * 刷新重新渲染第一页数据
+     * @param isLoading 是否下拉加载的动画
      * @private
      */
-    _onRefresh() {
+    _onRefresh(isLoading) {
         this.page = 1;
         this._data = [];
         // 开启加载动画
-        this.setState({
-            isLoading: true
-        });
+        if (isLoading) {
+            this.setState({
+                isLoading: true
+            });
+        }
         let url = this.props.url;
         let params = this.props.params;
         params.page = this.page;
@@ -177,7 +181,7 @@ export default class CustomListView extends Component {
     componentDidMount() {
         // 组件加载完毕，监听事件-重新加载数据。
         this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
-            this._onRefresh();
+            this._onRefresh(true);
         });
 
         InteractionManager.runAfterInteractions(() => {
