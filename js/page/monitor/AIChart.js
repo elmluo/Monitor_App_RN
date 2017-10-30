@@ -52,7 +52,7 @@ export default class HomeStatisticChart extends Component {
                 },
                 trigger: 'axis',
                 formatter: function (v, p, f) {
-                    return (v[0].data * 100).toFixed(1) + '%';
+                    return (v[0].data).toFixed(1) + '' ;
                 },
                 position: function (point, params, dom, rect, size) {
                     var triAng = document.createElement('div');
@@ -88,7 +88,7 @@ export default class HomeStatisticChart extends Component {
                 {
                     type: 'category',
                     // boundaryGap : false,
-                    data: this.props.chartData.data.map(function (v) {
+                    data: this.props.chartData.data.reverse().map(function (v) {
                         return Utils.FormatTime(new Date(v.time), 'MM-dd hh:mm')
                     }),
                     boundaryGap: false,
@@ -179,7 +179,7 @@ export default class HomeStatisticChart extends Component {
                         }
                     },
 
-                    data: this.props.chartData.data.map(function (v) {
+                    data: this.props.chartData.data.reverse().map(function (v) {
                         return v.value;
                     }),
                     markPoint: {

@@ -65,7 +65,7 @@ export default class SiteDetailSignalAI extends React.Component {
         };
 
         dataRespository.fetchNetRepository('POST', url, params).then((result) => {
-            alert(JSON.stringify(result));
+            // alert(JSON.stringify(result));
             if (result.success === true) {
                 this.setState({
                     isLoading: false,
@@ -145,17 +145,17 @@ export default class SiteDetailSignalAI extends React.Component {
                         <View style={styles.topChart}>
                             {/*图表组件*/}
                             <AIChart
+                                unit={this.props.signal.unit}
                                 chartData={this.state.data}
                                 width={width}
-                                height={height * 0.37}
+                                height={height * 0.35}
                             />
                         </View>
-                        <View style={styles.topTitle}>
-                            <Text style={styles.topTitleText}>采集时间</Text>
-                            <Text style={styles.topTitleText}>数据</Text>
-                        </View>
                     </View>
-
+                    <View style={styles.topTitle}>
+                        <Text style={styles.topTitleText}>采集时间</Text>
+                        <Text style={styles.topTitleText}>数据</Text>
+                    </View>
                     <View style={styles.bottom}>
                         {content}
                     </View>
@@ -177,21 +177,24 @@ let styles = new StyleSheet.create({
         backgroundColor: '#FFFFFF'
     },
     top: {
-        height: height * 0.45,
+        height: height * 0.37,
         backgroundColor: '#F3F3F3'
     },
     topChart: {},
     topTitle: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        alignItems: 'center'
+        alignItems: 'center',
+        height: height* 0.06,
+        borderBottomColor: '#F3F3F3',
+        borderBottomWidth: 4
     },
     topTitleText: {
         fontSize: 16,
         color: '#7E7E7E'
     },
     bottom: {
-        height: height * 0.4
+        height: height * 0.43
     },
     cellWrapper: {
         paddingLeft: 16,

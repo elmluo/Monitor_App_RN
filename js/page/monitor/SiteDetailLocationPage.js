@@ -50,11 +50,19 @@ export default class LocationPage extends React.Component {
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}
                 leftButton={this._renderLeftButton()}/>;
+        let insertJSToHtml = `
+        obj={a: 120.261498, b: 30.317364};
+        var map = new AMap.Map('container',{
+            zoom: 10,
+            center: [window.obj.a,window.obj.b]
+        });`;
+
+        //120.261498,30.317364
         return (
             <View style={styles.container}>
                 {navigationBar}
                 <WebView
-                    // source={{uri: 'https://www.baidu.com/index.php?tn=22073068_2_dghttps://www.baidu.com/index.php?tn=22073068_2_dg'}}
+                    injectedJavaScript={insertJSToHtml}
                     source={{uri: 'http://localhost:8081/js/html/Location/locationMap.html'}}
                     startInLoadingState={true}/>
             </View>

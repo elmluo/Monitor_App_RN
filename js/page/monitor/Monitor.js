@@ -55,16 +55,22 @@ export default class Monitor extends Component {
      */
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let fsuOnline =
-            rowData.fsuOnline ? <Text style={[styles.onlineState]}>在线</Text>
-                : <Text style={styles.onlineState}>离线</Text>;
+            rowData.fsuOnline ? <View style={[styles.onlineState]}><Text style={styles.operationStateText}>在线</Text></View>
+                : <View style={styles.onlineState}><Text style={styles.operationStateText}>离线</Text></View>;
 
         let operationState;
         if (rowData.operationState === '工程态') {
-            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(141, 135, 179)'}]}>工程态</Text>
+            operationState = <View style={[styles.operationState, {backgroundColor: 'rgb(141, 135, 179)'}]}>
+                <Text style={styles.operationStateText}>工程态</Text>
+            </View>
         } else if (rowData.operationState === '测试态') {
-            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(136, 121, 232)'}]}>测试态</Text>
+            operationState = <View style={[styles.operationState, {backgroundColor: 'rgb(136, 121, 232)'}]}>
+                <Text style={styles.operationStateText}>测试态</Text>
+            </View>
         } else if (rowData.operationState === '交维态') {
-            operationState = <Text style={[styles.operationState, {backgroundColor: 'rgb(107, 92, 245)'}]}>交维态</Text>
+            operationState = <View style={[styles.operationState, {backgroundColor: 'rgb(107, 92, 245)'}]}>
+                <Text style={styles.operationStateText}>交维态</Text>
+            </View>
         }
         return (
             <TouchableOpacity
@@ -213,24 +219,20 @@ const styles = StyleSheet.create({
     },
     onlineState: {
         backgroundColor: '#949494',
-        color: '#FFFFFF',
-        fontSize: 12,
-        // paddingTop: 1,
-        // paddingBottom: 1,
         paddingLeft: 6,
         paddingRight: 6,
         borderRadius: 3,
     },
     operationState: {
         backgroundColor: '#949494',
-        color: '#FFFFFF',
-        fontSize: 12,
-        // paddingTop: 1,
-        // paddingBottom: 1,
         paddingLeft: 6,
         paddingRight: 6,
         borderRadius: 3,
         marginRight: 4,
+    },
+    operationStateText: {
+        color: '#FFFFFF',
+        fontSize: 12,
     }
 
 });
