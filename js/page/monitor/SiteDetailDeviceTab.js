@@ -83,7 +83,7 @@ export default class DeviceTab extends Component {
     _renderListView() {
         let params = this.props.params;
         params.system = this.state.selectedSystem;
-        alert(JSON.stringify(params));
+        // alert(JSON.stringify(params));
         return (
             <CustomListView
                 {...this.props}
@@ -255,6 +255,7 @@ export default class DeviceTab extends Component {
                                 underlayColor='transparent'
                                 onPress={() => {
                                     this.isSelected = false;
+
                                     // 发送通知，执行自定义列表组件刷新
                                     // 此处由于刷新视图操作较多，注意列表组件刷新的顺序
                                     this.timer = setTimeout(function(){
