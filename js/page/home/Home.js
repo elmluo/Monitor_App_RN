@@ -308,7 +308,7 @@ export default class Monitor extends Component {
         return (
             <View style={styles.onlineRate}>
                 <View style={styles.onlineRateTop}>
-                    <Text style={{color: '#FFFFFF', fontSize: 40}}>{Math.ceil((onlineCount / sum) * 100)}</Text>
+                    <Text style={{color: '#FFFFFF', fontSize: 38}}>{Math.ceil((onlineCount / sum) * 100)}</Text>
                     <Text style={{color: '#FFFFFF', fontSize: 20, marginBottom: 7}}>%</Text>
                 </View>
                 <View style={styles.onlineRateCenter}>
@@ -566,13 +566,13 @@ const styles = StyleSheet.create({
     onlineRateTop: {
         flexDirection: 'row',
         alignItems: 'flex-end',
-        marginBottom: 5,
+        marginBottom: 2,
     },
     onlineRateCenter: {
-        marginBottom: 5,
+        marginBottom: 2,
     },
     onlineRateBottom: {
-        width: 110,
+        width: 90,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between'

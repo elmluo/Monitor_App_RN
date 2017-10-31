@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     Dimensions,
     DeviceEventEmitter,
+    ScrollView
 } from 'react-native';
 import CustomListView from '../../common/CustomListView'
 import SearchPage from '../../page/SearchPage';
@@ -221,7 +222,7 @@ export default class DeviceTab extends Component {
                                 ? <Image style={{width: 12, height: 6, tintColor: '#3C7FFC'}}
                                          source={require('../../../res/Image/BaseIcon/ic_triangle_up_nor.png')}/>
                                 : <Image style={{width: 12, height: 6, tintColor: '#3C7FFC'}}
-                                         source={require('../../../res/Image/BaseIcon/ic_triangle_up_nor.png')}/>
+                                         source={require('../../../res/Image/BaseIcon/ic_triangle_down_nor.png')}/>
                         }
                     </View>
                 </TouchableOpacity>
@@ -245,7 +246,7 @@ export default class DeviceTab extends Component {
      */
     _renderSelectOptionList() {
         return (
-            <View style={styles.selectList}>
+            <ScrollView style={styles.selectList}>
                 <View>
                     {
                         this.state.systemList.map((item, i, arr) => {
@@ -297,7 +298,7 @@ export default class DeviceTab extends Component {
                     }}>
                 </TouchableOpacity>
 
-            </View>
+            </ScrollView>
         )
     }
 
