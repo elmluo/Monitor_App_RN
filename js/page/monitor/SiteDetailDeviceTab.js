@@ -7,7 +7,8 @@ import {
     Alert,
     Image,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
+    DeviceEventEmitter,
 } from 'react-native';
 import CustomListView from '../../common/CustomListView'
 import SearchPage from '../../page/SearchPage';
@@ -82,6 +83,7 @@ export default class DeviceTab extends Component {
     _renderListView() {
         let params = this.props.params;
         params.system = this.state.selectedSystem;
+        // alert(JSON.stringify(params));
         return (
             <CustomListView
                 {...this.props}
@@ -181,12 +183,10 @@ export default class DeviceTab extends Component {
             // alert(JSON.stringify(result.data));
 
             // 默认显示系统列表下第一个系统下设备
-            let params = this.props.params;
             params.system = result.data[0];
             this.setState({
                 systemList: result.data,
                 selectedSystem: result.data[0],
-                params: params,
             });
         });
     }
@@ -255,6 +255,14 @@ export default class DeviceTab extends Component {
                                 underlayColor='transparent'
                                 onPress={() => {
                                     this.isSelected = false;
+
+                                    // 发送通知，执行自定义列表组件刷新
+                                    // 此处由于刷新视图操作较多，注意列表组件刷新的顺序
+                                    this.timer = setTimeout(function(){
+                                        clearTimeout(this.timer);
+                                        DeviceEventEmitter.emit('custom_listView');
+                                    },0);
+
                                     this.setState({
                                         isSelected: this.isSelected,
                                         selectedSystem: item,

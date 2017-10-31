@@ -59,6 +59,7 @@ export default class Login extends Component {
                         .then(() => {
                             console.log('用户信息已经保存');
                         });
+
                     //保存用户登录信息
                     storage.setUserInfo(params);
                     //根据登录返回 classes 判断是代理商还是普通用户

@@ -9,7 +9,8 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ListView
+    ListView,
+    DeviceEventEmitter,
 } from 'react-native'
 import AlarmFilter from './alarmFilter'
 import AlarmDetail from './AlarmDetail'
@@ -21,8 +22,6 @@ import CustomListView from '../../common/CustomListView'
 import Utils from '../../util/Utils'
 
 let storage = new Storage();
-
-let StorageFunction = new Storage();
 export default class Alarm extends Component {
     constructor(props) {
         super(props);
@@ -80,8 +79,8 @@ export default class Alarm extends Component {
 
     _this_Params(initialPage, isHisAlarm) {
         let params = {
-            stamp: StorageFunction.getLoginInfo().stamp,
-            userId: StorageFunction.getLoginInfo().userId,
+            stamp: storage.getLoginInfo().stamp,
+            userId: storage.getLoginInfo().userId,
             size: 20,
         };
         //参数逻辑判断
@@ -99,7 +98,6 @@ export default class Alarm extends Component {
             } else {
                 params.status = 1;
                 params.page = this.state.historyPage;
-
 
             }
         }
@@ -137,13 +135,13 @@ export default class Alarm extends Component {
                 tabBarInactiveTextColor='mintcream'
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
-                initialPage={1}>
-                <AlarmTab tabLabel='关注告警' {...this.props} params={{...this._this_Params(0, true), ...this.state.filter}} isAlarm={false}
-                          url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
+                initialPage={0}>
                 <AlarmTab tabLabel='实时告警' {...this.props} params={{...this._this_Params(1, true), ...this.state.filter}} isAlarm={false}
                           url={'/app/v2/alarm/list'} filter = {this.state.filter}>实时告警</AlarmTab>
                 <AlarmTab tabLabel='历史告警' {...this.props} params={{...this._this_Params(2, false), ...this.state.filter}} isAlarm={true}
                           url={'/app/v2/alarm/list'} filter = {this.state.filter}>历史告警</AlarmTab>
+                <AlarmTab tabLabel='关注告警' {...this.props} params={{...this._this_Params(0, true), ...this.state.filter}} isAlarm={false}
+                          url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
             </ScrollableTabView>;
         return (
             <View style={styles.container}>
@@ -193,7 +191,7 @@ class AlarmTab extends Component {
             .then(result => {
 
                 if (result.success === true) {
-                    alert(JSON.stringify(result));
+                    // alert(JSON.stringify(result));
 
                     // let result = this._inAlarmIDArr(this.alarmIDArr, alarmId);
                     // alert(result);
@@ -208,9 +206,9 @@ class AlarmTab extends Component {
                         // success:result.success,
                         url: this.props.url,
 
-
                     });
-
+                    // 发送通知，自定义列表刷新
+                    DeviceEventEmitter.emit('custom_listView');
                 }
             })
     }

@@ -43,10 +43,10 @@ export default class Monitor extends Component {
             ],
             allCount: 21,
             levelAlarm: [
-                {item: "一级告警", count: 7},
-                {item: "一级告警", count: 7},
-                {item: "一级告警", count: 7},
-                {item: "一级告警", count: 7},
+                {item: "一级告警", count: 0},
+                {item: "二级告警", count: 0},
+                {item: "三级告警", count: 0},
+                {item: "四级告警", count: 0},
             ],
             fsuWeekCount: [
                 {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
@@ -257,12 +257,13 @@ export default class Monitor extends Component {
                 this._getWeekFsuCount(stamp),
                 this._getAlarmCount(stamp),
             ]).then((results) => {
+                console.log(results);
                 // 计算告警数量总和
                 let allCount = 0;
-                for (let i = 0; i < results[0].data.length; i++) {
-                    allCount += results[0].data[i].count
+                for (let i = 0; i < results[2].data.length; i++) {
+                    allCount += results[2].data[i].count
                 }
-
+                console.log(allCount,123456);
                 this.setState({
                     fsuCount: results[0].data,
                     fsuWeekCount: results[1].data,
@@ -498,8 +499,8 @@ export default class Monitor extends Component {
                 //---------------------------------ios end---------------------------------
 
         JPushModule.addGetRegistrationIdListener((registrationId) => {
-            console.log("Device register succeed, registrationId " + registrationId);
-            alert("Device register succeed, registrationId " + registrationId);
+            // console.log("Device register succeed, registrationId " + registrationId);
+            // alert("Device register succeed, registrationId " + registrationId);
 
         });
         // 页面加载完成再去渲染数据，减缓卡顿问题

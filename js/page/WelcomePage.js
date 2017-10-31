@@ -179,7 +179,6 @@ export default class WelcomePage extends Component {
             let alias = userData.userId;
 
             if (alias !== undefined) {
-                alert(JSON.stringify(alias));
                 JPushModule.setAlias(alias, () => {
                     console.log("Set alias succeed");
                 }, () => {

@@ -6,6 +6,7 @@ import {
     ScrollView,
     ListView,
     Alert,
+    Button,
     TouchableOpacity,
     ImageBackground,
     Image,
@@ -15,11 +16,14 @@ import NavigationBar from '../../common/NavigationBar'
 import CustomListView from '../../common/CustomListView'
 import Storage from '../../common/StorageClass'
 import DataRepository from '../../expand/dao/Data'
+import Utils from '../../util/Utils';
+import SiteDetailSignalAI from './SiteDetailSignalAI'
 
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
 let storage = new Storage();
 export default class SignalList extends React.Component {
+    selectArr = [];
     constructor(props) {
         super(props);
         this.state = {
@@ -66,45 +70,117 @@ export default class SignalList extends React.Component {
 
     }
 
-    _renderCell(v,i) {
-        if (v.techType === "遥测") {
-            return (
-                <View key={i} style={styles.cell}>
-                    <View style={styles.cellLeft}>
-                        <ImageBackground
-                            style={styles.cellLeftImageBg}
-                            source={require('../../../res/Image/Monitor/ic_single_nor.png')}>
-                        </ImageBackground>
-                        <View style={styles.celLeftText}>
-                            <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                            <Text style={styles.cellLeftSubTitle}>{v.time}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cellRight}>
-                        <Text>向右箭头</Text>
-                    </View>
-                </View>
+    _pushToSiteDetailSignalAI(v) {
+        this.props.navigator.push({
+            component: SiteDetailSignalAI,
+            params: {
+                signal: v,
+                ...this.props
+            }
+        })
+    }
 
-            )
-        } else if(v.techType === "遥信"){
-            if (v.value === 0) {
-                return (
+    _renderLeftButton() {
+        return (
+            <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity
+                    onPress={() => {
+                        this.props.navigator.pop();
+                    }}>
+                    <View style={{padding: 5, marginRight: 8}}>
+                        <Image
+                            style={{width: 24, height: 24}}
+                            source={require('../../../res/Image/Nav/ic_backItem.png')}
+                        />
+                    </View>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+    _renderCell(v, i) {
+        if (v.techType === "遥测") {
+            let value;
+            if (v.unit === '%RH') {
+                value = <View>
+                    <Text style={styles.cellLeftImageBgText}>{v.value}</Text>
+                    <Text style={styles.cellLeftImageBgText}>{v.unit}</Text>
+                </View>
+            } else {
+                value = <View>
+                    <Text style={styles.cellLeftImageBgText}>{v.value + '' + v.unit}</Text>
+                </View>
+            }
+            return (
+                <TouchableOpacity
+                    onPress={() => {
+                        this._pushToSiteDetailSignalAI(v);
+                    }}>
                     <View key={i} style={styles.cell}>
                         <View style={styles.cellLeft}>
                             <ImageBackground
                                 style={styles.cellLeftImageBg}
                                 source={require('../../../res/Image/Monitor/ic_single_nor.png')}>
+                                {value}
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{v.time}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils._Time(v.time)}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>
-                            <Text>向右箭头</Text>
+                            <Image
+                                style={styles.cellRightImage}
+                                source={require('../../../res/Image/BaseIcon/ic_push_nor.png')}/>
                         </View>
                     </View>
+                </TouchableOpacity>
+            )
+        } else if (v.techType === "遥信") {
+            if (v.value === 0) {
+                let clickView;
+                if ('1' !== JSON.stringify(v.threshold)) {
+                    clickView =
+                        <TouchableOpacity
+                            style={styles.clickView}
+                            onPress={() => {
 
+                                // 点击显示遥信的门限值
+                                let result = this.selectArr.indexOf(v.threshold) !== -1;    // 内容是否在数组中
+                                if (result) {
+                                    this.selectArr.splice(this.selectArr.indexOf(v.threshold), 1);
+                                } else {
+                                    this.selectArr.push(v.threshold);
+                                }
+                                this.setState({})   // 触发视图刷新
+
+                            }}>
+                        </TouchableOpacity>
+                } else {
+                    clickView = null;
+                }
+                return (
+                    <View key={i} style={styles.cell}>
+                        {clickView}
+                        <View style={styles.cellLeft}>
+                            <ImageBackground
+                                style={styles.cellLeftImageBg}
+                                source={require('../../../res/Image/Monitor/ic_single_nor.png')}>
+                                <Text style={styles.cellLeftImageBgText}>
+                                    {
+                                        this.selectArr.indexOf(v.threshold) !== -1
+                                            ? v.threshold :'正常'
+                                    }
+                                </Text>
+
+                            </ImageBackground>
+                            <View style={styles.celLeftText}>
+                                <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils._Time(v.time)}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.cellRight}>
+                        </View>
+                    </View>
                 )
             } else {
                 return (
@@ -113,14 +189,15 @@ export default class SignalList extends React.Component {
                             <ImageBackground
                                 style={styles.cellLeftImageBg}
                                 source={require('../../../res/Image/Monitor/ic_single_alarm.png')}>
+                                <Text style={styles.cellLeftImageBgText}>告警</Text>
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{v.time}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils._Time(v.time)}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>
-                            <Text>向右箭头</Text>
+                            {/*<Text>向右箭头</Text>*/}
                         </View>
                     </View>
                 )
@@ -181,7 +258,17 @@ let styles = new StyleSheet.create({
         alignItems: 'center',
         padding: 16,
         backgroundColor: '#FFFFFF',
-        marginBottom: 4
+        marginBottom: 4,
+        position: 'relative'
+    },
+    clickView: {
+        position: 'absolute',
+        left: 16,
+        width: 50,
+        height: 50,
+        // backgroundColor: 'red',
+        backgroundColor: 'transparent',
+        zIndex: 2,
     },
     cellLeft: {
         flexDirection: 'row',
@@ -189,9 +276,18 @@ let styles = new StyleSheet.create({
         alignItems: 'center',
     },
     cellLeftImageBg: {
-        width: 46,
-        height: 46,
-        marginRight: 16
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 50,
+        height: 50,
+        marginRight: 16,
+    },
+    cellLeftImageBgText: {
+        // backgroundColor: 'red',
+        backgroundColor: 'transparent',
+        color: '#7E7E7E',
+        fontSize: 12,
     },
     celLeftText: {},
     cellLeftTitle: {
@@ -204,5 +300,11 @@ let styles = new StyleSheet.create({
         fontSize: 12,
         marginTop: 6
     },
-    cellRight: {}
+    cellRight: {},
+    cellRightImage: {
+        width: 24,
+        height: 24,
+        tintColor: '#7E7E7E',
+        // backgroundColor: 'red'
+    }
 });
