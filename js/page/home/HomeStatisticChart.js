@@ -41,7 +41,7 @@ export default class HomeStatisticChart extends Component {
 
         let monday3 = new Date(today.getTime() - hour * 24 * (new Date().getDay() - 2) - 21 * hour).getTime();
         this.props.chartData.forEach(function (v) {
-            var id = (v.recordTime - monday3) / (4 * hour);
+            var id = (v.recordTime - monday3) / (6 * hour);
             id = Math.round(id);
             onlineRate[id] = v;
         });
