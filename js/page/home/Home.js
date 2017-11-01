@@ -15,6 +15,7 @@ import {
     Platform,
     Dimensions,
     InteractionManager,
+    DeviceEventEmitter,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import BulletinList from './BulletinList'
@@ -356,10 +357,9 @@ export default class Monitor extends Component {
                     />
                 }>
                 <View style={{flex: 1}}>
-                    <ImageBackground
-                        style={styles.gb}
-                        source={require('../../../res/Image/Login/ic_login_bg.png')}>
-
+                    <ImageBackground style={styles.gb}
+                                     source={require('../../../res/Image/Login/ic_login_bg.png')}
+                    >
                         {this._renderBulletinSlideBar()}
                         {this._renderTodayOnlineRate()}
                         <HomeStatisticChart chartData={this.state.fsuWeekCount}
@@ -373,38 +373,38 @@ export default class Monitor extends Component {
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['1']});
                                 }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[0].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[0].item}
-                                    alarmColor='#1CCAEB'/></TouchableOpacity>
+                                <HomeAlarmCell count={this.state.levelAlarm[0].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[0].item}
+                                               alarmColor='#1CCAEB'/>
+                            </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['2']});
                                 }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[1].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[1].item}
-                                    alarmColor='#F63232'/></TouchableOpacity>
+                                <HomeAlarmCell count={this.state.levelAlarm[1].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[1].item}
+                                               alarmColor='#F63232'/>
+                            </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['3']});
                                 }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[2].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[2].item}
-                                    alarmColor='#F9AE46'/></TouchableOpacity>
+                                <HomeAlarmCell count={this.state.levelAlarm[2].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[2].item}
+                                               alarmColor='#F9AE46'/>
+                            </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['4']});
                                 }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[3].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[3].item}
-                                    alarmColor='#E6CD0D'/></TouchableOpacity>
+                                <HomeAlarmCell count={this.state.levelAlarm[3].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[3].item}
+                                               alarmColor='#E6CD0D'/>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -414,7 +414,6 @@ export default class Monitor extends Component {
             <View style={styles.container}>
                 {navigationBar}
                 {content}
-
             </View>
         )
     }
@@ -535,6 +534,11 @@ export default class Monitor extends Component {
                 this._getNoticeNotReadCount(stamp);
             })
         });
+    }
+
+    componentWillUnmount() {
+        // 组件卸载后取消定时器，防止多余异常出现
+        // this.timer && clearTimeout(this.timer);
     }
 }
 const styles = StyleSheet.create({

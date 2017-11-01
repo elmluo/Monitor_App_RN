@@ -87,6 +87,10 @@ export default class CustomListView extends Component {
     _onRefresh(isLoading) {
         this.page = 1;
         this._data = [];
+        // 获取传入fsu列表
+        if (this.props.fsuList) {
+            this._data = this._data.concat(this.props.fsuList);
+        }
         // 开启加载动画
         if (isLoading) {
             this.setState({
@@ -180,9 +184,17 @@ export default class CustomListView extends Component {
      */
     componentDidMount() {
         // 组件加载完毕，监听事件-重新加载数据。
-        this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
+        this.listener = DeviceEventEmitter.addListener('custom_listView', (p) => {
+            // 当params想要修改的时候，可以传入参数p可以覆盖。可以覆盖原有的字段或者属性
+            if (p) {
+                for (let i in p){
+                    this.props.params[i] = p[i];
+                }
+            }
             this._onRefresh(true);
         });
+
+        // console.log(this.props.params);
 
         InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {

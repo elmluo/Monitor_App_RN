@@ -105,7 +105,7 @@ export default class HomeStatisticChart extends Component {
                     type: 'category',
                     // boundaryGap : false,
                     data: this.props.chartData.data.reverse().map(function (v) {
-                        return Utils.FormatTime(new Date(v.time), 'MM-dd hh:mm')
+                        return '           '+Utils.FormatTime(new Date(v.time), 'MM-dd hh:mm')
                     }),
                     boundaryGap: false,
                     axisTick: {
@@ -143,7 +143,7 @@ export default class HomeStatisticChart extends Component {
                             color: "rgba(255,255,255,0.1)"
                         }
                     },
-                    min: minData - 2,
+                    min: parseInt(minData * 0.95),
                     // axisTick: {
                     //     show: true
                     // },
@@ -221,7 +221,7 @@ export default class HomeStatisticChart extends Component {
                         },
                         emphasis: {
                             opacity: 1,
-                            color: '#fff',
+                            color: '#',
                             borderColor: 'rgba(255,255,255,0.1)',
                             borderWidth: 10
                         }

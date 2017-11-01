@@ -80,22 +80,6 @@ export default class SiteDetail extends Component {
         })
     }
 
-    /**
-     * 获取FSU列表
-     *
-     */
-    _getFsuList() {
-        let url = '/app/v2/fsu/list';
-        let params = {
-            stamp: storage.getLoginInfo().stamp,
-            siteId: this.props.item.siteId,
-        };
-        dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            console.log(result);
-
-        })
-    }
-
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -161,7 +145,6 @@ export default class SiteDetail extends Component {
 
     componentDidMount() {
         InteractionManager.runAfterInteractions(()=> {
-
         })
     }
 }
@@ -185,6 +168,12 @@ const styles = StyleSheet.create({
         marginLeft: 14,
     }
 });
+
+
+
+
+
+
 
 
 /**
