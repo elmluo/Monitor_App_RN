@@ -1,3 +1,13 @@
+/**
+ *------------------- 自定义请求没有获取数据的时候，显示图片：-------------------------
+ * 传入属性(this.props.)
+ *      url   [string]    获取数据地址uri
+ *      type  [string]    请求没有获得数据的时候，或者获取数据为空，需要实现的提示图片的
+ *      onClick           添加点击图片执行方法。
+ *----------------------------------------------------------
+ */
+
+
 import React from 'react';
 import {
     StyleSheet,
@@ -22,30 +32,58 @@ export default class ComponentName extends React.Component {
     _renderContent(type) {
         if (type === 'noData') {
             return (
-                <View style={styles.content}>
-                    <Image source={require('../../res/Image/Anomaly/ic_noData.png')}/>
-                    <Text style={styles.text}> 还没有数据哦</Text>
+                <View>
+                    <TouchableOpacity
+                        style={styles.content}
+                        activeOpacity={1}
+                        onPress={()=> {
+                            this.props.onClick();
+                        }}>
+                        <Image source={require('../../res/Image/Anomaly/ic_noData.png')}/>
+                        <Text style={styles.text}> 还没有数据哦</Text>
+                    </TouchableOpacity>
                 </View>
             )
         } else if (type === 'noNetWork') {
             return (
-                <View style={styles.content}>
-                    <Image source={require('../../res/Image/Anomaly/ic_noNetwork.png')}/>
-                    <Text style={styles.text}> 请检查网络是否正常！</Text>
+                <View>
+                    <TouchableOpacity
+                        style={styles.content}
+                        activeOpacity={1}
+                        onPress={()=> {
+                            this.props.onClick();
+                        }}>
+                        <Image source={require('../../res/Image/Anomaly/ic_noNetwork.png')}/>
+                        <Text style={styles.text}> 请检查网络是否正常！</Text>
+                    </TouchableOpacity>
                 </View>
             )
         } else if (type === 'netWorkError') {
             return (
-                <View style={styles.content}>
-                    <Image source={require('../../res/Image/Anomaly/ic_noNetworkError.png')}/>
-                    <Text style={styles.text}> 网络连接错误！</Text>
+                <View>
+                    <TouchableOpacity
+                        style={styles.content}
+                        activeOpacity={1}
+                        onPress={()=> {
+                            this.props.onClick();
+                        }}>
+                        <Image source={require('../../res/Image/Anomaly/ic_noNetworkError.png')}/>
+                        <Text style={styles.text}> 网络连接错误！</Text>
+                    </TouchableOpacity>
                 </View>
             )
         } else if (type === 'noAlarm') {
             return (
-                <View style={styles.content}>
-                    <Image source={require('../../res/Image/Anomaly/ic_noAlarm.png')}/>
-                    <Text style={styles.text}> 还没有告警哦！</Text>
+                <View >
+                    <TouchableOpacity
+                        style={styles.content}
+                        activeOpacity={1}
+                        onPress={()=> {
+                            this.props.onClick();
+                        }}>
+                        <Image source={require('../../res/Image/Anomaly/ic_noAlarm.png')}/>
+                        <Text style={styles.text}> 还没有数据哦！</Text>
+                    </TouchableOpacity>
                 </View>
             )
         }

@@ -9,16 +9,15 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ListView
+    ListView,
+    DeviceEventEmitter,
 } from 'react-native'
 import AlarmFilter from './alarmFilter'
-import AlarmDetail from './AlarmDetail'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import Storage from '../../common/StorageClass'
-import CustomListView from '../../common/CustomListView'
-import Utils from '../../util/Utils'
+import AlarmTab from './AlarmTab'
 
 let storage = new Storage();
 export default class Alarm extends Component {
@@ -33,7 +32,7 @@ export default class Alarm extends Component {
             alarmPage: 1,
             historyPage: 1,
             // 告警筛选条件
-            filter: {       
+            filter: {
                 level: [],
                 deviceType: [],
                 siteId: []
@@ -97,16 +96,10 @@ export default class Alarm extends Component {
             } else {
                 params.status = 1;
                 params.page = this.state.historyPage;
-
             }
         }
-
-
         return params;
-
-
     }
-
 
     render() {
         // this.state.filter.level = this.props.crossPageData ? this.props.crossPageData.level || [] : [];
@@ -116,11 +109,30 @@ export default class Alarm extends Component {
             this.state.filter.level = this.props.crossPageData.level;
             this.props.setCrossPageData(null, false);
         }
+
+        // alert(JSON.stringify(this.state.filter))
+        // 请求会报错，为空的话，需要变成undefined。
+        if (this.state.filter.level && this.state.filter.level.length === 0) {
+            this.state.filter.level = undefined;
+        }
+        if (this.state.filter.siteId && this.state.filter.siteId.length === 0) {
+            this.state.filter.siteId = undefined;
+        }
+        if (this.state.filter.deviceType && this.state.filter.deviceType.length === 0) {
+            this.state.filter.deviceType = undefined;
+        }
+
+        this.timer = setTimeout(()=> {
+            clearTimeout(this.timer);
+            DeviceEventEmitter.emit('custom_listView_alarm', this.state.filter);
+        }, 0);
+
         // alert(JSON.stringify(this.state.filter))
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
             barStyle: 'light-content'
         };
+
         let navigationBar =
             <NavigationBar
                 title={'告警页面'}
@@ -134,13 +146,31 @@ export default class Alarm extends Component {
                 tabBarInactiveTextColor='mintcream'
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
-                initialPage={1}>
-                <AlarmTab tabLabel='关注告警' {...this.props} params={{...this._this_Params(0, true), ...this.state.filter}} isAlarm={false}
-                          url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
-                <AlarmTab tabLabel='实时告警' {...this.props} params={{...this._this_Params(1, true), ...this.state.filter}} isAlarm={false}
-                          url={'/app/v2/alarm/list'} filter = {this.state.filter}>实时告警</AlarmTab>
-                <AlarmTab tabLabel='历史告警' {...this.props} params={{...this._this_Params(2, false), ...this.state.filter}} isAlarm={true}
-                          url={'/app/v2/alarm/list'} filter = {this.state.filter}>历史告警</AlarmTab>
+                initialPage={0}>
+                <AlarmTab tabLabel='实时告警'
+                          {...this.props}
+                          params={{...this._this_Params(1, true), ...this.state.filter}}
+                          isAlarm={false}
+                          url={'/app/v2/alarm/list'}
+                          filter={this.state.filter}>
+                    实时告警
+                </AlarmTab>
+                <AlarmTab tabLabel='关注告警'
+                          {...this.props}
+                          params={{...this._this_Params(0, true), ...this.state.filter}}
+                          isAlarm={false}
+                          url={'/app/v2/alarm/focus/list'}
+                          filter={this.state.filter}>
+                    关注告警
+                </AlarmTab>
+                <AlarmTab tabLabel='历史告警'
+                          {...this.props}
+                          params={{...this._this_Params(2, false), ...this.state.filter}}
+                          isAlarm={true}
+                          url={'/app/v2/alarm/list'}
+                          filter={this.state.filter}>
+                    历史告警
+                </AlarmTab>
             </ScrollableTabView>;
         return (
             <View style={styles.container}>
@@ -151,228 +181,8 @@ export default class Alarm extends Component {
     }
 }
 
-
-/**
- * 封装一个单独的组件类，
- * 充当scrollableTabView的tab页面
- */
-class AlarmTab extends Component {
-
-
-    constructor(props) {
-        super(props);
-        this.dataRepository = new DataRepository();
-        this.state = {
-            isLoading: false,
-            dataSource: new ListView.DataSource({
-                rowHasChanged: (r1, r2) => r1 !== r2
-            }),
-
-        }
-    }
-
-    _postSelectedAlarm(alarmId) {
-        this.setState({
-            isLoading: true
-        });
-        let url = '/app/v2/alarm/focus/change';
-        let params = {
-            userId: storage.getLoginInfo().userId,
-            stamp: storage.getLoginInfo().stamp,
-            alarmId: alarmId,
-        };
-
-
-        // 切换不同标签页，通过tabBle
-        // alert(JSON.stringify(url));
-        // alert(JSON.stringify(params));
-        this.dataRepository.fetchNetRepository('POST', url, params)
-            .then(result => {
-
-                if (result.success === true) {
-                    alert(JSON.stringify(result));
-
-                    // let result = this._inAlarmIDArr(this.alarmIDArr, alarmId);
-                    // alert(result);
-                    //
-                    // if (result) {
-                    //     this.alarmIDArr.splice(this.alarmIDArr.indexOf(alarmId), 1);
-                    // } else {
-                    //     this.alarmIDArr.push(alarmId)
-                    // }
-                    this.setState({
-                        // alarmIDArr: this.alarmIDArr,
-                        // success:result.success,
-                        url: this.props.url,
-
-
-                    });
-
-                }
-            })
-    }
-
-
-    _renderRow(rowData, sectionID, rowID, hightlightRow) {
-        let alarmIconSource;
-        switch (rowData.level) {
-            case '1':
-                alarmIconSource = require('../../../res/Image/BaseIcon/ic_oneAlarm_nor.png');
-                break;
-            case '2':
-                alarmIconSource = require('../../../res/Image/BaseIcon/ic_twoAlarm_nor.png');
-                break;
-            case '3':
-                alarmIconSource = require('../../../res/Image/BaseIcon/ic_threeAlarm_nor.png');
-                break;
-            default:
-                alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
-        }
-
-        // this.setState({
-        //     focus:rowData.focus,
-        //
-        // });
-
-        return (
-            <View style={{position: 'relative'}}>
-                <TouchableOpacity
-                    activeOpacity={0.5}
-                    onPress={() => {
-                        this._pushToDetail(rowData, this.props.isAlarm)
-                    }}>
-                    <View style={styles.cell}>
-                        <View style={styles.cellLeft}>
-                            <Image
-                                source={alarmIconSource}/>
-                        </View>
-                        <View style={styles.cellRight}>
-                            <View style={{
-                                flexDirection: 'row',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                marginBottom: 10
-                            }}>
-                                <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
-                                <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
-                            </View>
-                            <View>
-                                <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
-                            </View>
-                            <View>
-                                <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.deviceName}</Text>
-                            </View>
-
-                        </View>
-                    </View>
-
-                </TouchableOpacity>
-
-
-                <View style={{position: 'absolute', right: 10, bottom: 10}}>
-                    {!this.props.isAlarm ?
-                        <TouchableOpacity onPress={() => {
-
-                            this._postSelectedAlarm(rowData.alarmId);
-                        }}>
-                            <View style={{width: 100, height: 50, alignItems: 'center', justifyContent: 'center'}}>
-                                {
-
-                                    rowData.focus
-                                        ? <View style={{
-                                            width: 100,
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            flexDirection: 'row',
-                                            backgroundColor: 'rgba(0,0,0,0)'
-                                        }}>
-                                            <Image style={{width: 10, height: 10}}
-                                                   source={require('../../../res/Image/Alarm/ic_focus_selected.png')}/>
-                                            <Text style={{left: 5, fontSize: 12, color: 'rgb(126,126,126)'}}>已关注</Text>
-                                        </View>
-                                        : <View style={{
-                                            width: 100,
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            flexDirection: 'row',
-                                            backgroundColor: 'rgba(0,0,0,0)'
-                                        }}>
-                                            <Image style={{width: 10, height: 10}}
-                                                   source={require('../../../res/Image/Alarm/ic_focus_nor.png')}/>
-                                            <Text style={{left: 5, fontSize: 12, color: 'rgb(126,126,126)'}}>未关注</Text>
-                                        </View>
-                                }
-
-                            </View>
-
-                        </TouchableOpacity>
-                        :<View></View>
-                    }
-
-                </View>
-            </View>
-
-        )
-    }
-
-    _pushToDetail(rowData, isHisAlarm) {
-        this.props.navigator.push({
-            component: AlarmDetail,
-            params: {
-                item: rowData,
-                isHisAlarm: isHisAlarm,
-                ...this.props
-            }
-        })
-    }
-
-    render() {
-        // this.props.params.level = ['2', '1'];
-        // this.props.params.siteId = ['57abe9d355545eeda80722e5']
-        // this.props.params.deviceType = ['烟雾传感器']
-        if (this.props.params.level && this.props.params.level.length === 0) {
-            this.props.params.level = undefined;
-        }
-        if (this.props.params.siteId && this.props.params.siteId.length === 0) {
-            this.props.params.siteId = undefined;
-        }
-        if (this.props.params.deviceType && this.props.params.deviceType.length === 0) {
-            this.props.params.deviceType = undefined;
-        }
-        // alert(JSON.stringify(this.props.params))
-        let content = <CustomListView
-            {...this.props}
-            isAutoRefresh={true}
-            url={this.props.url}
-            params={{...this.props.params, ...this.state.filter}}
-            // bind(this)机制需要熟悉
-            renderRow={this._renderRow.bind(this)}
-            alertText={'没有更多数据了~'}
-        />;
-        return (
-            <View style={styles.container}>
-                {content}
-            </View>
-        )
-    }
-}
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    cell: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 2,
-        padding: 16,
-        backgroundColor: '#FFFFFF',
-        borderWidth: 1,
-        borderColor: 'white'
-    },
-    cellLeft: {},
-    cellRight: {
-        flex: 1,
-        marginLeft: 14,
-    }
 });

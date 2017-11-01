@@ -29,7 +29,8 @@ export default class AlarmFilter extends Component {
         super(props);
         this.state = {
             theme: this.props.theme,
-            selectedArr: []
+            selectedArr: [],
+            curSite: []
         }
         let dataRepository = new DataRepository();
         dataRepository.fetchNetRepository('POST', '/app/v2/alarm/condition', {stamp: storageClass.getLoginInfo().stamp}).then(result => {
@@ -41,7 +42,7 @@ export default class AlarmFilter extends Component {
                 this.setState({});
             }
         }).catch(error => {
-            // alert(JSON.stringify(error));
+            alert(JSON.stringify(error));
         })
     }
 
@@ -71,6 +72,8 @@ export default class AlarmFilter extends Component {
                     onPress={() => {
                         scope.selectedAlarmLevels.length = 0;
                         scope.selectedDevices.length = 0;
+                        scope.state.curSite = [];
+                        storageClass.setAlarmFilterSiteId([]);
                         scope.setState({});
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
@@ -90,6 +93,10 @@ export default class AlarmFilter extends Component {
     selectedAlarmLevels = this.props.filter ? (this.props.filter.level || []) : [];
 
     selectedDevices = this.props.filter ? (this.props.filter.deviceType || []) : []
+
+    componentDidMount () {
+        this.state.curSite = storageClass.getAlarmFilterSiteId();
+    }
 
     render() {
         let scope = this;
@@ -131,9 +138,11 @@ export default class AlarmFilter extends Component {
         }
 
         let onPressComfirm = function () {
+            // alert(JSON.stringify(scope.state.curSite))
             scope.props.setFilter({
                 level: scope.selectedAlarmLevels,
-                deviceType: scope.selectedDevices
+                deviceType: scope.selectedDevices,
+                siteId: scope.state.curSite.length > 0 ? scope.state.curSite.map((v)=>{return v.siteId}) : undefined
             })
             scope.props.navigator.pop();
         }
@@ -148,7 +157,14 @@ export default class AlarmFilter extends Component {
                             scope.props.navigator.push({
                                 component: AlarmFilterSite,
                                 params: {
-                                    ...scope.props
+                                    ...scope.props,
+                                    selecteSite: function (site) {
+                                        scope.setState({
+                                            curSite: site
+                                        });
+                                        storageClass.setAlarmFilterSiteId(site);
+                                    },
+                                    siteList: scope.state.curSite
                                 }
                             })
                         }}>
@@ -157,7 +173,7 @@ export default class AlarmFilter extends Component {
                                 <Text style={{lineHeight: 24}}>站点</Text>
                             </View>
                             <View style={styles.siteRight}>
-                                <Text numberOfLines = {1} style={{width: 120}}>{'九和路来来来时代峰峻阿'}</Text>                                        
+                                <Text numberOfLines = {1} style={{width: 120, textAlign: "right"}}>{this.state.curSite.reduce((o,v)=>{return o + ' ' + v.name}, '')}</Text>
                                 <Image
                                     style={{width: 24, height: 24}}
                                     source={require('../../../res/Image/BaseIcon/ic_listPush_nor.png')}
@@ -206,7 +222,7 @@ export default class AlarmFilter extends Component {
                 <TouchableOpacity style = {{backgroundColor: "#FFFFFF"}}
                     activeOpacity={0.5}
                     onPress={onPressComfirm}>
-                    <Text style = {{padding: 14, textAlign: 'center', fontSize: 16}}>确定</Text>
+                    <Text style = {{padding: 14, textAlign: 'center', fontSize: 16, color: this.state.theme.themeColor}}>确定</Text>
                 </TouchableOpacity>
             </View>
         )

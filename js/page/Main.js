@@ -230,17 +230,15 @@ export default class Main extends BaseComponent {
         return (
             <View style={styles.container}>
                 <TabNavigator>
-                    {this._renderTab(Home,'tb_home','首页',require('../../res/Image/Tab/tab_home_nor.png'),2)}
+                    {this._renderTab(Home,'tb_home','首页',require('../../res/Image/Tab/tab_home_nor.png'),1)}
                     {this._renderTab(Monitor,'tb_monitor','监控',require('../../res/Image/Tab/tab_monitor_nor.png'),null)}
                     {this._renderTab(Alarm,'tb_alarm','告警',require('../../res/Image/Tab/tab_alarm_nor.png'),123)}
                     {this._renderTab(Function,'tb_function','功能',require('../../res/Image/Tab/tab_subsystem_nor.png'),null)}
                     {/*{this._renderTab(PopularPage,'tb_popular','告警',require('../../res/images/ic_polular.png'))}*/}
                     {/*{this._renderTab(TrendingPage,'tb_trending','趋势',require('../../res/images/ic_trending.png'))}*/}
                     {/*{this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}*/}
-                    {/*{this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}*/}
+                    {this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}
                 </TabNavigator>
-
-
                 <Toast ref={(toast)=>this.toast=toast}/>
             </View>
         );
@@ -262,8 +260,8 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: -2,
         right: -5,
-        minWidth: 14,
-        height: 14,
+        paddingLeft: 4,
+        paddingRight: 4,
         borderRadius: 7,
         backgroundColor: 'red',
     },

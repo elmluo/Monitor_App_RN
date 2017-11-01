@@ -19,7 +19,7 @@ import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import Storage from '../../common/StorageClass'
 import DeviceTab from './SiteDetailDeviceTab'
-
+import LocationPage from './SiteDetailLocationPage';
 
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
@@ -57,7 +57,8 @@ export default class SiteDetail extends Component {
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
                     onPress={() => {
-                        alert('还不能打开地图功能')
+                        // alert('还不能打开地图功能');
+                        this._pushToLocation()
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
                         <Image
@@ -69,6 +70,16 @@ export default class SiteDetail extends Component {
         )
     }
 
+
+    _pushToLocation() {
+        this.props.navigator.push({
+            component: LocationPage,
+            params: {
+                ...this.props
+            },
+        })
+    }
+
     /**
      * 获取FSU列表
      *
@@ -77,7 +88,7 @@ export default class SiteDetail extends Component {
         let url = '/app/v2/fsu/list';
         let params = {
             stamp: storage.getLoginInfo().stamp,
-            siteId: this.props.item.siteId,
+            siteId: this.props.siteInfo.siteId,
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             console.log(result);
@@ -93,7 +104,7 @@ export default class SiteDetail extends Component {
 
         let navigationBar =
             <NavigationBar
-                title={this.props.item.name}
+                title={this.props.siteInfo.name}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}
                 leftButton={this._renderLeftButton()}
@@ -113,7 +124,7 @@ export default class SiteDetail extends Component {
                            url={'/app/v2/device/list'}
                            params={{
                                stamp: storage.getLoginInfo().stamp,
-                               siteId: this.props.item.siteId,
+                               siteId: this.props.siteInfo.siteId,
                                // system: '',
                                // keyword: '',
                                page: 1,
@@ -128,7 +139,7 @@ export default class SiteDetail extends Component {
                                params={{
                                    stamp: storage.getLoginInfo().stamp,
                                    userId: storage.getLoginInfo().userId,
-                                   siteId: [this.props.item.siteId],
+                                   siteId: [this.props.siteInfo.siteId],
                                    // system: '',
                                    // keyword: '',
                                    page: 1,
@@ -174,6 +185,13 @@ const styles = StyleSheet.create({
         marginLeft: 14,
     }
 });
+
+
+
+
+
+
+
 
 
 /**

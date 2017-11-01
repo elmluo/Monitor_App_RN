@@ -55,4 +55,12 @@ export default class LocalStorageClass {
     getServerIP(){
         return this.IP;
     }
+
+    getAlarmFilterSiteId () {
+        return this.alarmFilterSiteId || [];
+    }
+
+    setAlarmFilterSiteId (siteId) {
+        this.alarmFilterSiteId = siteId;
+    }
 }

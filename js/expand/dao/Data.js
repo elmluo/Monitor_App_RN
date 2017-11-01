@@ -50,7 +50,8 @@ export default class DataRepository {
                 .catch(error => {
                     reject(error);
                     console.log(error);
-                    alert('获取数据出错')
+                    alert('获取数据出错');
+                    console.log(params,url,3444444444)
                 })
             })
         }

@@ -16,6 +16,7 @@ import {
     Dimensions,
     InteractionManager,
     NativeAppEventEmitter,
+    DeviceEventEmitter,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import BulletinList from './BulletinList'
@@ -39,15 +40,16 @@ export default class Monitor extends Component {
             isLoading: false,
             noticeCount: 6,
             isShowNoticeBar: false,
-            fsuCount: [
-                {item: "在线", count: 1}
+            fsuCount: [     // 初始化的数据结构和操作的数据结构统一
+                {item: "在线", count: 2},
+                {item: "离线", count: 0}
             ],
             allCount: 21,
             levelAlarm: [
-                {item: "一级告警", count: 7},
-                {item: "一级告警", count: 7},
-                {item: "一级告警", count: 7},
-                {item: "一级告警", count: 7},
+                {item: "一级告警", count: 0},
+                {item: "二级告警", count: 0},
+                {item: "三级告警", count: 0},
+                {item: "四级告警", count: 0},
             ],
             fsuWeekCount: [
                 {onlineCount: 1, offlineCount: 14, recordTime: 1508094000117},
@@ -63,13 +65,12 @@ export default class Monitor extends Component {
     }
 
 
-
-
-    componentWillUnmount(){
+    componentWillUnmount() {
         JPushModule.removeReceiveCustomMsgListener();
         JPushModule.removeReceiveNotificationListener();
     }
-        /**
+
+    /**
      * 从本地获取登录信息，同时保存到单例，全局使用
      * @returns {Promise}
      * @private
@@ -202,18 +203,6 @@ export default class Monitor extends Component {
                 type: 1
             };
             dataRepository.fetchNetRepository('POST', URL, params).then(result => {
-                // alert(JSON.stringify({'alarm数量': result}));
-                // console.log(result);
-                // this.setState({
-                //     levelAlarm: result.data
-                // });
-
-                // 计算告警数量总和
-
-
-                // this.setState({
-                //     allCount: allCount
-                // });
                 resolve(result);
             }, (error) => {
                 reject(error)
@@ -258,12 +247,13 @@ export default class Monitor extends Component {
                 this._getWeekFsuCount(stamp),
                 this._getAlarmCount(stamp),
             ]).then((results) => {
+                console.log(results);
                 // 计算告警数量总和
                 let allCount = 0;
-                for (let i = 0; i < results[0].data.length; i++) {
-                    allCount += results[0].data[i].count
+                for (let i = 0; i < results[2].data.length; i++) {
+                    allCount += results[2].data[i].count
                 }
-
+                // console.log(allCount,123456);
                 this.setState({
                     fsuCount: results[0].data,
                     fsuWeekCount: results[1].data,
@@ -284,26 +274,55 @@ export default class Monitor extends Component {
     _renderBulletinSlideBar() {
         if (this.state.isShowNoticeBar) {
             return (
-                <BulletinSlideBar
-                    style={{}}
-                    isClose={this.state.isShowNoticeBar}
-                    text={`您有${this.state.noticeCount}个公告信息，请点击查看`}
-                    onPressText={() => {
-                        this.props.navigator.push({
-                            component: BulletinList,
-                            params: {...this.props}
-                        })
-                    }}
-                    onPressClose={() => {
-                        this.setState({
-                            isShowNoticeBar: true,
-                        })
-                    }}/>
+                <View style={styles.noticeWrapper}>
+                    <BulletinSlideBar
+                        style={{}}
+                        isClose={this.state.isShowNoticeBar}
+                        text={`您有${this.state.noticeCount}个公告信息，请点击查看`}
+                        onPressText={() => {
+                            this.props.navigator.push({
+                                component: BulletinList,
+                                params: {...this.props}
+                            })
+                        }}
+                        onPressClose={() => {
+                            this.setState({
+                                isShowNoticeBar: false,
+                            })
+                        }}/>
+                </View>
+
             )
         } else {
             return null
         }
 
+    }
+
+    /**
+     * 渲染今日在线率统计
+     */
+    _renderTodayOnlineRate() {
+        let onlineCount = this.state.fsuCount[0].count;
+        let outLintCount = this.state.fsuCount[1].count;
+        let sum = onlineCount + outLintCount;
+        console.log(sum);
+        return (
+            <View style={styles.onlineRate}>
+                <View style={styles.onlineRateTop}>
+                    <Text style={{color: '#FFFFFF', fontSize: 38}}>{Math.ceil((onlineCount / sum) * 100)}</Text>
+                    <Text style={{color: '#FFFFFF', fontSize: 20, marginBottom: 7}}>%</Text>
+                </View>
+                <View style={styles.onlineRateCenter}>
+                    <Text style={{color: '#FFFFFF', fontSize: 14}}>今日在线率</Text>
+                </View>
+                <View style={styles.onlineRateBottom}>
+                    <Text style={{color: '#FFFFFF', fontSize: 12}}>在线: {this.state.fsuCount[0].count}</Text>
+                    <Text style={{color: '#FFFFFF', fontSize: 12}}>离线: {this.state.fsuCount[1].count}</Text>
+                </View>
+
+            </View>
+        )
     }
 
     render() {
@@ -339,12 +358,11 @@ export default class Monitor extends Component {
                     />
                 }>
                 <View style={{flex: 1}}>
-                    <ImageBackground
-                        style={styles.gb}
-                        source={require('../../../res/Image/Login/ic_login_bg.png')}>
-
+                    <ImageBackground style={styles.gb}
+                                     source={require('../../../res/Image/Login/ic_login_bg.png')}
+                    >
                         {this._renderBulletinSlideBar()}
-
+                        {this._renderTodayOnlineRate()}
                         <HomeStatisticChart chartData={this.state.fsuWeekCount}
                                             width={width}
                                             height={height * 0.4}/>
@@ -352,34 +370,46 @@ export default class Monitor extends Component {
                     <View style={styles.alarmWrap}>
                         <View style={styles.alarm}>
                             {/* 通过TouchableOpacity组件将路由切换到告警页 */}
-                            <TouchableOpacity 
-                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['1']}); }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[0].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[0].item}
-                                    alarmColor='#1CCAEB'/></TouchableOpacity>
                             <TouchableOpacity
-                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['2']}); }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[1].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[1].item}
-                                    alarmColor='#F63232'/></TouchableOpacity>
+                                activeOpacity={1}
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', {level: ['1']});
+                                }}>
+                                <HomeAlarmCell count={this.state.levelAlarm[0].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[0].item}
+                                               alarmColor='#1CCAEB'/>
+                            </TouchableOpacity>
                             <TouchableOpacity
-                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['3']}); }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[2].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[2].item}
-                                    alarmColor='#F9AE46'/></TouchableOpacity>
+                                activeOpacity={1}
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', {level: ['2']});
+                                }}>
+                                <HomeAlarmCell count={this.state.levelAlarm[1].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[1].item}
+                                               alarmColor='#F63232'/>
+                            </TouchableOpacity>
                             <TouchableOpacity
-                                onPress = {() => {this.props.routerChange('tb_alarm',{level: ['4']}); }}>
-                                <HomeAlarmCell
-                                    count={this.state.levelAlarm[3].count}
-                                    allCount={this.state.allCount}
-                                    alarmName={this.state.levelAlarm[3].item}
-                                    alarmColor='#E6CD0D'/></TouchableOpacity>
+                                activeOpacity={1}
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', {level: ['3']});
+                                }}>
+                                <HomeAlarmCell count={this.state.levelAlarm[2].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[2].item}
+                                               alarmColor='#F9AE46'/>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                activeOpacity={1}
+                                onPress={() => {
+                                    this.props.routerChange('tb_alarm', {level: ['4']});
+                                }}>
+                                <HomeAlarmCell count={this.state.levelAlarm[3].count}
+                                               allCount={this.state.allCount}
+                                               alarmName={this.state.levelAlarm[3].item}
+                                               alarmColor='#E6CD0D'/>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
@@ -401,6 +431,36 @@ export default class Monitor extends Component {
 
     componentDidMount() {
 
+        JPushModule.addReceiveCustomMsgListener((message) => {
+
+            //这是默认的通知消息
+
+            this.setState({pushMsg: message});
+            alert('默认推送消息' + message);
+
+        });
+
+        // JPushModule.addReceiveNotificationListener((map) => {
+        //
+        //     //自定义推送的消息
+        //
+        //     //console.log("alertContent: " + map.alertContent);
+        //
+        //     //extra是可选配置上的附件字段
+        //
+        //     //console.log("extras: " + map.extras);
+        //
+        //     var message = JSON.parse(map.extras);
+        //
+        //     // this.stora是可选配置上的附件字段reDB(message);//我这里是把内容存在了数据库里面，你可以把这里的message放到state里面显示出来
+        //     alert(message);
+        //     //这里面解析json数据，并存在数据库中，同时显示在通知栏上
+        //
+        // })
+
+        //点击通知进入应用的主页，相当于跳转到制定的页面
+
+        // JPushModule.addReceiveOpenNotificationListener((map) => {
         // if (Platform.OS === 'android') {
         //     alert('安卓');
         //     JPushModule.addReceiveCustomMsgListener((message) => {
@@ -418,7 +478,7 @@ export default class Monitor extends Component {
         // }else {
         //
         //
-        //     alert('IOS');
+        //     this.props.navigator.replace({name: "HomePage",component:HomePage});
         //
         //     NativeAppEventEmitter.addListener(
         //         'OpenNotification',
@@ -459,6 +519,11 @@ export default class Monitor extends Component {
             })
         });
     }
+
+    componentWillUnmount() {
+        // 组件卸载后取消定时器，防止多余异常出现
+        // this.timer && clearTimeout(this.timer);
+    }
 }
 const styles = StyleSheet.create({
     container: {
@@ -471,6 +536,34 @@ const styles = StyleSheet.create({
     gb: {
         width: width,
         height: 0.4 * height,
+        position: 'relative'
+    },
+    noticeWrapper: {
+        width: width,
+        position: 'absolute',
+        zIndex: 3,
+    },
+    onlineRate: {
+        position: 'absolute',
+        top: 30,
+        zIndex: 4,
+        backgroundColor: 'transparent',
+        marginLeft: 20,
+        // backgroundColor: 'red'
+    },
+    onlineRateTop: {
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        marginBottom: 2,
+    },
+    onlineRateCenter: {
+        marginBottom: 2,
+    },
+    onlineRateBottom: {
+        width: 90,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
     overlay: {
         width: width,

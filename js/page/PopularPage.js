@@ -170,7 +170,7 @@ class PopularTab extends Component {
             this.isFavoriteChanged = false;
             this.getFavoriteKeys();
         }else if(nextProps.theme!==this.state.theme){
-            this.updateState({theme:nextProps.theme})
+            this.updateState({theme:nextProps.theme});
             this.flushFavoriteState();
         }
     }

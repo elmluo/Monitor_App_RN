@@ -23,6 +23,7 @@ export default class App extends Component {
       source = Platform.OS === 'ios' ? sourceIOS : sourceAndroid;
     }
 
+    // alert(JSON.stringify(source));
     return (
       <View style={{flex: 1, height: this.props.height || 400,}}>
         <WebView

@@ -16,7 +16,6 @@
 #import <React/RCTRootView.h>
 
 @implementation AppDelegate
-RCT_EXPORT_MODULE();
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
@@ -71,9 +70,7 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
  NSDictionary * userInfo = notification.request.content.userInfo;
   [JPUSHService handleRemoteNotification:userInfo];
-  [self resolverresolve:^(id result) {
-    result = userInfo;
-  }];
+
  [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:userInfo];
   [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 
@@ -83,9 +80,6 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
 NSDictionary * userInfo = response.notification.request.content.userInfo;
 [JPUSHService handleRemoteNotification:userInfo];
-  [self resolverresolve:^(id result) {
-    result = userInfo;
-  }];
 [[NSNotificationCenter defaultCenter] postNotificationName:kJPFOpenNotification object:userInfo];
   [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 
@@ -95,8 +89,6 @@ completionHandler();
 [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:notification.userInfo];
 
 }
-RCT_EXPORT_METHOD(resolverresolve:(RCTPromiseResolveBlock)resolve){
-  
-}
+
 
 @end
