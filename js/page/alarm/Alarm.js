@@ -375,6 +375,7 @@ class AlarmTab extends Component {
         // alert(JSON.stringify(this.props.params))
         let content = <CustomListView
             {...this.props}
+            noDataType={'noAlarm'}
             isAutoRefresh={true}
             url={this.props.url}
             params={{...this.props.params}}

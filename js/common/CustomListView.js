@@ -1,7 +1,17 @@
 /**
- * Created by penn on 2016/12/14.
+ *------------------- 自定义列表组件：-------------------------
+ * 传入属性(this.props.)
+ *      url         [string]    获取数据地址uri
+ *      params      [object]    post请求参数
+ *      alertText   [string]    easyToast组件,提示的文本内容
+ *      renderRow   [Function]  原生listView组件渲染列表cell内容
+ *      fusList     [Array]     根据业务需求，需要则列表页传入某些特定的数据
+ *      noDateType  [string]    请求没有获得数据的时候，或者获取数据为空，需要实现的提示图片的类型，目前支持'noData（没有数据）、noAlarm（没有告警）'两种图片
+ *
+ *
+ *
+ *----------------------------------------------------------
  */
-
 import React, {Component} from 'react';
 import {
     StyleSheet,
@@ -187,7 +197,7 @@ export default class CustomListView extends Component {
         this.listener = DeviceEventEmitter.addListener('custom_listView', (p) => {
             // 当params想要修改的时候，可以传入参数p可以覆盖。可以覆盖原有的字段或者属性
             if (p) {
-                for (let i in p){
+                for (let i in p) {
                     this.props.params[i] = p[i];
                 }
             }
@@ -243,10 +253,28 @@ export default class CustomListView extends Component {
     }
 
     render() {
-        let content =
-            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
-                : this.state.noData ?
-                <NoContentPage type='noData'/> : this._renderListView();
+        let content;
+        let noData =
+            this.props.noDataType
+                ? this.props.noDataType
+                : 'noData';
+
+        if (this.state.noNetWork) {
+            content = <NoContentPage type='noNetWork'/>
+        } else {
+            if (this.state.noData) {
+                content =
+                    <NoContentPage
+                        type={noData}
+                        onClick={() => {
+                            this._onRefresh.bind();
+                            // alert('click me');
+                        }}/>
+            } else {
+                content = this._renderListView();
+            }
+        }
+
         return (
             <View style={styles.container}>
                 {content}
