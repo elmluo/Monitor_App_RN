@@ -17,6 +17,7 @@ import Storage from '../../common/StorageClass'
 import DataRepository from '../../expand/dao/Data'
 import Searchbox from '../../common/Searchbox'
 import SignalList from './SiteDetailSignalList';
+import FsuInfo from './SiteDetailFsuInfo';
 
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
@@ -52,6 +53,20 @@ export default class DeviceTab extends Component {
     }
 
     /**
+     * 路由跳转到FUS信息
+     * @private
+     */
+    _pushToFsuInfo(rowData) {
+        this.props.navigator.push({
+            component: FsuInfo,
+            params: {
+                fsuInfo: rowData,
+                ...this.props
+            }
+        })
+    }
+
+    /**
      * 渲染列表cell
      */
     _renderRow(rowData) {
@@ -59,15 +74,17 @@ export default class DeviceTab extends Component {
         // 判断是否FSU还是一般设备
         if (rowData.fsuId) {
             if (rowData.online) {
-                fsuOnline = <View style={[styles.onlineState, {backgroundColor: '#3C7FFC'}]}><Text style={styles.operationStateText}>在线</Text></View>
+                fsuOnline = <View style={[styles.onlineState, {backgroundColor: '#3C7FFC'}]}><Text
+                    style={styles.operationStateText}>在线</Text></View>
             } else {
                 fsuOnline = <View style={styles.onlineState}><Text style={styles.operationStateText}>离线</Text></View>;
             }
         }
+
         return (
             <TouchableOpacity
                 onPress={() => {
-                    this._pushToSignalList(rowData)
+                    rowData.fsuId ? this._pushToFsuInfo(rowData) : this._pushToSignalList(rowData)
                 }}>
                 <View style={styles.cell}>
                     <View style={styles.cellLeft}>
@@ -99,6 +116,7 @@ export default class DeviceTab extends Component {
         return (
             <CustomListView
                 fsuList={this.state.fsuList}
+                noData
                 {...this.props}
                 url={this.props.url}
                 params={params}
@@ -117,7 +135,7 @@ export default class DeviceTab extends Component {
         let url = '/app/v2/fsu/list';
         let params = {
             stamp: storage.getLoginInfo().stamp,
-            siteId: this.props.item.siteId,
+            siteId: this.props.siteInfo.siteId,
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             console.log(result);
@@ -208,7 +226,7 @@ export default class DeviceTab extends Component {
         let url = '/app/v2/device/system/list';
         let params = {
             stamp: storage.getLoginInfo().stamp,
-            siteId: this.props.item.siteId
+            siteId: this.props.siteInfo.siteId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             // alert(JSON.stringify(result.data));

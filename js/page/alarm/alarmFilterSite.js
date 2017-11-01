@@ -23,7 +23,7 @@ import ViewUtils from '../../util/ViewUtils'
 import Utils from '../../util/Utils'
 
 let storageClass = new StorageClass();
-let {width, height} = Dimensions.get('window')
+let {width, height} = Dimensions.get('window');
 export default class AlarmFilterSite extends Component {
 
     selectedArr = [];
@@ -169,7 +169,7 @@ export default class AlarmFilterSite extends Component {
                                       this.props.selecteSite(this.state.siteList);
                                       this.props.navigator.pop();
                                   }}>
-                    <Text style = {{padding: 14, textAlign: 'center', fontSize: 16}}>确定</Text>
+                    <Text style = {{padding: 14, textAlign: 'center', fontSize: 16, color: this.state.theme.themeColor}}>确定</Text>
                 </TouchableOpacity>
             </View>
         )

@@ -370,6 +370,7 @@ export default class Monitor extends Component {
                         <View style={styles.alarm}>
                             {/* 通过TouchableOpacity组件将路由切换到告警页 */}
                             <TouchableOpacity
+                                activeOpacity={1}
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['1']});
                                 }}>
@@ -379,6 +380,7 @@ export default class Monitor extends Component {
                                                alarmColor='#1CCAEB'/>
                             </TouchableOpacity>
                             <TouchableOpacity
+                                activeOpacity={1}
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['2']});
                                 }}>
@@ -388,6 +390,7 @@ export default class Monitor extends Component {
                                                alarmColor='#F63232'/>
                             </TouchableOpacity>
                             <TouchableOpacity
+                                activeOpacity={1}
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['3']});
                                 }}>
@@ -397,6 +400,7 @@ export default class Monitor extends Component {
                                                alarmColor='#F9AE46'/>
                             </TouchableOpacity>
                             <TouchableOpacity
+                                activeOpacity={1}
                                 onPress={() => {
                                     this.props.routerChange('tb_alarm', {level: ['4']});
                                 }}>

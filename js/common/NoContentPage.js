@@ -82,7 +82,7 @@ export default class ComponentName extends React.Component {
                             this.props.onClick();
                         }}>
                         <Image source={require('../../res/Image/Anomaly/ic_noAlarm.png')}/>
-                        <Text style={styles.text}> 还没有告警哦！</Text>
+                        <Text style={styles.text}> 还没有数据哦！</Text>
                     </TouchableOpacity>
                 </View>
             )

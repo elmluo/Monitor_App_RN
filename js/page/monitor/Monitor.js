@@ -104,7 +104,7 @@ export default class Monitor extends Component {
         this.props.navigator.push({
             component: SiteDetail,
             params: {
-                item: rowData,
+                siteInfo: rowData,
                 ...this.props
             },
         })

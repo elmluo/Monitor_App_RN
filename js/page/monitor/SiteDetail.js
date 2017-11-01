@@ -80,6 +80,22 @@ export default class SiteDetail extends Component {
         })
     }
 
+    /**
+     * 获取FSU列表
+     *
+     */
+    _getFsuList() {
+        let url = '/app/v2/fsu/list';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            siteId: this.props.siteInfo.siteId,
+        };
+        dataRepository.fetchNetRepository('POST', url, params).then((result) => {
+            console.log(result);
+
+        })
+    }
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -88,7 +104,7 @@ export default class SiteDetail extends Component {
 
         let navigationBar =
             <NavigationBar
-                title={this.props.item.name}
+                title={this.props.siteInfo.name}
                 statusBar={statusBar}
                 style={this.state.theme.styles.navBar}
                 leftButton={this._renderLeftButton()}
@@ -108,7 +124,7 @@ export default class SiteDetail extends Component {
                            url={'/app/v2/device/list'}
                            params={{
                                stamp: storage.getLoginInfo().stamp,
-                               siteId: this.props.item.siteId,
+                               siteId: this.props.siteInfo.siteId,
                                // system: '',
                                // keyword: '',
                                page: 1,
@@ -123,7 +139,7 @@ export default class SiteDetail extends Component {
                                params={{
                                    stamp: storage.getLoginInfo().stamp,
                                    userId: storage.getLoginInfo().userId,
-                                   siteId: [this.props.item.siteId],
+                                   siteId: [this.props.siteInfo.siteId],
                                    // system: '',
                                    // keyword: '',
                                    page: 1,
@@ -145,6 +161,7 @@ export default class SiteDetail extends Component {
 
     componentDidMount() {
         InteractionManager.runAfterInteractions(()=> {
+
         })
     }
 }
@@ -168,6 +185,7 @@ const styles = StyleSheet.create({
         marginLeft: 14,
     }
 });
+
 
 
 

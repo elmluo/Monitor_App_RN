@@ -128,7 +128,7 @@ export default class Alarm extends Component {
         this.timer = setTimeout(()=> {
             clearTimeout(this.timer);
             DeviceEventEmitter.emit('custom_listView', this.state.filter);
-        }, 0);
+        }, 2000);
 
         // alert(JSON.stringify(this.state.filter))
         let statusBar = {
@@ -221,9 +221,8 @@ class AlarmTab extends Component {
         // alert(JSON.stringify(params));
         this.dataRepository.fetchNetRepository('POST', url, params)
             .then(result => {
-
                 if (result.success === true) {
-                    // alert(JSON.stringify(result));
+                    // alert(JSON.stringify(result));f
 
                     // let result = this._inAlarmIDArr(this.alarmIDArr, alarmId);
                     // alert(result);
@@ -239,8 +238,12 @@ class AlarmTab extends Component {
                         url: this.props.url,
 
                     });
+
                     // 发送通知，自定义列表刷新
-                    DeviceEventEmitter.emit('custom_listView');
+                    this.timer = setTimeout(()=> {
+                        clearTimeout(this.timer);
+                        DeviceEventEmitter.emit('custom_listView');
+                    });
                 }
             })
     }
@@ -305,12 +308,10 @@ class AlarmTab extends Component {
                 <View style={{position: 'absolute', right: 10, bottom: 10}}>
                     {!this.props.isAlarm ?
                         <TouchableOpacity onPress={() => {
-
                             this._postSelectedAlarm(rowData.alarmId);
                         }}>
                             <View style={{width: 100, height: 50, alignItems: 'center', justifyContent: 'center'}}>
                                 {
-
                                     rowData.focus
                                         ? <View style={{
                                             width: 100,
@@ -335,9 +336,7 @@ class AlarmTab extends Component {
                                             <Text style={{left: 5, fontSize: 12, color: 'rgb(126,126,126)'}}>未关注</Text>
                                         </View>
                                 }
-
                             </View>
-
                         </TouchableOpacity>
                         : <View></View>
                     }

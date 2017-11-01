@@ -222,7 +222,7 @@ export default class AlarmFilter extends Component {
                 <TouchableOpacity style = {{backgroundColor: "#FFFFFF"}}
                     activeOpacity={0.5}
                     onPress={onPressComfirm}>
-                    <Text style = {{padding: 14, textAlign: 'center', fontSize: 16}}>确定</Text>
+                    <Text style = {{padding: 14, textAlign: 'center', fontSize: 16, color: this.state.theme.themeColor}}>确定</Text>
                 </TouchableOpacity>
             </View>
         )
