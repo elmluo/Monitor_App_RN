@@ -147,6 +147,7 @@ export default class HomeStatisticChart extends Component {
                 extraCssText: 'background-color:#3AB0FF; padding:0 5px;'
             },
             grid: {
+                top: '55%',
                 left: '2%',
                 right: '2%'
                 // backgroundColor: "transparent"

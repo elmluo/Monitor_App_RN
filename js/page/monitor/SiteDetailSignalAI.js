@@ -145,6 +145,7 @@ export default class SiteDetailSignalAI extends React.Component {
                         <View style={styles.topChart}>
                             {/*图表组件*/}
                             <AIChart
+                                {...this.props}
                                 unit={this.props.signal.unit}
                                 chartData={this.state.data}
                                 width={width}

@@ -34,7 +34,7 @@ export default class Alarm extends Component {
             alarmPage: 1,
             historyPage: 1,
             // 告警筛选条件
-            filter: {       
+            filter: {
                 level: [],
                 deviceType: [],
                 siteId: []
@@ -101,13 +101,8 @@ export default class Alarm extends Component {
 
             }
         }
-
-
         return params;
-
-
     }
-
 
     render() {
         // this.state.filter.level = this.props.crossPageData ? this.props.crossPageData.level || [] : [];
@@ -117,6 +112,24 @@ export default class Alarm extends Component {
             this.state.filter.level = this.props.crossPageData.level;
             this.props.setCrossPageData(null, false);
         }
+
+        // alert(JSON.stringify(this.state.filter))
+        // 请求会报错，为空的话，需要变成undefined。
+        if (this.state.filter.level && this.state.filter.level.length === 0) {
+            this.state.filter.level = undefined;
+        }
+        if (this.state.filter.siteId && this.state.filter.siteId.length === 0) {
+            this.state.filter.siteId = undefined;
+        }
+        if (this.state.filter.deviceType && this.state.filter.deviceType.length === 0) {
+            this.state.filter.deviceType = undefined;
+        }
+
+        this.timer = setTimeout(()=> {
+            clearTimeout(this.timer);
+            DeviceEventEmitter.emit('custom_listView', this.state.filter);
+        }, 0);
+
         // alert(JSON.stringify(this.state.filter))
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -136,12 +149,30 @@ export default class Alarm extends Component {
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
                 initialPage={0}>
-                <AlarmTab tabLabel='实时告警' {...this.props} params={{...this._this_Params(1, true), ...this.state.filter}} isAlarm={false}
-                          url={'/app/v2/alarm/list'} filter = {this.state.filter}>实时告警</AlarmTab>
-                <AlarmTab tabLabel='历史告警' {...this.props} params={{...this._this_Params(2, false), ...this.state.filter}} isAlarm={true}
-                          url={'/app/v2/alarm/list'} filter = {this.state.filter}>历史告警</AlarmTab>
-                <AlarmTab tabLabel='关注告警' {...this.props} params={{...this._this_Params(0, true), ...this.state.filter}} isAlarm={false}
-                          url={'/app/v2/alarm/focus/list'}>关注告警</AlarmTab>
+                <AlarmTab tabLabel='实时告警'
+                          {...this.props}
+                          params={{...this._this_Params(1, true), ...this.state.filter}}
+                          isAlarm={false}
+                          url={'/app/v2/alarm/list'}
+                          filter={this.state.filter}>
+                    实时告警
+                </AlarmTab>
+                <AlarmTab tabLabel='关注告警'
+                          {...this.props}
+                          params={{...this._this_Params(0, true), ...this.state.filter}}
+                          isAlarm={false}
+                          url={'/app/v2/alarm/focus/list'}
+                          filter={this.state.filter}>
+                    关注告警
+                </AlarmTab>
+                <AlarmTab tabLabel='历史告警'
+                          {...this.props}
+                          params={{...this._this_Params(2, false), ...this.state.filter}}
+                          isAlarm={true}
+                          url={'/app/v2/alarm/list'}
+                          filter={this.state.filter}>
+                    历史告警
+                </AlarmTab>
             </ScrollableTabView>;
         return (
             <View style={styles.container}>
@@ -151,6 +182,7 @@ export default class Alarm extends Component {
         )
     }
 }
+
 
 
 /**
@@ -307,7 +339,7 @@ class AlarmTab extends Component {
                             </View>
 
                         </TouchableOpacity>
-                        :<View></View>
+                        : <View></View>
                     }
 
                 </View>
@@ -330,22 +362,12 @@ class AlarmTab extends Component {
     render() {
         // this.props.params.level = ['2', '1'];
         // this.props.params.siteId = ['57abe9d355545eeda80722e5']
-        // this.props.params.deviceType = ['烟雾传感器']
-        if (this.props.params.level && this.props.params.level.length === 0) {
-            this.props.params.level = undefined;
-        }
-        if (this.props.params.siteId && this.props.params.siteId.length === 0) {
-            this.props.params.siteId = undefined;
-        }
-        if (this.props.params.deviceType && this.props.params.deviceType.length === 0) {
-            this.props.params.deviceType = undefined;
-        }
-        alert(JSON.stringify({...this.props.params, ...this.state.filter}))
         let content = <CustomListView
             {...this.props}
+            noDataType={'noAlarm'}
             isAutoRefresh={true}
             url={this.props.url}
-            params={{...this.props.params, ...this.state.filter}}
+            params={{...this.props.params}}
             // bind(this)机制需要熟悉
             renderRow={this._renderRow.bind(this)}
             alertText={'没有更多数据了~'}

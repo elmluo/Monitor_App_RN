@@ -72,6 +72,8 @@ export default class AlarmFilter extends Component {
                     onPress={() => {
                         scope.selectedAlarmLevels.length = 0;
                         scope.selectedDevices.length = 0;
+                        scope.state.curSite = [];
+                        storageClass.setAlarmFilterSiteId([]);
                         scope.setState({});
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>

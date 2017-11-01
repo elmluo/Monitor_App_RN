@@ -32,7 +32,7 @@ export default class Utils {
     }
 
     /**
-     * 转化事件格式
+     * 转化时间格式
      * @param strTime
      * @returns {string}
      * @private
