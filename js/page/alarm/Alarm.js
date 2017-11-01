@@ -340,7 +340,7 @@ class AlarmTab extends Component {
         if (this.props.params.deviceType && this.props.params.deviceType.length === 0) {
             this.props.params.deviceType = undefined;
         }
-        // alert(JSON.stringify(this.props.params))
+        alert(JSON.stringify({...this.props.params, ...this.state.filter}))
         let content = <CustomListView
             {...this.props}
             isAutoRefresh={true}
