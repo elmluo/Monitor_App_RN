@@ -11,8 +11,11 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import Btn from '../my/BaseBtn'
 import ResetPasswordPage from '../my/ResetPasswordPage'
+import DataRepository from '../../expand/dao/Data'
+import Toast, {DURATION} from 'react-native-easy-toast';
 
-let {width,height} = Dimensions.get('window')
+let {width,height} = Dimensions.get('window');
+let dataRepository = new DataRepository();
 export default class ForgetPasswordPage extends React.Component {
     constructor(props) {
         super(props);
@@ -28,7 +31,9 @@ export default class ForgetPasswordPage extends React.Component {
             btnText: '下一步',
             timeLeft: timeLeft,
             begin: begin,
-            textColor: 'rgb(60,127,252)'
+            textColor: 'rgb(60,127,252)',
+            phone:'',
+            forget:'',
         };
 
     }
@@ -65,15 +70,38 @@ export default class ForgetPasswordPage extends React.Component {
      */
 
     _beginCountDown() {
-        if (this.state.begin === 1){
-            return;
+        let url = '/app/v2/sms/verify';
+        let params = {
+            phone: this.state.phone,
+        };
+        if (this.state.phone.length ===1){
+            this.refs.toast.show('*请输入手机号');
+        }else {
+            if(this.state.phone.length != 11 && !this._verificationOfMobilePhone(this.state.phone)){
+                this.refs.toast.show('*请输入正确的手机号');
+
+            } else {
+                dataRepository.fetchNetRepository('POST', url, params)
+                    .then((response) => {
+                        if (response.success === true) {
+                            this.refs.toast.show('*发送验证码成功');
+                            if (this.state.begin === 1){
+                                return;
+                            }
+                            let time = this.state.timeLeft;
+                            console.log("===lin===> time " + time);
+                            let afterEnd = this.afterEnd;
+                            let begin = this.state.begin;
+                            console.log("===lin===> start " + begin);
+                            this.countdownfn(time, afterEnd, begin)
+                        } else {
+                            this.refs.toast.show('*获取验证码失败请重试');
+                        }
+
+                    });
+            }
         }
-        let time = this.state.timeLeft;
-        console.log("===lin===> time " + time);
-        let afterEnd = this.afterEnd;
-        let begin = this.state.begin;
-        console.log("===lin===> start " + begin);
-        this.countdownfn(time, afterEnd, begin)
+
     }
 
     /**
@@ -113,6 +141,54 @@ export default class ForgetPasswordPage extends React.Component {
         )
     }
 
+    _verificationOfMobilePhone(phone){
+        let PATTERN_CHINAMOBILE = /^1(3[0-9]|4[57]|5[0-35-9]|7[0135678]|8[0-9])\\d{8}$/;
+        if (PATTERN_CHINAMOBILE.test(phone)) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
+    /**
+     * 手机短信验证
+     * @private
+     */
+    _shortMessageIdentification(){
+        let url = '/app/v2/user/phone/verify';
+        let params = {
+            phone: this.state.phone,
+            code:this.state.forget,
+        };
+        // alert(JSON.stringify(response.data));
+        if (this.state.phone.length === 1) {
+            this.refs.toast.show('*请输入手机号');
+        } else {
+            if (this.state.phone.length != 11 && !this._verificationOfMobilePhone(this.state.phone)) {
+                this.refs.toast.show('*请输入有效的手机号');
+            } else {
+
+
+                dataRepository.fetchNetRepository('POST', url, params)
+                    .then((response) => {
+                        if (response.success === true) {
+                            alert(JSON.stringify(response))
+
+                            this.props.navigator.push({
+                                component: ResetPasswordPage,
+                                item:response.data,
+                                params: {...this.props}
+                            });
+                        } else {
+                            this.refs.toast.show('*获取验证码失败');
+                        }
+
+                    });
+            }
+        }
+    }
+
 
     render() {
         let statusBar = {
@@ -142,7 +218,7 @@ export default class ForgetPasswordPage extends React.Component {
                             keyboardType = 'numeric'
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}
-                            onChangeText={(input) => this.setState({username: input})}>
+                            onChangeText={(input) => this.setState({phone: input})}>
                         </TextInput>
                     </View>
                     <View style = {styles.textInputViewStyle}>
@@ -156,7 +232,7 @@ export default class ForgetPasswordPage extends React.Component {
                             clearTextOnFocus={true}
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}
-                            onChangeText={(input) => this.setState({username: input})}>
+                            onChangeText={(input) => this.setState({forget: input})}>
                         </TextInput>
                         <Text
                             onPress={() => {
@@ -167,13 +243,23 @@ export default class ForgetPasswordPage extends React.Component {
                         </Text>
                     </View>
                 </View>
+                <Toast
+                    ref="toast"
+                    style={{backgroundColor:'white'}}
+                    position='top'
+                    positionValue={100}
+                    fadeInDuration={500}
+                    fadeOutDuration={1000}
+                    opacity={0.8}
+                    textStyle={{color:'red'}}
+                />
                 <View style = {{marginTop:60,width:width,height:50,backgroundColor:'#FFF'}}>
 
-                    <TouchableOpacity onPress={() => {
-                        this.props.navigator.push({
-                            component: ResetPasswordPage,
-                            params: {...this.props}
-                        })
+                    <TouchableOpacity onPress={() => { this._shortMessageIdentification()
+                        // this.props.navigator.push({
+                        //     component: ResetPasswordPage,
+                        //     params: {...this.props}
+                        // })
                     }}>
                         <Btn text = {this.state.btnText} />
                     </TouchableOpacity>
@@ -188,7 +274,7 @@ export default class ForgetPasswordPage extends React.Component {
 let styles = new StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor:'#FFF',
+        backgroundColor:'white',
 
     },
     bgView:{

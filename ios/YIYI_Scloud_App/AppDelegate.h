@@ -8,8 +8,10 @@
  */
 
 #import <UIKit/UIKit.h>
+#import <React/RCTBridgeModule.h>
+#import <React/RCTLog.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate,RCTBridgeModule>
 
 @property (nonatomic, strong) UIWindow *window;
 

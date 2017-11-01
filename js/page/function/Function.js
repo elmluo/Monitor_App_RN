@@ -38,7 +38,7 @@ export default class Function extends Component {
         }}>
             <View style={{marginTop: marginTop ? marginTop : 25, width: viewWidth, alignItems: 'center'}}>
                 <Image source={icon}/>
-                <Text style={{top: 10, color: 'rgb(126,126,126)'}}>{text}</Text>
+                <Text style={{marginTop: 10, color: 'rgb(126,126,126)'}}>{text}</Text>
             </View>
         </TouchableOpacity>;
 

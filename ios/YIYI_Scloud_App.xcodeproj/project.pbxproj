@@ -15,6 +15,7 @@
 		00E356F31AD99517003FC87E /* YIYI_Scloud_AppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* YIYI_Scloud_AppTests.m */; };
 		05F1A42AEBFA480FBEB735AD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F55EA7B6AC452B80E9F9F2 /* CoreFoundation.framework */; };
 		0A07D601389342EB92477BC0 /* libRCTJPushModule.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 09C208487544468A88C98003 /* libRCTJPushModule.a */; };
+		0B8B27171FA9EED200BC105F /* CalendarManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B8B27161FA9EED200BC105F /* CalendarManager.m */; };
 		10B111208A4647468D0937B0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE938F8FFB5940DCA3EA5CC6 /* SystemConfiguration.framework */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -99,20 +100,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 6280980A1CEDC407000D3A81;
 			remoteInfo = RCTJPushModule;
-		};
-		0B2463AC1F986FD000BAE2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5C3D0D4391B64F40848986CD /* CodePush.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = CodePush;
-		};
-		0B2463AE1F986FD000BAE2A1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5C3D0D4391B64F40848986CD /* CodePush.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F886647B1F4ADB500036D01B;
-			remoteInfo = "CodePush-tvOS";
 		};
 		0B2463E81F9870E800BAE2A1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -330,7 +317,9 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* YIYI_Scloud_AppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YIYI_Scloud_AppTests.m; sourceTree = "<group>"; };
 		09C208487544468A88C98003 /* libRCTJPushModule.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTJPushModule.a; sourceTree = "<group>"; };
-		0B2463EA1F98735F00BAE2A1 /* YIYI_Scloud_App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = YIYI_Scloud_App.entitlements; path = YIYI_Scloud_App/YIYI_Scloud_App.entitlements; sourceTree = "<group>"; };
+		0B41CD381FA970CC005C9EAD /* YIYI_Scloud_App.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = YIYI_Scloud_App.entitlements; path = YIYI_Scloud_App/YIYI_Scloud_App.entitlements; sourceTree = "<group>"; };
+		0B8B27151FA9EED200BC105F /* CalendarManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CalendarManager.h; sourceTree = "<group>"; };
+		0B8B27161FA9EED200BC105F /* CalendarManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CalendarManager.m; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* YIYI_Scloud_App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YIYI_Scloud_App.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -351,7 +340,6 @@
 		40D228A1570146DEB5ADE88E /* libresolv.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		503E777F0CEF4D0283854947 /* libCodePush.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libCodePush.a; sourceTree = "<group>"; };
 		51F55EA7B6AC452B80E9F9F2 /* CoreFoundation.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		5C3D0D4391B64F40848986CD /* CodePush.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = CodePush.xcodeproj; path = "../node_modules/react-native-code-push/ios/CodePush.xcodeproj"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		639587D9E4AA494B82B93428 /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
@@ -499,15 +487,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		0B2463A81F986FCF00BAE2A1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				0B2463AD1F986FD000BAE2A1 /* libCodePush.a */,
-				0B2463AF1F986FD000BAE2A1 /* libCodePush.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		0B2463E51F9870E800BAE2A1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -537,7 +516,7 @@
 		13B07FAE1A68108700A75B9A /* YIYI_Scloud_App */ = {
 			isa = PBXGroup;
 			children = (
-				0B2463EA1F98735F00BAE2A1 /* YIYI_Scloud_App.entitlements */,
+				0B41CD381FA970CC005C9EAD /* YIYI_Scloud_App.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -545,6 +524,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				0B8B27151FA9EED200BC105F /* CalendarManager.h */,
+				0B8B27161FA9EED200BC105F /* CalendarManager.m */,
 			);
 			name = YIYI_Scloud_App;
 			sourceTree = "<group>";
@@ -631,7 +612,6 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				2CA6F8FAEA6B400284E49BE6 /* RCTJCoreModule.xcodeproj */,
 				14199C64772A471581A05F2A /* RCTJPushModule.xcodeproj */,
-				5C3D0D4391B64F40848986CD /* CodePush.xcodeproj */,
 				EA714993C8E348369572C40A /* SplashScreen.xcodeproj */,
 			);
 			name = Libraries;
@@ -734,6 +714,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = H2P99378K6;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -760,10 +741,6 @@
 				{
 					ProductGroup = 18A556531F947BF2005BA4FC /* Products */;
 					ProjectRef = 18A556521F947BF2005BA4FC /* ART.xcodeproj */;
-				},
-				{
-					ProductGroup = 0B2463A81F986FCF00BAE2A1 /* Products */;
-					ProjectRef = 5C3D0D4391B64F40848986CD /* CodePush.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
@@ -882,20 +859,6 @@
 			fileType = archive.ar;
 			path = libRCTJPushModule.a;
 			remoteRef = 0B2463741F986F3D00BAE2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		0B2463AD1F986FD000BAE2A1 /* libCodePush.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libCodePush.a;
-			remoteRef = 0B2463AC1F986FD000BAE2A1 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		0B2463AF1F986FD000BAE2A1 /* libCodePush.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libCodePush.a;
-			remoteRef = 0B2463AE1F986FD000BAE2A1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		0B2463E91F9870E800BAE2A1 /* libSplashScreen.a */ = {
@@ -1154,6 +1117,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				0B8B27171FA9EED200BC105F /* CalendarManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1255,6 +1219,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = YIYI_Scloud_App/YIYI_Scloud_App.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = H2P99378K6;
@@ -1276,6 +1242,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.kongtrolink.Scloud;
 				PRODUCT_NAME = YIYI_Scloud_App;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1286,6 +1254,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = YIYI_Scloud_App/YIYI_Scloud_App.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = H2P99378K6;
 				HEADER_SEARCH_PATHS = (
@@ -1306,6 +1276,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.kongtrolink.Scloud;
 				PRODUCT_NAME = YIYI_Scloud_App;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

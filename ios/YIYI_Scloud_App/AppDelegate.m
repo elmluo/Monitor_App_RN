@@ -12,12 +12,11 @@
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max
 #import <UserNotifications/UserNotifications.h>
 #endif
-#import <CodePush/CodePush.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 
 @implementation AppDelegate
-
+RCT_EXPORT_MODULE();
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
 JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
@@ -26,7 +25,10 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
   [JPUSHService setupWithOption:launchOptions appKey:@"db1eb39511fee670d2845fdb"
                         channel:nil apsForProduction:nil];
   
- 
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+  NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+  
+
   
   NSURL *jsCodeLocation;
 
@@ -50,6 +52,11 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
   [self.window makeKeyAndVisible];
   return YES;
 }
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+  // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+
+}
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 [JPUSHService registerDeviceToken:deviceToken];
@@ -58,23 +65,38 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
 [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:userInfo];
 }
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)   (UIBackgroundFetchResult))completionHandler {
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:userInfo];
 }
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
  NSDictionary * userInfo = notification.request.content.userInfo;
   [JPUSHService handleRemoteNotification:userInfo];
+  [self resolverresolve:^(id result) {
+    result = userInfo;
+  }];
  [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:userInfo];
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+
     
  completionHandler(UNNotificationPresentationOptionAlert);
 }
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
 NSDictionary * userInfo = response.notification.request.content.userInfo;
 [JPUSHService handleRemoteNotification:userInfo];
+  [self resolverresolve:^(id result) {
+    result = userInfo;
+  }];
 [[NSNotificationCenter defaultCenter] postNotificationName:kJPFOpenNotification object:userInfo];
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 
 completionHandler();
 }
 - (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification {
 [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:notification.userInfo];
+
 }
+RCT_EXPORT_METHOD(resolverresolve:(RCTPromiseResolveBlock)resolve){
+  
+}
+
 @end

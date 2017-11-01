@@ -15,6 +15,7 @@ import {
     Platform,
     Dimensions,
     InteractionManager,
+    NativeAppEventEmitter,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import BulletinList from './BulletinList'
@@ -399,109 +400,57 @@ export default class Monitor extends Component {
     // }
 
     componentDidMount() {
-        // alert(123456);
-        //---------------------------------android start---------------------------------
 
-        JPushModule.addReceiveCustomMsgListener((message) => {
-
-            //这是默认的通知消息
-
-              this.setState({pushMsg:message});
-              alert('默认推送消息'+message);
-
-        });
-
-        // JPushModule.addReceiveNotificationListener((map) => {
-        //
-        //     //自定义推送的消息
-        //
-        //     //console.log("alertContent: " + map.alertContent);
-        //
-        //     //extra是可选配置上的附件字段
-        //
-        //     //console.log("extras: " + map.extras);
-        //
-        //     var message = JSON.parse(map.extras);
-        //
-        //     // this.stora是可选配置上的附件字段reDB(message);//我这里是把内容存在了数据库里面，你可以把这里的message放到state里面显示出来
-        //     alert(message);
-        //     //这里面解析json数据，并存在数据库中，同时显示在通知栏上
-        //
-        // })
-
-        //点击通知进入应用的主页，相当于跳转到制定的页面
-
-        // JPushModule.addReceiveOpenNotificationListener((map) => {
-        //
-        //     //console.log("Opening notification!");
-        //
-        //     this.props.navigator.replace({name: "HomePage",component:HomePage});
-        //
-        // })
-
-        //---------------------------------android end---------------------------------
-
-        //---------------------------------ios start---------------------------------
-
-        // NativeAppEventEmitter.addListener(
-        //
-        //     'ReceiveNotification',
-        //
-        //     (message) => {
-        //
-        //         //下面就是发送过来的内容，可以用stringfy打印发来的消息
-        //
-        //         console.log("content: " + JSON.stringify(message));
+        // if (Platform.OS === 'android') {
+        //     alert('安卓');
+        //     JPushModule.addReceiveCustomMsgListener((message) => {
+        //         //这是默认的通知消息
+        //         console.log("默认推送消息: ", message);
         //     });
-                //下面的json就是我在极光推送上的附件字段内容就是上面的log打印出来的东西
-
-                // {
-
-                //    "_j_msgid": 4572771355, 
-
-                //    "content": "日志第一天", 
-
-                //    "time": "2016-11-18/13:11:09", 
-
-                //    "aps": {
-
-                //        "sound": "default",  
-
-                //        "badge": 1, 
-
-                //        "alert": "测试ios1" 
-
-                //    }, 
-
-                //    "name": "刘成",
-
-                //    "age": "28", 
-
-                //    "性别": "男",
-
-                //"qq":"674668211"，
-
-                //"手机号":"674668211"，
-
-                // } console.log("_j_msgid:" + message._j_msgid);
-
-                //这个是极光的消息id console.log("content:" + message.content);
-
-                //这是标题 console.log("aps:" + message.aps.sound);
-
-                //这是声音 console.log("aps:" + message.aps.badge);
-
-                //这是上标 console.log("aps:" + message.aps.alert);
-
-                //这是发送通知的主内容 this.storeDB(message); } );
-
-                //---------------------------------ios end---------------------------------
-
-        JPushModule.addGetRegistrationIdListener((registrationId) => {
-            console.log("Device register succeed, registrationId " + registrationId);
-            alert("Device register succeed, registrationId " + registrationId);
-
-        });
+        //     //推送消息
+        //     JPushModule.addReceiveNotificationListener((message) => {
+        //         console.log("ANreceive notification: ", message);
+        //     });
+        //     //点击跳转
+        //     JPushModule.addReceiveOpenNotificationListener((map) => {
+        //         console.log("ANOpening notification!",map);
+        //     });
+        // }else {
+        //
+        //
+        //     alert('IOS');
+        //
+        //     NativeAppEventEmitter.addListener(
+        //         'OpenNotification',
+        //         (notification) => {
+        //             console.log('打开推送',notification);
+        //         })
+        //
+        //     NativeAppEventEmitter.addListener(
+        //
+        //         'ReceiveNotification',
+        //
+        //         (message) => {
+        //
+        //             //下面就是发送过来的内容，可以用stringfy打印发来的消息
+        //             console.log('-------------------收到推送----------------');
+        //             console.log("content: " + JSON.stringify(message));
+        //         });
+        //
+        //
+        //
+        // }
+        //
+        //
+        //
+        //
+        //
+        //
+        // JPushModule.addGetRegistrationIdListener((registrationId) => {
+        //     console.log("Device register succeed, registrationId " + registrationId);
+        //     alert("Device register succeed, registrationId " + registrationId);
+        //
+        // });
         // 页面加载完成再去渲染数据，减缓卡顿问题
         InteractionManager.runAfterInteractions(() => {
             this._refreshData();
