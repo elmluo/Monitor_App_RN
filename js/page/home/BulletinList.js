@@ -16,9 +16,9 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import BulletinDetail from './BulletinDetail'
 import DataRepository from '../../expand/dao/Data';
-import NoContentPage from '../../common/NoContentPage';
-import NetInfoUtils from '../../util/NetInfoUtils';
 import Storage from '../../common/StorageClass';
+import CustomListView from "../../common/CustomListView";
+import Utils from '../../util/Utils'
 
 let storage = new Storage();
 let dataRepository = new DataRepository();
@@ -28,75 +28,9 @@ export default class BulletinList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            noNetWork: false,
-            noData: false,
-            isLoading: false,
             theme: this.props.theme,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         }
     }
-
-    /**
-     * 获取公告列表数据
-     * @private
-     */
-    _getBulletinList() {
-        this.setState({
-            isLoading: true // 开启加载动画
-        });
-        let URL = '/app/v2/notice/list';
-        let params = {
-            stamp: storage.getLoginInfo().stamp,
-            userId: storage.getLoginInfo().userId,
-            page: 1,
-            size: 20,
-        };
-        // alert(JSON.stringify(params));
-        dataRepository.fetchNetRepository('POST', URL, params).then(result => {
-            // alert(JSON.stringify(result));
-            if (result.success === true) {
-
-                // mock模拟数据
-                let result = {
-                    data: new Array(10).join(' ').split(' ').map((v) => {
-                        return {
-                            noticeId: "（公告ID【String】",
-                            title: "九和路数据中心",
-                            abstracts: "摘要内容摘要内容摘要内容摘要内容摘要内容摘" +
-                            "要内容摘要内容摘要内容摘要内容摘要内容",
-                            time: "2017-02-01 15: 22",
-                            read: true
-                        }
-                    })
-                };
-
-                if (!result.data) {
-                    this.setState({
-                        isLoading: false,
-                        noNetWork: false,
-                        noData: true,
-                    })
-                } else {
-                    this.setState({
-                        result: JSON.stringify(result),
-                        dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
-                        isLoading: false,   // 关闭加载动画
-                        noData: false,
-                    })
-                }
-            } else {
-                this.setState({
-                    netWorkError: true,
-                })
-            }
-
-        }).catch(error => {
-            this.setState({
-                result: JSON.stringify(error)
-            });
-        })
-    }
-
 
     /**
      * 渲染navigationBar左侧按钮
@@ -142,13 +76,13 @@ export default class BulletinList extends Component {
                         <View style={styles.cellTopLeft}>
                             {
                                 rowData.read
-                                    ? <Image source={require('../../../res/Image/Home/ic_home_dot.png')}/>
-                                    : null
+                                    ? null
+                                    :<Image source={require('../../../res/Image/Home/ic_home_dot.png')}/>
                             }
                             <Text style={styles.cellTopLeftTitle}>{rowData.title}</Text>
                         </View>
                         <View style={styles.cellTopRight}>
-                            <Text style={styles.cellTopRightTime}>{rowData.time}</Text>
+                            <Text style={styles.cellTopRightTime}>{Utils._Time(rowData.time)}</Text>
                             <Image source={require('../../../res/Image/BaseIcon/ic_listPush_nor.png')}/>
                         </View>
 
@@ -174,29 +108,26 @@ export default class BulletinList extends Component {
                 style={this.state.theme.styles.navBar}
                 leftButton={this._renderLeftButton()}/>;
 
-        // 判断数据是否为空，若为空，返回提示页面,若不为空
-        let content =
-            this.state.noNetWork ? <NoContentPage type='noNetWork'/>
-                : this.state.noData ? <NoContentPage type='noData'/> : <ListView
-                    dataSource={this.state.dataSource}
-                    renderRow={this._renderRow.bind(this)}
-                    refreshControl={
-                        <RefreshControl
-                            title='加载中...'
-                            titleColor={this.state.theme.themeColor}
-                            colors={[this.state.theme.themeColor]}
-                            tintColor={this.state.theme.themeColor}
-                            refreshing={this.state.isLoading}
-                            onRefresh={() => {
-                                // 重新获取数据
-                                this._getBulletinList();
-                            }}/>
-                    }/>;
+        let URL = '/app/v2/notice/list';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            userId: storage.getLoginInfo().userId,
+            page: 1,
+            size: 20,
+        };
 
+        let list =  <CustomListView
+            {...this.props}
+            noDataType={'onData'}
+            url={URL}
+            params={params}
+            renderRow={this._renderRow.bind(this)}   // bind(this)机制需要熟悉
+            alertText={'没有更多数据了~'}
+        />;
         return (
             <View style={styles.container}>
                 {navigationBar}
-                {content}
+                {list}
             </View>
         )
     }
@@ -218,15 +149,6 @@ export default class BulletinList extends Component {
 
     componentDidMount() {
         InteractionManager.runAfterInteractions(() => {
-            NetInfoUtils.checkNetworkState((isConnectedNet) => {
-                if (isConnectedNet) {
-                    this._getBulletinList();
-                } else {
-                    this.setState({
-                        noNetWork: true
-                    });
-                }
-            });
         })
     }
 }
