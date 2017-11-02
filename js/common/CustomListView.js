@@ -115,7 +115,7 @@ export default class CustomListView extends Component {
         // console.log(params);
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
             if (result.success === true) {
-                alert(JSON.stringify(result.data));
+                // alert(JSON.stringify(result.data));
                 // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
                     // alert(page);

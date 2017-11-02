@@ -123,7 +123,7 @@ export default class SiteDetailSignalAI extends React.Component {
         return (
             <View style={styles.container}>
                 {navigationBar}
-                <ScrollView
+                <View
                     style={styles.scrollView}
                     ref='scrollView'
                     horizontal={false}
@@ -160,8 +160,7 @@ export default class SiteDetailSignalAI extends React.Component {
                     <View style={styles.bottom}>
                         {content}
                     </View>
-
-                </ScrollView>
+                </View>
 
             </View>
         )

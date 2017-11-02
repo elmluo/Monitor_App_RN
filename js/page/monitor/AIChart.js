@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
 import {
-    View,
-    Image,
-    Text,
     Dimensions,
 } from 'react-native'
 
@@ -31,6 +28,7 @@ export default class HomeStatisticChart extends Component {
     }
 
     render() {
+        let themeColor = this.state.theme.themeColor;
         let yAxisArr = this.props.chartData.data.reverse().map(function (v) {
             return v.value;
         });
@@ -43,9 +41,32 @@ export default class HomeStatisticChart extends Component {
         }
         // console.log(minData);
 
-
         // alert(JSON.stringify(this.props.chartData));
         // console.log(this.props.chartData);
+
+        let positionFn = Function('point, params, dom, rect, size', `
+            var triAng = document.createElement('div');
+            triAng.style.position = 'absolute';
+            triAng.style.border = '5px solid transparent';
+            triAng.style.borderTopColor = "${themeColor}";
+            triAng.style.left = (size.contentSize[0] / 2 - 5) + 'px';
+            dom.appendChild(triAng);
+
+            var time = document.createElement('div');
+            time.innerText = params[0].axisValue;
+            time.style.position = 'absolute';
+            time.style.borderTopColor = '#3AB0FF';
+            time.style.width = '100px';
+            time.style.textAlign = 'center';
+            time.style.fontSize = '0.8rem';
+            time.style.left = -(100 - size.contentSize[0]) / 2 + 'px';
+            time.style.top = size.contentSize[1] + 12 + 'px';
+
+
+            return [point[0] - size.contentSize[0] / 2, point[1] - size.contentSize[1] - 10];
+        `);
+
+
         let option = {
             backgroundColor: {
                 type: 'linear',
@@ -68,36 +89,13 @@ export default class HomeStatisticChart extends Component {
                 formatter: function (v, p, f) {
                     return (v[0].data).toFixed(1) + '';
                 },
-                position: function (point, params, dom, rect, size) {
-                    // 三角形
-                    var triAng = document.createElement('div');
-                    triAng.style.position = 'absolute';
-                    triAng.style.border = '5px solid transparent';
-                    triAng.style.borderTopColor = '#3AB0FF';
-                    triAng.style.left = (size.contentSize[0] / 2 - 5) + 'px';
-                    dom.appendChild(triAng);
-
-                    // 时间
-                    var time = document.createElement('div');
-                    time.innerText = params[0].axisValue;
-                    time.style.position = 'absolute';
-                    time.style.borderTopColor = '#3AB0FF';
-                    time.style.width = '100px';
-                    time.style.textAlign = 'center';
-                    time.style.fontSize = '0.8rem';
-                    time.style.left = -(100 - size.contentSize[0]) / 2 + 'px';
-                    time.style.top = size.contentSize[1] + 12 + 'px';
-
-                    // dom.appendChild(time);
-
-                    return [point[0] - size.contentSize[0] / 2, point[1] - size.contentSize[1] - 10];
-                },
+                position: positionFn,
                 extraCssText: `background-color: ${this.props.theme.themeColor}; padding:0 5px;`
             },
             grid: {
                 left: '9%',
                 right: '7%',
-                backgroundColor: "transparent",
+                // backgroundColor: "transparent",
                 // containLabel: true
             },
             xAxis: [
@@ -105,7 +103,7 @@ export default class HomeStatisticChart extends Component {
                     type: 'category',
                     // boundaryGap : false,
                     data: this.props.chartData.data.reverse().map(function (v) {
-                        return '           '+Utils.FormatTime(new Date(v.time), 'MM-dd hh:mm')
+                        return '           '+Utils.FormatTime(new Date(v.time), 'MM/dd hh:mm')
                     }),
                     boundaryGap: false,
                     axisTick: {
@@ -221,16 +219,16 @@ export default class HomeStatisticChart extends Component {
                         },
                         emphasis: {
                             opacity: 1,
-                            color: '#',
-                            borderColor: 'rgba(255,255,255,0.1)',
-                            borderWidth: 10
+                            color: '#FFFFFF',
+                            borderColor: themeColor,
+                            borderWidth: 3
                         }
                     }
                 }
             ]
         };
         return (
-            <Echarts ref='echarts' option={option} height={this.props.height}/>
+            <Echarts ref='echarts' option={option} height={this.props.height} style={{borderBottomColor: '#FFFFFF', borderBottomWidth: 2,}}/>
         )
     }
 }

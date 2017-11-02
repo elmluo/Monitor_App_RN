@@ -68,7 +68,7 @@ export default class BulletinDetail extends Component {
             noticeId: this.props.item.noticeId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((response)=> {
-            console.log(response);
+            // console.log(response);
             if (response.success === true) {
                 this.setState({
                     notice: response.data,

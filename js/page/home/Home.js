@@ -247,7 +247,7 @@ export default class Monitor extends Component {
                 this._getWeekFsuCount(stamp),
                 this._getAlarmCount(stamp),
             ]).then((results) => {
-                console.log(results);
+                // console.log(results);
                 // 计算告警数量总和
                 let allCount = 0;
                 for (let i = 0; i < results[2].data.length; i++) {
