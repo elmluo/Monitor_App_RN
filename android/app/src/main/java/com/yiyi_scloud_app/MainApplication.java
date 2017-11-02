@@ -3,7 +3,6 @@ package com.yiyi_scloud_app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.microsoft.codepush.react.CodePush;
 import cn.jpush.reactnativejpush.JPushPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -17,11 +16,6 @@ public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
 
-        @Override
-        protected String getJSBundleFile() {
-        return CodePush.getJSBundleFile();
-        }
-    
     @Override
     public boolean getUseDeveloperSupport() {
       return BuildConfig.DEBUG;
@@ -36,7 +30,6 @@ public class MainApplication extends Application implements ReactApplication {
 
         return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new CodePush(null, getApplicationContext(), BuildConfig.DEBUG),
             new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG)
 
       );

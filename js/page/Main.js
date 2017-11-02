@@ -10,11 +10,14 @@ import {
     Image,
     View,
     Text,
-    DeviceEventEmitter
+    Platform,
+    DeviceEventEmitter,
+    NativeAppEventEmitter,
+    NativeModules,
 } from 'react-native';
 
 import TabNavigator from 'react-native-tab-navigator';
-
+import JPushModule from 'jpush-react-native';
 // import {Navigator} from 'react-native-deprecated-custom-components'
 import Home from './home/Home'
 import Monitor from './monitor/Monitor'
@@ -37,6 +40,8 @@ export const FLAG_TAB={
     flag_favoriteTab:'tb_favorite',
     flag_my:'tb_my'
 };
+const { CalendarManager } = NativeModules.CalendarManager;
+
 // import codePush from 'react-native-code-push'
 export default class Main extends BaseComponent {
     constructor(props) {
@@ -48,6 +53,7 @@ export default class Main extends BaseComponent {
             crossPageData: null
         }
 }
+
 
 
 
@@ -69,9 +75,78 @@ export default class Main extends BaseComponent {
     componentDidMount(){
 
         super.componentDidMount();
+
+
+        if (Platform.OS === 'android') {
+            JPushModule.initPush();
+            alert('安卓');
+            JPushModule.addReceiveCustomMsgListener((message) => {
+                //这是默认的通知消息
+                console.log("默认推送消息: ", message);
+                alert(JSON.stringify('推送消息'+message));
+            });
+            //推送消息
+            JPushModule.addReceiveNotificationListener((message) => {
+                console.log("ANreceive notification: ", message);
+                alert(JSON.stringify('自定义消息'+message));
+
+            });
+            //点击跳转
+            JPushModule.addReceiveOpenNotificationListener((map) => {
+                console.log("ANOpening notification!",map);
+                alert(JSON.stringify('点击跳转'+map));
+
+
+            });
+            JPushModule.addGetRegistrationIdListener((registrationId) => {
+                console.log("Device register succeed, registrationId " + registrationId);
+                alert("Device register succeed, registrationId " + registrationId);
+
+            });
+        }else {
+
+
+            alert('IOS');
+            CalendarManager.addEvent('Birthday Party', '4 Privet Drive, Surrey');
+            NativeAppEventEmitter.addListener(
+                'kJPFOpenNotification',
+                (notification) => {
+                    console.log('打开推送',notification);
+                })
+
+            NativeAppEventEmitter.addListener(
+
+                'kJPFDidReceiveRemoteNotification',
+
+                (message) => {
+
+                    //下面就是发送过来的内容，可以用stringfy打印发来的消息
+                    console.log('-------------------收到推送----------------');
+                    console.log("content: " + JSON.stringify(message));
+                });
+
+
+
+        }
+
+
+
+
+
+
+
         this.listener = DeviceEventEmitter.addListener('ACTION_HOME',
             (action,params) => this.onAction(action,params));
         // this.update();
+    }
+
+
+    componentWillUnmount(){
+        JPushModule.removeReceiveCustomMsgListener();
+        JPushModule.removeReceiveNotificationListener();
+        JPushModule.removeReceiveOpenNotificationListener();
+        JPushModule.removeGetRegistrationIdListener();
+        CalendarManager.remove();
     }
 
     /**

@@ -180,7 +180,7 @@ export default class WelcomePage extends Component {
 
             if (alias !== undefined) {
                 JPushModule.setAlias(alias, () => {
-                    console.log("Set alias succeed");
+                    console.log("Set alias succeed"+ alias);
                 }, () => {
                     console.log("Set alias failed");
                 });

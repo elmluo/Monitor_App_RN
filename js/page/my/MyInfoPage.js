@@ -174,13 +174,13 @@ export default class MyInfoPage extends Component {
                             {text: '退出', onPress:() => {
                             ///退出登录操作
                                let alias = storage.getLoginInfo().userId;
-                                if (alias !== undefined) {
-                                    JPushModule.deleteAlias(alias, () => {
-                                        console.log("Delete alias succeed");
-                                    }, () => {
-                                        console.log("Delete alias failed");
-                                    });
-                                }
+                                // if (alias !== undefined) {
+                                //     JPushModule.deleteAlias(alias, () => {
+                                //         console.log("Delete alias succeed");
+                                //     }, () => {
+                                //         console.log("Delete alias failed");
+                                //     });
+                                // }
                              this.dataRepository.removeLocalRepository('user');
                              this.dataRepository.removeLocalRepository('/app/v2/user/info/get')
                                  .then(()=> {

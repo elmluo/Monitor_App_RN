@@ -32,4 +32,9 @@ public class MainActivity extends ReactActivity {
         super.onResume();
         JPushInterface.onResume(this);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

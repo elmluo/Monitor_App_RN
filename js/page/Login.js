@@ -149,10 +149,10 @@ export default class Login extends Component {
     _JPushSetAlias(userId) {
 
         let alias = userId;
-
+        alert(JSON.stringify(alias));
         if (alias !== undefined) {
             JPushModule.setAlias(alias, () => {
-                console.log("Set alias succeed");
+                console.log("Set alias succeed",alias);
             }, () => {
                 console.log("Set alias failed");
             });
