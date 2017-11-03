@@ -12,8 +12,6 @@ import {
     Text,
     Platform,
     DeviceEventEmitter,
-    NativeAppEventEmitter,
-    NativeModules,
 } from 'react-native';
 
 import TabNavigator from 'react-native-tab-navigator';
@@ -40,7 +38,6 @@ export const FLAG_TAB={
     flag_favoriteTab:'tb_favorite',
     flag_my:'tb_my'
 };
-const { CalendarManager } = NativeModules.CalendarManager;
 
 // import codePush from 'react-native-code-push'
 export default class Main extends BaseComponent {
@@ -50,7 +47,9 @@ export default class Main extends BaseComponent {
         this.state = {
             selectedTab: selectedTab,
             theme:this.props.theme,
-            crossPageData: null
+            crossPageData: null,
+            homeBadge:null,
+            alarmBadge:null,
         }
 }
 
@@ -77,60 +76,20 @@ export default class Main extends BaseComponent {
         super.componentDidMount();
 
 
-        if (Platform.OS === 'android') {
-            JPushModule.initPush();
-            alert('安卓');
-            JPushModule.addReceiveCustomMsgListener((message) => {
-                //这是默认的通知消息
-                console.log("默认推送消息: ", message);
-                alert(JSON.stringify('推送消息'+message));
-            });
-            //推送消息
-            JPushModule.addReceiveNotificationListener((message) => {
-                console.log("ANreceive notification: ", message);
-                alert(JSON.stringify('自定义消息'+message));
-
-            });
-            //点击跳转
-            JPushModule.addReceiveOpenNotificationListener((map) => {
-                console.log("ANOpening notification!",map);
-                alert(JSON.stringify('点击跳转'+map));
-
-
-            });
-            JPushModule.addGetRegistrationIdListener((registrationId) => {
-                console.log("Device register succeed, registrationId " + registrationId);
-                alert("Device register succeed, registrationId " + registrationId);
-
-            });
-        }else {
-
-
-            alert('IOS');
-            CalendarManager.addEvent('Birthday Party', '4 Privet Drive, Surrey');
-            NativeAppEventEmitter.addListener(
-                'kJPFOpenNotification',
-                (notification) => {
-                    console.log('打开推送',notification);
+        this.DeviceEvent = DeviceEventEmitter.addListener('setBadge', (type,badge) => {
+            console.log('Main'+type+badge);
+            if (type == 200) {
+                //
+                // this.setState({
+                //     homeBadge:badge,
+                // })
+            }else {
+                this.setState({
+                    alarmBadge:badge,
                 })
+            }
 
-            NativeAppEventEmitter.addListener(
-
-                'kJPFDidReceiveRemoteNotification',
-
-                (message) => {
-
-                    //下面就是发送过来的内容，可以用stringfy打印发来的消息
-                    console.log('-------------------收到推送----------------');
-                    console.log("content: " + JSON.stringify(message));
-                });
-
-
-
-        }
-
-
-
+        });
 
 
 
@@ -142,11 +101,8 @@ export default class Main extends BaseComponent {
 
 
     componentWillUnmount(){
-        JPushModule.removeReceiveCustomMsgListener();
-        JPushModule.removeReceiveNotificationListener();
-        JPushModule.removeReceiveOpenNotificationListener();
-        JPushModule.removeGetRegistrationIdListener();
-        CalendarManager.remove();
+        this.DeviceEvent.remove();
+        this.listener.remove();
     }
 
     /**
@@ -230,9 +186,9 @@ export default class Main extends BaseComponent {
         return (
             <View style={styles.container}>
                 <TabNavigator>
-                    {this._renderTab(Home,'tb_home','首页',require('../../res/Image/Tab/tab_home_nor.png'),1)}
+                    {this._renderTab(Home,'tb_home','首页',require('../../res/Image/Tab/tab_home_nor.png'),this.state.homeBadge)}
                     {this._renderTab(Monitor,'tb_monitor','监控',require('../../res/Image/Tab/tab_monitor_nor.png'),null)}
-                    {this._renderTab(Alarm,'tb_alarm','告警',require('../../res/Image/Tab/tab_alarm_nor.png'),123)}
+                    {this._renderTab(Alarm,'tb_alarm','告警',require('../../res/Image/Tab/tab_alarm_nor.png'),this.state.alarmBadge)}
                     {this._renderTab(Function,'tb_function','功能',require('../../res/Image/Tab/tab_subsystem_nor.png'),null)}
                     {/*{this._renderTab(PopularPage,'tb_popular','告警',require('../../res/images/ic_polular.png'))}*/}
                     {/*{this._renderTab(TrendingPage,'tb_trending','趋势',require('../../res/images/ic_trending.png'))}*/}

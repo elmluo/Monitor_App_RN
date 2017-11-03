@@ -54,8 +54,8 @@ export default class ResetPasswordPage extends React.Component {
         let url = '/app/v2/user/password/reset';
         let params = {
             password: this.state.newPassword,
-            userId: this.props.data.userId,
-            token: this.props.data.token,
+            userId: this.props.item.userId,
+            token: this.props.item.token,
         };
         alert(JSON.stringify(params));
 

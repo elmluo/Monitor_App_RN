@@ -31,7 +31,6 @@ import JPushModule from 'jpush-react-native';
 let storage = new Storage();
 let dataRepository = new DataRepository();
 let {width, height} = Dimensions.get('window');
-
 export default class Monitor extends Component {
     constructor(props) {
         super(props);
@@ -431,86 +430,104 @@ export default class Monitor extends Component {
 
     componentDidMount() {
 
-        JPushModule.addReceiveCustomMsgListener((message) => {
 
-            //这是默认的通知消息
 
-            this.setState({pushMsg: message});
-            alert('默认推送消息' + message);
 
-        });
+        if (Platform.OS === 'ios'){
+            console.log("iOS : ");
+            //推送消息
+            JPushModule.addReceiveNotificationListener((message) => {
+                console.log("获取推送消息 " + JSON.stringify(message));
+                this.timer = setTimeout(()=> {
+                    clearTimeout(this.timer);
+                    DeviceEventEmitter.emit('setBadge', message.type,message.aps.badge);
+                }, 0);
 
-        // JPushModule.addReceiveNotificationListener((map) => {
-        //
-        //     //自定义推送的消息
-        //
-        //     //console.log("alertContent: " + map.alertContent);
-        //
-        //     //extra是可选配置上的附件字段
-        //
-        //     //console.log("extras: " + map.extras);
-        //
-        //     var message = JSON.parse(map.extras);
-        //
-        //     // this.stora是可选配置上的附件字段reDB(message);//我这里是把内容存在了数据库里面，你可以把这里的message放到state里面显示出来
-        //     alert(message);
-        //     //这里面解析json数据，并存在数据库中，同时显示在通知栏上
-        //
-        // })
+            });
+            //点击跳转
+            JPushModule.addReceiveOpenNotificationListener((map) => {
+                console.log("点击 " + JSON.stringify(map));
 
-        //点击通知进入应用的主页，相当于跳转到制定的页面
+                const routes = this.props.navigator.state.routeStack;
+                console.log(routes);
+                let lent = 0;
+                for (let i = 0;i<routes.length;i++){
+                    if (routes[i].component.name === "BulletinList"){
+                        this.props.navigator.popToRoute(routes[i]);
+                    }else {
+                        lent++;
+                    }
+                }
+                if (lent == routes.length){
+                    this.props.navigator.push({
+                        component: BulletinList,
+                        params: {...this.props}
+                    })
+                }
 
-        // JPushModule.addReceiveOpenNotificationListener((map) => {
-        // if (Platform.OS === 'android') {
-        //     alert('安卓');
-        //     JPushModule.addReceiveCustomMsgListener((message) => {
-        //         //这是默认的通知消息
-        //         console.log("默认推送消息: ", message);
-        //     });
-        //     //推送消息
-        //     JPushModule.addReceiveNotificationListener((message) => {
-        //         console.log("ANreceive notification: ", message);
-        //     });
-        //     //点击跳转
-        //     JPushModule.addReceiveOpenNotificationListener((map) => {
-        //         console.log("ANOpening notification!",map);
-        //     });
-        // }else {
-        //
-        //
-        //     this.props.navigator.replace({name: "HomePage",component:HomePage});
-        //
-        //     NativeAppEventEmitter.addListener(
-        //         'OpenNotification',
-        //         (notification) => {
-        //             console.log('打开推送',notification);
-        //         })
-        //
-        //     NativeAppEventEmitter.addListener(
-        //
-        //         'ReceiveNotification',
-        //
-        //         (message) => {
-        //
-        //             //下面就是发送过来的内容，可以用stringfy打印发来的消息
-        //             console.log('-------------------收到推送----------------');
-        //             console.log("content: " + JSON.stringify(message));
-        //         });
-        //
-        //
-        //
-        // }
-        //
-        //
-        //
-        //
-        //
-        //
-        // JPushModule.addGetRegistrationIdListener((registrationId) => {
-        //     console.log("Device register succeed, registrationId " + registrationId);
-        //     alert("Device register succeed, registrationId " + registrationId);
-        //
-        // });
+
+            });
+        }else {
+            console.log("Android: ");
+            JPushModule.notifyJSDidLoad((resultCode) =>{
+                console.log("注册事件: ", resultCode);
+
+            });
+            JPushModule.crashLogOFF();
+            //推送消息
+            JPushModule.addReceiveNotificationListener((message) => {
+                console.log("获取推送消息 " + JSON.stringify(message));
+
+                this.timer = setTimeout(()=> {
+                    clearTimeout(this.timer);
+                    DeviceEventEmitter.emit('setBadge', message.type,0);
+                }, 0);
+
+
+            });
+            //点击跳转
+            JPushModule.addReceiveOpenNotificationListener((map) => {
+                console.log("点击 " + JSON.stringify(map));
+                const routes = this.props.navigator.state.routeStack;
+                console.log(routes);
+                let lent = 0;
+                for (let i = 0;i<routes.length;i++){
+                    if (routes[i].component.name === "BulletinList"){
+                        this.props.navigator.popToRoute(routes[i]);
+                    }else {
+                        lent++;
+                    }
+                }
+                if (lent == routes.length){
+                    this.props.navigator.push({
+                        component: BulletinList,
+                        params: {...this.props}
+                    })
+                }
+
+
+            });
+            JPushModule.addOpenNotificationLaunchAppListener((map)=>{
+                const routes = this.props.navigator.state.routeStack;
+                console.log(routes);
+                let lent = 0;
+                for (let i = 0;i<routes.length;i++){
+                    if (routes[i].component.name === "BulletinList"){
+                        this.props.navigator.popToRoute(routes[i]);
+                    }else {
+                        lent++;
+                    }
+                }
+                if (lent == routes.length){
+                    this.props.navigator.push({
+                        component: BulletinList,
+                        params: {...this.props}
+                    })
+                }
+            })
+        }
+
+
         // 页面加载完成再去渲染数据，减缓卡顿问题
         InteractionManager.runAfterInteractions(() => {
             this._refreshData();

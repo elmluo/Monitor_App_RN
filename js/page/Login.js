@@ -132,7 +132,7 @@ export default class Login extends Component {
 
                 } else {
                     console.log('获取数据失败')
-                    alert(JSON.stringify(response.info));
+                    // alert(JSON.stringify(response.info));
                 }
 
             })
@@ -149,7 +149,8 @@ export default class Login extends Component {
     _JPushSetAlias(userId) {
 
         let alias = userId;
-        alert(JSON.stringify(alias));
+        // alert(JSON.stringify(alias));
+        JPushModule.crashLogOFF();
         if (alias !== undefined) {
             JPushModule.setAlias(alias, () => {
                 console.log("Set alias succeed",alias);

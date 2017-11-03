@@ -63,4 +63,16 @@ export default class LocalStorageClass {
     setAlarmFilterSiteId (siteId) {
         this.alarmFilterSiteId = siteId;
     }
+
+    /**
+     *  保存安卓推送条数
+     * @param androidBage
+     */
+    setAndroidBadge(badge){
+        this.badge = badge;
+    }
+    getAndroidBadge(){
+        return this.badge;
+    }
+
 }

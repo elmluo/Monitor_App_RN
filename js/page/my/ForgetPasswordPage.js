@@ -173,8 +173,6 @@ export default class ForgetPasswordPage extends React.Component {
                 dataRepository.fetchNetRepository('POST', url, params)
                     .then((response) => {
                         if (response.success === true) {
-                            alert(JSON.stringify(response))
-
                             this.props.navigator.push({
                                 component: ResetPasswordPage,
                                 item:response.data,

@@ -177,7 +177,10 @@ export default class WelcomePage extends Component {
         dataRepository.fetchLocalRepository('/app/v2/user/login').then((userData) => {
 
             let alias = userData.userId;
-
+            if(Platform.OS == 'android'){
+                JPushModule.initPush();
+                JPushModule.crashLogOFF();
+            }
             if (alias !== undefined) {
                 JPushModule.setAlias(alias, () => {
                     console.log("Set alias succeed"+ alias);

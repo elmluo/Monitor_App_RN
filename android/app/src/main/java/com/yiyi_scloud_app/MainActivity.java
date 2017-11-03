@@ -1,7 +1,9 @@
 package com.yiyi_scloud_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import cn.jpush.android.api.JPushInterface;
+import cn.jpush.reactnativejpush.JPushPackage;
 import com.facebook.react.ReactActivity;
 
 public class MainActivity extends ReactActivity {
@@ -19,6 +21,9 @@ public class MainActivity extends ReactActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         JPushInterface.init(this);
+        Intent intent = new Intent(this,MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
     }
 
     @Override
