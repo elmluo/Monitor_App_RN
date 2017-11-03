@@ -138,7 +138,7 @@ export default class DeviceTab extends Component {
             siteId: this.props.siteInfo.siteId,
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            console.log(result);
+            // console.log(result);
             this.setState({
                 fsuList: result.data
             })
@@ -304,7 +304,6 @@ export default class DeviceTab extends Component {
                                 underlayColor='transparent'
                                 onPress={() => {
                                     this.isSelected = false;
-
                                     // 发送通知，执行自定义列表组件刷新
                                     // 此处由于刷新视图操作较多，注意列表组件刷新的顺序
                                     this.timer = setTimeout(function () {
@@ -336,7 +335,7 @@ export default class DeviceTab extends Component {
                 {/*半透明遮罩层部分*/}
                 <TouchableOpacity
                     activeOpacity={1}
-                    style={{backgroundColor: 'rgba(0, 0, 0, 0.3)', flex: 1,}}
+                    style={{backgroundColor: 'rgba(0, 0, 0, 0.3)', height: height* 0.7}}
                     onPress={() => {
                         // 关闭optionList
                         this.isSelected = false;
@@ -344,6 +343,10 @@ export default class DeviceTab extends Component {
                             isSelected: this.isSelected,
                         });
                     }}>
+                    {/*<View style={{height: 100}}>*/}
+                        {/*<View style={{flex: 1, backgroundColor: 'yellow'}}></View>*/}
+                        {/*<View><Text>12345</Text></View>*/}
+                    {/*</View>*/}
                 </TouchableOpacity>
 
             </ScrollView>

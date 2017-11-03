@@ -98,7 +98,7 @@ export default class LocationPage extends React.Component {
 
         // alert(JSON.stringify(source));
 
-        let gg=this._bd_decrypt(this.props.item.latitude, this.props.item.longitude);
+        let gg=this._bd_decrypt(this.props.siteInfo.latitude, this.props.siteInfo.longitude);
         console.log(gg);
         let gg_lon = gg.gg_lon;
         let gg_lat = gg.gg_lat;
@@ -109,7 +109,7 @@ export default class LocationPage extends React.Component {
                 <WebView
                     // injectedJavaScript={insertJSToHtml}
                     source={{
-                        uri: `https://uri.amap.com/marker?position=${gg_lon},${gg_lat}&name=${this.props.item.name}&src=mypage&coordinate=gaode&callnative=0 `
+                        uri: `https://uri.amap.com/marker?position=${gg_lon},${gg_lat}&name=${this.props.siteInfo.name}&src=mypage&coordinate=gaode&callnative=0 `
                     }}
                     // source={source}
                     startInLoadingState={true}/>

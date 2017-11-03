@@ -71,7 +71,7 @@ export default class Login extends Component {
                         this._pushToCompanyPage();
 
                     } else {
-                        alert('普通用户');
+                        // alert('普通用户');
                         // 获取用户信息 主要保存：companyId、userId
                         //
                         let userUrl = '/app/v2/user/info/get';
