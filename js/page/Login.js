@@ -12,7 +12,7 @@ import {
     Image,
     Alert,
     ImageBackground,
-
+    StatusBar
 } from 'react-native'
 
 import Main from './Main'
@@ -97,8 +97,8 @@ export default class Login extends Component {
                                                 // 保存用户登录返回信息
                                                 // alert(JSON.stringify(companyResponse.data));
                                                 this.setState({
-                                                   tag: companyResponse.data.stamp,
-                                                   alias:  companyResponse.data.userId,
+                                                    tag: companyResponse.data.stamp,
+                                                    alias: companyResponse.data.userId,
                                                 });
                                                 dataRepository.saveRepository(url, {
                                                     companyId: response.data.companyId,
@@ -107,7 +107,7 @@ export default class Login extends Component {
                                                 })
                                                     .then(() => {
 
-                                                    let userId = response.data.userId;
+                                                        let userId = response.data.userId;
 
                                                         this._JPushSetAlias(userId)
 
@@ -153,7 +153,7 @@ export default class Login extends Component {
         JPushModule.crashLogOFF();
         if (alias !== undefined) {
             JPushModule.setAlias(alias, () => {
-                console.log("Set alias succeed",alias);
+                console.log("Set alias succeed", alias);
             }, () => {
                 console.log("Set alias failed");
             });
@@ -222,80 +222,93 @@ export default class Login extends Component {
     /*设置背景图片*/
 
     render() {
-        return (<View style={styles.container}>
+        return (
+            <View style={styles.container}>
+                {/*背景*/}
+                <ImageBackground style={styles.bgImageSize}
+                                 source={require('../../res/Image/Login/ic_login_bg.png')}>
+                    <Image style={styles.loginImg}
+                           source={require('../../res/Image/Login/ic_login_logo.png')}/>
+                    <Text style={styles.logoText}>义益云监控</Text>
+                </ImageBackground>
 
-            <ImageBackground style={styles.bgImageSize}
-                             source={require('../../res/Image/Login/ic_login_bg.png')}>
-                <Image style={styles.loginImg}
-                       source={require('../../res/Image/Login/ic_login_logo.png')}/>
-                <Text style={styles.logoText}>义益云监控</Text>
+                {/*内容，悬浮于背景*/}
+                <View style = {styles.loginContent}>
 
-                <View style={styles.loginTextBg}>
-                    <View style={styles.item}>
-                        <Image source={require('../../res/Image/Login/ic_user_key_nor.png')}
-                               style={styles.iconKeyStyle}/>
-                        <TextInput
-                            ref="inputLoginName"
-                            // autoFocus={true}
-                            underlineColorAndroid="transparent"
-                            placeholder="请输入用户名"
-                            clearTextOnFocus={true}
-                            clearButtonMode="while-editing"
-                            style={styles.textInputSize}
-                            onChangeText={(input) => this.setState({username: input})}>
-                        </TextInput>
+                    <View style={styles.loginContentTop}>
+
                     </View>
-                    <View style={styles.item}>
-                        <Image source={require('../../res/Image/Login/ic_password_key_nor.png')}
-                               style={styles.iconKeyStyle}/>
-                        <TextInput
-                            ref="inputLoginPwd"
-                            underlineColorAndroid="transparent"
-                            placeholder="请输入密码"
-                            clearTextOnFocus={true}
-                            secureTextEntry={true}
-                            clearButtonMode="while-editing"
-                            style={styles.textInputSize}
-                            onChangeText={(input) => this.setState({userpwd: input})}>
-                        </TextInput>
+
+                    <View style={styles.loginContentCenter}>
+                        <View style={styles.loginTextBg}>
+                            <View style={styles.item}>
+                                <Image source={require('../../res/Image/Login/ic_user_key_nor.png')}
+                                       style={styles.iconKeyStyle}/>
+                                <TextInput
+                                    ref="inputLoginName"
+                                    // autoFocus={true}
+                                    underlineColorAndroid="transparent"
+                                    placeholder="请输入用户名"
+                                    clearTextOnFocus={true}
+                                    clearButtonMode="while-editing"
+                                    style={styles.textInputSize}
+                                    onChangeText={(input) => this.setState({username: input})}>
+                                </TextInput>
+                            </View>
+                            <View style={styles.item}>
+                                <Image source={require('../../res/Image/Login/ic_password_key_nor.png')}
+                                       style={styles.iconKeyStyle}/>
+                                <TextInput
+                                    ref="inputLoginPwd"
+                                    underlineColorAndroid="transparent"
+                                    placeholder="请输入密码"
+                                    clearTextOnFocus={true}
+                                    secureTextEntry={true}
+                                    clearButtonMode="while-editing"
+                                    style={styles.textInputSize}
+                                    onChangeText={(input) => this.setState({userpwd: input})}>
+                                </TextInput>
+                            </View>
+                        </View>
+
+                        <ImageBackground style={styles.loginBtnBgImg}
+                                         source={require('../../res/Image/Login/ic_loginBtn_bg.png')}>
+
+                            <TouchableOpacity style={styles.login}
+                                              underlayColor='transparent'
+                                              onPress={() => {
+                                                  this.loginInMainPage()
+                                              }}>
+                                <Text style={styles.loginText}>登录</Text>
+                            </TouchableOpacity>
+                        </ImageBackground>
                     </View>
-                </View>
-            </ImageBackground>
 
-            <ImageBackground style={styles.loginBtnBgImg} source={require('../../res/Image/Login/ic_loginBtn_bg.png')}>
+                    <View style={styles.viewBottomStyle}>
+                        <View>
+                            <TouchableOpacity onPress={() => {
+                                this._pushToForgetPasswordPage()
+                            }}>
+                                <Text style={styles.textBottomStyle}>忘记密码</Text>
+                            </TouchableOpacity>
+                        </View>
 
-                <TouchableOpacity style={styles.login}
-                                  underlayColor='transparent'
-                                  onPress={() => {
-                                      this.loginInMainPage()
-                                  }}>
-                    <Text style={styles.loginText}>登录</Text>
-                </TouchableOpacity>
-            </ImageBackground>
+                        <View>
+                            <Text> | </Text>
+                        </View>
+                        
+                        <View>
+                            <TouchableOpacity onPress={() => {
+                                this._pushToSetUpServerPage()
+                            }}>
+                                <Text style={styles.textBottomStyle}>服务器设置</Text>
+                            </TouchableOpacity>
 
-            <View style={styles.viewBottomStyle}>
-                <View>
-                    <TouchableOpacity onPress={() => {
-                        this._pushToForgetPasswordPage()
-                    }}>
-                        <Text style={styles.textBottomStyle}>忘记密码</Text>
-                    </TouchableOpacity>
-
-                </View>
-                <View>
-                    <Text> | </Text>
-                </View>
-                <View>
-                    <TouchableOpacity onPress={() => {
-                        this._pushToSetUpServerPage()
-                    }}>
-                        <Text style={styles.textBottomStyle}>服务器设置</Text>
-                    </TouchableOpacity>
-
+                        </View>
+                    </View>
                 </View>
             </View>
-
-        </View>)
+        )
     }
 
 
@@ -304,6 +317,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
+    },
+    loginContent: {
+        justifyContent: 'space-between',
+        position: 'absolute',
+        flex: 1,
+        height: height,
+        // backgroundColor: 'red',
+        paddingBottom: 40,
     },
     item: {
         flexDirection: 'row',
@@ -338,15 +359,22 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#FFF',
         textAlign: 'center',
-        marginTop: 30,
+        marginTop: 10,
         fontWeight: '600'
     },
+    loginContentCenter: {
+        position: 'relative',
+    },
+    loginContentTop: {
+    },
     loginTextBg: {
+        // backgroundColor: 'blue',
+        position: 'relative',
         backgroundColor: 'white',
         alignSelf: 'center',
         width: width - 30,
-        height: height * 0.3,
         marginTop: 49,
+        paddingBottom: 70,
         borderRadius: 5,
         shadowColor: 'rgba(19,171,228,0.5)',
         shadowOffset: {h: 15, w: 20},
@@ -354,9 +382,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.7,
     },
     loginBtnBgImg: {
-        marginTop: 85,
+        position: 'absolute',
+        zIndex: 10,
         width: width * 0.7,
         height: 40,
+        bottom: -15,
         alignSelf: 'center',
     },
     iconKeyStyle: {
@@ -371,15 +401,12 @@ const styles = StyleSheet.create({
         textAlign: 'left'
     },
     viewBottomStyle: {
-        marginTop: width * 0.40,
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     textBottomStyle: {
         fontSize: 15,
         color: 'rgb(102,102,102)'
     }
-
-
 });

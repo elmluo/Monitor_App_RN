@@ -9,9 +9,8 @@ import {
     View,
     Image,
     TouchableOpacity,
-    ListView,
-    RefreshControl,
-    InteractionManager
+    InteractionManager,
+    DeviceEventEmitter,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import BulletinDetail from './BulletinDetail'
@@ -70,6 +69,9 @@ export default class BulletinList extends Component {
                 activeOpacity={0.5}
                 onPress={() => {
                     this._pushToDetail(rowData);
+
+                    // 发送通知： 首页重新获取未读公告数量，
+                    DeviceEventEmitter.emit('getNoticeNotReadCount')
                 }}>
                 <View style={styles.cell}>
                     <View style={styles.cellTop}>

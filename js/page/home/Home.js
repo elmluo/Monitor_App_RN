@@ -37,7 +37,7 @@ export default class Monitor extends Component {
         this.state = {
             theme: this.props.theme,
             isLoading: false,
-            noticeCount: 6,
+            noticeCount: null,
             isShowNoticeBar: false,
             fsuCount: [     // 初始化的数据结构和操作的数据结构统一
                 {item: "在线", count: 2},
@@ -91,7 +91,7 @@ export default class Monitor extends Component {
      * @private
      */
     _renderRightButton() {
-        let image = this.state.isShowNoticeBar
+        let image = this.state.noticeCount
             ? <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_selected.png')}/>
             : <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_nor.png')}/>;
         return (
@@ -214,18 +214,22 @@ export default class Monitor extends Component {
      * @private
      */
     _getNoticeNotReadCount() {
+        // console.log('点我了');
         let url = '/app/v2/notice/unread/count';
         let params = {
             stamp: storage.getLoginInfo().stamp,
             userId: storage.getLoginInfo().userId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            // alert(JSON.stringify(result));
+            // console.log(result);
             if (result.data === 0 || result.data === null) {
                 this.setState({
                     isShowNoticeBar: false,
-                })
+                });
+                DeviceEventEmitter.emit('setNoticeBadge', 'none');
             } else {
+                // 发送通知显示底部首页badge
+                DeviceEventEmitter.emit('setNoticeBadge', result.data);
                 this.setState({
                     isShowNoticeBar: true,
                     noticeCount: result.data,
@@ -328,6 +332,7 @@ export default class Monitor extends Component {
         }
         return (
             <View style={onlineRateStyle}>
+
                 <View style={styles.onlineRatePercent}>
                     <Text style={{color: '#FFFFFF', fontSize: 38}}>{Math.ceil((onlineCount / sum) * 100)}</Text>
                     <Text style={{color: '#FFFFFF', fontSize: 20, marginBottom: 7}}>%</Text>
@@ -566,11 +571,18 @@ export default class Monitor extends Component {
                 this._getNoticeNotReadCount(stamp);
             })
         });
+
+
+        // 添加监听。看完公告内容后，重新获取未读公告数量。
+        this.listener = DeviceEventEmitter.addListener('getNoticeNotReadCount', ()=> {
+            this._getNoticeNotReadCount()
+        })
     }
 
     componentWillUnmount() {
         // 组件卸载后取消定时器，防止多余异常出现
         // this.timer && clearTimeout(this.timer);
+        this.listener.remove();
     }
 }
 const styles = StyleSheet.create({

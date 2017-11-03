@@ -94,6 +94,11 @@ const styles = StyleSheet.create({
         paddingBottom: 9,
         backgroundColor: '#FFFFFF',
         borderRadius: 2,
+        // shadowColor: 'gray',
+        // shadowOffset: {width: 2, height: 2},
+        // shadowOpacity: 0.4,
+        // shadowRadius: 1,
+        // elevation:2
     },
     cellLeft: {
         flexDirection: 'row',
