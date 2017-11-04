@@ -6,11 +6,12 @@ import {
     View,
     Text,
     ART,
-    InteractionManager
+    InteractionManager,
+    Dimensions,
 } from 'react-native'
 
 const {Surface, Group, Shape, Path} = ART;
-
+let {width, height} = Dimensions.get('window');
 import Wedge from '../../common/Wedge';
 
 export default class HomeAlarmCell extends Component {
@@ -85,12 +86,19 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         // padding: 12,
+        height: height*0.1,     // 根据比例计算高度
+        minHeight: 60,
         paddingLeft: 14,
         paddingRight: 14,
         paddingTop: 9,
         paddingBottom: 9,
         backgroundColor: '#FFFFFF',
         borderRadius: 2,
+        // shadowColor: 'gray',
+        // shadowOffset: {width: 2, height: 2},
+        // shadowOpacity: 0.4,
+        // shadowRadius: 1,
+        // elevation:2
     },
     cellLeft: {
         flexDirection: 'row',
@@ -107,7 +115,6 @@ const styles = StyleSheet.create({
         color: "red",
     },
     cellLeftAlarmName: {
-        marginTop: 6,
         fontSize: 12,
         color: '#6B6B6B'
     },

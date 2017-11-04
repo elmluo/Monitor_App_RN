@@ -37,7 +37,7 @@ export default class Monitor extends Component {
         this.state = {
             theme: this.props.theme,
             isLoading: false,
-            noticeCount: 6,
+            noticeCount: null,
             isShowNoticeBar: false,
             fsuCount: [     // 初始化的数据结构和操作的数据结构统一
                 {item: "在线", count: 2},
@@ -91,7 +91,7 @@ export default class Monitor extends Component {
      * @private
      */
     _renderRightButton() {
-        let image = this.state.isShowNoticeBar
+        let image = this.state.noticeCount
             ? <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_selected.png')}/>
             : <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_nor.png')}/>;
         return (
@@ -214,18 +214,22 @@ export default class Monitor extends Component {
      * @private
      */
     _getNoticeNotReadCount() {
+        // console.log('点我了');
         let url = '/app/v2/notice/unread/count';
         let params = {
             stamp: storage.getLoginInfo().stamp,
             userId: storage.getLoginInfo().userId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            // alert(JSON.stringify(result));
+            // console.log(result);
             if (result.data === 0 || result.data === null) {
                 this.setState({
                     isShowNoticeBar: false,
-                })
+                });
+                DeviceEventEmitter.emit('setNoticeBadge', 'none');
             } else {
+                // 发送通知显示底部首页badge
+                DeviceEventEmitter.emit('setNoticeBadge', result.data);
                 this.setState({
                     isShowNoticeBar: true,
                     noticeCount: result.data,
@@ -305,21 +309,98 @@ export default class Monitor extends Component {
         let onlineCount = this.state.fsuCount[0].count;
         let outLintCount = this.state.fsuCount[1].count;
         let sum = onlineCount + outLintCount;
-        console.log(sum);
+        // console.log(sum);
+        let onlineRateStyle;
+        if (height < 667) {
+            onlineRateStyle = {
+                flexDirection: 'row-reverse',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                position: 'absolute',
+                top: 30,
+                zIndex: 4,
+                backgroundColor: 'transparent',
+            }
+        } else {
+            onlineRateStyle = {
+                justifyContent: 'center',
+                position: 'absolute',
+                top: 30,
+                zIndex: 4,
+                backgroundColor: 'transparent',
+            }
+        }
         return (
-            <View style={styles.onlineRate}>
-                <View style={styles.onlineRateTop}>
+            <View style={onlineRateStyle}>
+
+                <View style={styles.onlineRatePercent}>
                     <Text style={{color: '#FFFFFF', fontSize: 38}}>{Math.ceil((onlineCount / sum) * 100)}</Text>
                     <Text style={{color: '#FFFFFF', fontSize: 20, marginBottom: 7}}>%</Text>
                 </View>
-                <View style={styles.onlineRateCenter}>
-                    <Text style={{color: '#FFFFFF', fontSize: 14}}>今日在线率</Text>
-                </View>
-                <View style={styles.onlineRateBottom}>
-                    <Text style={{color: '#FFFFFF', fontSize: 12}}>在线: {this.state.fsuCount[0].count}</Text>
-                    <Text style={{color: '#FFFFFF', fontSize: 12}}>离线: {this.state.fsuCount[1].count}</Text>
+
+                <View style={styles.onlineRateText}>
+                    <View style={styles.onlineRateTextTop}>
+                        <Text style={{color: '#FFFFFF', fontSize: 14}}>今日FSU在线率</Text>
+                    </View>
+                    <View style={styles.onlineRageTextBottom}>
+                        <Text style={{color: '#FFFFFF', fontSize: 12}}>在线: {this.state.fsuCount[0].count}</Text>
+                        <Text style={{color: '#FFFFFF', fontSize: 12}}>离线: {this.state.fsuCount[1].count}</Text>
+                    </View>
                 </View>
 
+            </View>
+        )
+    }
+
+    /**
+     *
+     */
+    _renderLevelAlarm() {
+        return (
+            <View style={styles.alarmWrap}>
+                <View style={styles.alarm}>
+                    {/* 通过TouchableOpacity组件将路由切换到告警页 */}
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                            this.props.routerChange('tb_alarm', {level: ['1']});
+                        }}>
+                        <HomeAlarmCell count={this.state.levelAlarm[0].count}
+                                       allCount={this.state.allCount}
+                                       alarmName={this.state.levelAlarm[0].item}
+                                       alarmColor='#1CCAEB'/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                            this.props.routerChange('tb_alarm', {level: ['2']});
+                        }}>
+                        <HomeAlarmCell count={this.state.levelAlarm[1].count}
+                                       allCount={this.state.allCount}
+                                       alarmName={this.state.levelAlarm[1].item}
+                                       alarmColor='#F63232'/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                            this.props.routerChange('tb_alarm', {level: ['3']});
+                        }}>
+                        <HomeAlarmCell count={this.state.levelAlarm[2].count}
+                                       allCount={this.state.allCount}
+                                       alarmName={this.state.levelAlarm[2].item}
+                                       alarmColor='#F9AE46'/>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={() => {
+                            this.props.routerChange('tb_alarm', {level: ['4']});
+                        }}>
+                        <HomeAlarmCell count={this.state.levelAlarm[3].count}
+                                       allCount={this.state.allCount}
+                                       alarmName={this.state.levelAlarm[3].item}
+                                       alarmColor='#E6CD0D'/>
+                    </TouchableOpacity>
+                </View>
             </View>
         )
     }
@@ -358,59 +439,14 @@ export default class Monitor extends Component {
                 }>
                 <View style={{flex: 1}}>
                     <ImageBackground style={styles.gb}
-                                     source={require('../../../res/Image/Login/ic_login_bg.png')}
-                    >
+                                     source={require('../../../res/Image/Login/ic_login_bg.png')}>
                         {this._renderBulletinSlideBar()}
                         {this._renderTodayOnlineRate()}
                         <HomeStatisticChart chartData={this.state.fsuWeekCount}
                                             width={width}
                                             height={height * 0.4}/>
                     </ImageBackground>
-                    <View style={styles.alarmWrap}>
-                        <View style={styles.alarm}>
-                            {/* 通过TouchableOpacity组件将路由切换到告警页 */}
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                onPress={() => {
-                                    this.props.routerChange('tb_alarm', {level: ['1']});
-                                }}>
-                                <HomeAlarmCell count={this.state.levelAlarm[0].count}
-                                               allCount={this.state.allCount}
-                                               alarmName={this.state.levelAlarm[0].item}
-                                               alarmColor='#1CCAEB'/>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                onPress={() => {
-                                    this.props.routerChange('tb_alarm', {level: ['2']});
-                                }}>
-                                <HomeAlarmCell count={this.state.levelAlarm[1].count}
-                                               allCount={this.state.allCount}
-                                               alarmName={this.state.levelAlarm[1].item}
-                                               alarmColor='#F63232'/>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                onPress={() => {
-                                    this.props.routerChange('tb_alarm', {level: ['3']});
-                                }}>
-                                <HomeAlarmCell count={this.state.levelAlarm[2].count}
-                                               allCount={this.state.allCount}
-                                               alarmName={this.state.levelAlarm[2].item}
-                                               alarmColor='#F9AE46'/>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                activeOpacity={1}
-                                onPress={() => {
-                                    this.props.routerChange('tb_alarm', {level: ['4']});
-                                }}>
-                                <HomeAlarmCell count={this.state.levelAlarm[3].count}
-                                               allCount={this.state.allCount}
-                                               alarmName={this.state.levelAlarm[3].item}
-                                               alarmColor='#E6CD0D'/>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
+                    {this._renderLevelAlarm()}
                 </View>
             </ScrollView>;
 
@@ -534,11 +570,18 @@ export default class Monitor extends Component {
                 this._getNoticeNotReadCount(stamp);
             })
         });
+
+
+        // 添加监听。看完公告内容后，重新获取未读公告数量。
+        this.listener = DeviceEventEmitter.addListener('getNoticeNotReadCount', ()=> {
+            this._getNoticeNotReadCount()
+        })
     }
 
     componentWillUnmount() {
         // 组件卸载后取消定时器，防止多余异常出现
         // this.timer && clearTimeout(this.timer);
+        this.listener.remove();
     }
 }
 const styles = StyleSheet.create({
@@ -559,27 +602,29 @@ const styles = StyleSheet.create({
         position: 'absolute',
         zIndex: 3,
     },
-    onlineRate: {
-        position: 'absolute',
-        top: 30,
-        zIndex: 4,
-        backgroundColor: 'transparent',
-        marginLeft: 20,
-        // backgroundColor: 'red'
-    },
-    onlineRateTop: {
+    // onlineRate: {
+    //     justifyContent: 'center',
+    //     position: 'absolute',
+    //     top: 30,
+    //     zIndex: 4,
+    //     backgroundColor: 'transparent',
+    //     marginLeft: 20,
+    // },
+    onlineRatePercent: {
         flexDirection: 'row',
         alignItems: 'flex-end',
-        marginBottom: 2,
+        marginLeft: 20,
     },
-    onlineRateCenter: {
-        marginBottom: 2,
+    onlineRateText: {
+        width: 110,
+        justifyContent: 'center',
+        marginLeft: 20,
     },
-    onlineRateBottom: {
-        width: 90,
+    onlineRateTextTop: {},
+    onlineRageTextBottom: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        alignItems: 'center'
     },
     overlay: {
         width: width,
