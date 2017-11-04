@@ -117,12 +117,14 @@ export default class Login extends Component {
                                                     });
                                             } else {
                                                 console.log('获取数据失败')
-
+                                                alert('获取数据失败');
                                             }
                                         });
 
                                 } else {
                                     console.log('获取数据失败')
+                                    alert('获取数据失败');
+
                                 }
                             })
                             .catch(error => {
@@ -138,6 +140,8 @@ export default class Login extends Component {
             })
             .catch(error => {
                 console.log(error);
+                alert('获取数据失败');
+
             })
     }
 
@@ -150,7 +154,6 @@ export default class Login extends Component {
 
         let alias = userId;
         // alert(JSON.stringify(alias));
-        JPushModule.crashLogOFF();
         if (alias !== undefined) {
             JPushModule.setAlias(alias, () => {
                 console.log("Set alias succeed",alias);
@@ -239,7 +242,7 @@ export default class Login extends Component {
                             // autoFocus={true}
                             underlineColorAndroid="transparent"
                             placeholder="请输入用户名"
-                            clearTextOnFocus={true}
+                            clearTextOnFocus={false}
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}
                             onChangeText={(input) => this.setState({username: input})}>
@@ -252,7 +255,7 @@ export default class Login extends Component {
                             ref="inputLoginPwd"
                             underlineColorAndroid="transparent"
                             placeholder="请输入密码"
-                            clearTextOnFocus={true}
+                            clearTextOnFocus={false}
                             secureTextEntry={true}
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}

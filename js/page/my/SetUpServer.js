@@ -46,15 +46,20 @@ export default class SetUpServer extends React.Component {
     _setSeverIP(IP){
         let url = '/app/timestamp';
         //进行登录
-        storage.setServerAddress(IP);
         dataRepository.fetchNetRepository('POST', url, null)
             .then((response) => {
                 if(response.success == true){
-                     alert('设置成功');
-                    this.props.navigator.pop();
+                    //设置成功后保存到本地并且更新单例中ip
+                    alert('设置成功');
+
+                    dataRepository.saveRepository('Environment_Domain',IP)
+                        .then(() => {
+                            storage.setServerAddress(IP);
+                            this.props.navigator.pop();
+                        })
+
                 }else {
-                    storage.setServerAddress(null);
-                     alert('设置失败');
+                     alert('输入服务器地址不正确/请重试');
 
                 }
             });
@@ -85,12 +90,14 @@ export default class SetUpServer extends React.Component {
                             // autoFocus={true}
                             underlineColorAndroid="transparent"
                             placeholderTextColor = '#7E7E7E'
-                            placeholder="请输入服务器地址"
-                            clearTextOnFocus={true}
+                            placeholder= "请输入服务器地址"
+                            clearTextOnFocus={false}
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}
+                            defaultValue = {storage.getServerIP()?storage.getServerIP():''}
                             onChangeText={(input) => this.setState({username: input})}>
                         </TextInput>
+
                     </View>
 
                 </View>

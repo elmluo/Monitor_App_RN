@@ -90,7 +90,7 @@ export default class AlarmDetail extends Component {
         let line;
         if (this.props.isHisAlarm === true) {
 
-            cell = this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'), '恢复时间', null, this.props.item.recoverTime ? Utils._Time(this.props.item.recoverTime) : '--');
+            cell = this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'), '恢复时间', null, this.props.item.recoverTime ? Utils.FormatTime(new Date(this.props.item.recoverTime),'yyyy-MM-dd hh:mm') : '--');
             line = <View style={styles.line}/>
         }
         return (
@@ -130,7 +130,7 @@ export default class AlarmDetail extends Component {
                         <View style={{position: 'relative', top: 50}}>
                             {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_turned.png'), '设备名称', null, this.props.item.deviceName ? this.props.item.deviceName : '--')}
                             <View style={styles.line}/>
-                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'), '告警时间', null, this.props.item.reportTime ? Utils._Time(this.props.item.reportTime) : '--')}
+                            {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_start.png'), '告警时间', null, this.props.item.reportTime ? Utils.FormatTime(new Date(this.props.item.reportTime),'yyyy-MM-dd hh:mm') : '--')}
                             <View style={styles.line}/>
                             {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_notifications.png'), '告警详情', null, this.props.item.detail ? this.props.item.detail : '--')}
                             <View style={styles.line}/>

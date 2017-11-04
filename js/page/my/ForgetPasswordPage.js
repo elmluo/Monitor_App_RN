@@ -172,14 +172,14 @@ export default class ForgetPasswordPage extends React.Component {
 
                 dataRepository.fetchNetRepository('POST', url, params)
                     .then((response) => {
+                    console.log(JSON.stringify(response));
                         if (response.success === true) {
                             this.props.navigator.push({
                                 component: ResetPasswordPage,
-                                item:response.data,
-                                params: {...this.props}
+                                params: {...this.props,item:response.data,username:this.state.phone}
                             });
                         } else {
-                            this.refs.toast.show('*获取验证码失败');
+                            this.refs.toast.show('*请输入有效的验证码/或重试！');
                         }
 
                     });
@@ -244,7 +244,7 @@ export default class ForgetPasswordPage extends React.Component {
                 <Toast
                     ref="toast"
                     style={{backgroundColor:'white'}}
-                    position='top'
+                    position='center'
                     positionValue={100}
                     fadeInDuration={500}
                     fadeOutDuration={1000}

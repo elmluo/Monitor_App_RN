@@ -26,8 +26,8 @@ export default class ResetPasswordPage extends React.Component {
         this.state = {
             theme: this.props.theme,
             btnText: '确定',
-            newPassword:'',
-            twoNewPassword:'',
+            newPassword: '',
+            twoNewPassword: '',
         };
 
     }
@@ -51,30 +51,38 @@ export default class ResetPasswordPage extends React.Component {
     }
 
     _setPassword() {
-        let url = '/app/v2/user/password/reset';
-        let params = {
-            password: this.state.newPassword,
-            userId: this.props.item.userId,
-            token: this.props.item.token,
-        };
-        alert(JSON.stringify(params));
 
-        if (this.state.newPassword.length === 1) {
+
+        if (this.state.newPassword.length === 0) {
             this.refs.toast.show('*请输入新密码');
 
         } else {
 
             if (/^[0-9a-zA-Z_]{1,}$/.test(this.state.newPassword) && this.state.newPassword.length > 5 && this.state.newPassword.length < 21) {
 
-                if (this.state.twoNewPassword.length === 1) {
+                if (this.state.twoNewPassword.length === 0) {
                     this.refs.toast.show('*请再输入一次新密码');
 
                 } else {
+
+                    if (this.state.newPassword !== this.state.twoNewPassword) {
+                        this.refs.toast.show('*两次密码输入不一致');
+
+                    } else {
+
+                        let url = '/app/v2/user/password/reset';
+                        let params = {
+                            password: this.state.newPassword,
+                            userId: this.props.item.userId,
+                            token: this.props.item.token,
+                        };
+
                         dataRepository.fetchNetRepository('POST', url, params)
                             .then((response) => {
+                            console.log(JSON.stringify(response));
                                 if (response.success === true) {
                                     let userInfo = {
-                                        username: storage.getUserInfo().username,
+                                        username: this.props.phone,
                                         password: this.state.newPassword,
                                     }
                                     storage.setUserInfo(userInfo);
@@ -96,7 +104,9 @@ export default class ResetPasswordPage extends React.Component {
 
                             });
 
+                    }
                 }
+
 
             } else {
                 this.refs.toast.show('*输入长度为6~20的字母/数字/下划线');
@@ -132,7 +142,7 @@ export default class ResetPasswordPage extends React.Component {
                             underlineColorAndroid="transparent"
                             placeholderTextColor='#7E7E7E'
                             placeholder="请输入新密码"
-                            clearTextOnFocus={true}
+                            clearTextOnFocus={false}
                             secureTextEntry={true}
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}
@@ -146,7 +156,7 @@ export default class ResetPasswordPage extends React.Component {
                             underlineColorAndroid="transparent"
                             placeholderTextColor='#7E7E7E'
                             placeholder="请再输入一次密码"
-                            clearTextOnFocus={true}
+                            clearTextOnFocus={false}
                             secureTextEntry={true}
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}
@@ -156,19 +166,19 @@ export default class ResetPasswordPage extends React.Component {
                 </View>
                 <Toast
                     ref="toast"
-                    style={{backgroundColor:'white'}}
-                    position='bottom'
-                    positionValue={80}
+                    style={{backgroundColor: 'white'}}
+                    position='center'
+                    positionValue={100}
                     fadeInDuration={500}
                     fadeOutDuration={1000}
                     opacity={0.8}
-                    textStyle={{color:'red'}}
+                    textStyle={{color: 'red'}}
                 />
                 <View style={{marginTop: 60, width: width, height: 50, backgroundColor: '#FFF'}}>
 
 
-                    <TouchableOpacity onPress={() => { this._setPassword()
-
+                    <TouchableOpacity onPress={() => {
+                        this._setPassword()
 
 
                     }}>

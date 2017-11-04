@@ -16,7 +16,9 @@ import Login from './Login'
 import ThemeDao from '../expand/dao/ThemeDao'
 import JPushModule from 'jpush-react-native';
 import DataRepository from '../expand/dao/Data'
+import Storage from '../common/StorageClass'
 
+let storage = new Storage();
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
 export default class WelcomePage extends Component {
@@ -30,6 +32,7 @@ export default class WelcomePage extends Component {
 
     componentDidMount() {
         // SplashScreen.hide();
+
         new ThemeDao().getTheme().then((data) => {
             this.theme = data;
         });
@@ -214,6 +217,15 @@ export default class WelcomePage extends Component {
             .then((result) => {
                 oldVersion = result;
                 // alert(JSON.stringify(oldVersion));
+            });
+        //去拿本地是否有服务器IP 没有则设置默认IP
+        dataRepository.fetchLocalRepository('Environment_Domain')
+            .then((result) => {
+            if (result){
+                storage.setServerAddress(result);
+            }else {
+                storage.setServerAddress('http://sc.kongtrolink.com');
+            }
             });
         return (
             <View style={styles.container}>

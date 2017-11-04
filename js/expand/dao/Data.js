@@ -19,8 +19,8 @@ export default class DataRepository {
         // let host = Platform.OS === 'ios'
         //     ? 'http://sc.kongtrolink.com'      // 在Info.plist中的App Transport Security Settings中添加Allow Arbitrary Loads，类型为Boolean，值为yes。可以用http请求，但是不能用https请求
         //     : 'http://sc.kongtrolink.com';
-        let host = storage.getServerIP()?storage.getServerIP():'http://sc.kongtrolink.com';
 
+        let host = storage.getServerIP()?storage.getServerIP():'http://sc.kongtrolink.com';
         let URL = host + url;
         if (method === 'GET') {
             return new Promise((resolve, reject) => {
@@ -64,6 +64,7 @@ export default class DataRepository {
      * @returns {*}
      */
     saveRepository(url, value) {
+
         if (!value || !url ) return;
         return new Promise((resolve, reject)=>{
             AsyncStorage.setItem(url, JSON.stringify(value), (error)=>{

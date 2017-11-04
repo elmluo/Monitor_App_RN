@@ -473,7 +473,6 @@ export default class Monitor extends Component {
                 console.log("注册事件: ", resultCode);
 
             });
-            JPushModule.crashLogOFF();
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
                 console.log("获取推送消息 " + JSON.stringify(message));

@@ -32,7 +32,6 @@
 		2E6C8B5B072F40A091D63EAB /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B66A80A670A54CCC8EAC7F06 /* CFNetwork.framework */; };
 		38932983AD60473FB9B63532 /* libSplashScreen.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 639587D9E4AA494B82B93428 /* libSplashScreen.a */; };
 		62617234200744DC81AA3E06 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE1E521C5FC04B9581945018 /* Foundation.framework */; };
-		6497D0EA275A4509BE488117 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 503E777F0CEF4D0283854947 /* libCodePush.a */; };
 		6E1A13AFD363409881285CEA /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B71E4B6023F4A9CAB55B103 /* UserNotifications.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8F386C35BD584599A1ED923D /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A4ABDCB27F2D43269D23AF9F /* libz.tbd */; };
@@ -338,7 +337,6 @@
 		3115759AC34D42DBA4151D51 /* CoreTelephony.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		382BD134F3C24A878B8557E3 /* Security.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		40D228A1570146DEB5ADE88E /* libresolv.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
-		503E777F0CEF4D0283854947 /* libCodePush.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libCodePush.a; sourceTree = "<group>"; };
 		51F55EA7B6AC452B80E9F9F2 /* CoreFoundation.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		639587D9E4AA494B82B93428 /* libSplashScreen.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libSplashScreen.a; sourceTree = "<group>"; };
@@ -393,7 +391,6 @@
 				1DD9140ABBFF42199E5C9207 /* UIKit.framework in Frameworks */,
 				BF80F76191F9459D8C7A69D4 /* libresolv.tbd in Frameworks */,
 				93EA502A081B42ED943A0818 /* CoreGraphics.framework in Frameworks */,
-				6497D0EA275A4509BE488117 /* libCodePush.a in Frameworks */,
 				38932983AD60473FB9B63532 /* libSplashScreen.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -465,7 +462,6 @@
 			children = (
 				B65F705B08DF4FA696F36CFD /* libRCTJCoreModule.a */,
 				09C208487544468A88C98003 /* libRCTJPushModule.a */,
-				503E777F0CEF4D0283854947 /* libCodePush.a */,
 				639587D9E4AA494B82B93428 /* libSplashScreen.a */,
 			);
 			name = "Recovered References";
