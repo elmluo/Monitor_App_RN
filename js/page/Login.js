@@ -271,36 +271,6 @@ export default class Login extends Component {
                                 </TextInput>
                             </View>
                         </View>
-                <View style={styles.loginTextBg}>
-                    <View style={styles.item}>
-                        <Image source={require('../../res/Image/Login/ic_user_key_nor.png')}
-                               style={styles.iconKeyStyle}/>
-                        <TextInput
-                            ref="inputLoginName"
-                            // autoFocus={true}
-                            underlineColorAndroid="transparent"
-                            placeholder="请输入用户名"
-                            clearTextOnFocus={false}
-                            clearButtonMode="while-editing"
-                            style={styles.textInputSize}
-                            onChangeText={(input) => this.setState({username: input})}>
-                        </TextInput>
-                    </View>
-                    <View style={styles.item}>
-                        <Image source={require('../../res/Image/Login/ic_password_key_nor.png')}
-                               style={styles.iconKeyStyle}/>
-                        <TextInput
-                            ref="inputLoginPwd"
-                            underlineColorAndroid="transparent"
-                            placeholder="请输入密码"
-                            clearTextOnFocus={false}
-                            secureTextEntry={true}
-                            clearButtonMode="while-editing"
-                            style={styles.textInputSize}
-                            onChangeText={(input) => this.setState({userpwd: input})}>
-                        </TextInput>
-                    </View>
-                </View>
 
                         <ImageBackground style={styles.loginBtnBgImg}
                                          source={require('../../res/Image/Login/ic_loginBtn_bg.png')}>
