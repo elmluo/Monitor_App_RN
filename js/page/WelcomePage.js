@@ -182,7 +182,6 @@ export default class WelcomePage extends Component {
             let alias = userData.userId;
             if(Platform.OS == 'android'){
                 JPushModule.initPush();
-                JPushModule.crashLogOFF();
             }
             if (alias !== undefined) {
                 JPushModule.setAlias(alias, () => {

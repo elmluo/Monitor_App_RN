@@ -102,14 +102,22 @@ export default class LocationPage extends React.Component {
         console.log(gg);
         let gg_lon = gg.gg_lon;
         let gg_lat = gg.gg_lat;
-
+        let uri;
+        //此处判断设备
+        //iOS 使用百度URI
+        //android 使用高德URI
+        if (Platform.OS === 'ios'){
+            uri = `http://api.map.baidu.com/geocoder?location=${gg_lat},${gg_lon}&coord_type=gcj02&output=html&src=yourCompanyName|yourAppName`
+        }else {
+            uri = encodeURI(`https://uri.amap.com/marker?position=${gg_lon},${gg_lat}&name=${this.props.siteInfo.name} &src=mypage&coordinate=gaode&callnative=0`);
+        }
         return (
             <View style={styles.container}>
                 {navigationBar}
                 <WebView
                     // injectedJavaScript={insertJSToHtml}
                     source={{
-                        uri: `https://uri.amap.com/marker?position=${gg_lon},${gg_lat}&name=${this.props.siteInfo.name}&src=mypage&coordinate=gaode&callnative=0 `
+                        uri:uri
                     }}
                     // source={source}
                     startInLoadingState={true}/>

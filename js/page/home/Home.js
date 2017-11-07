@@ -523,6 +523,7 @@ export default class Monitor extends Component {
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
                 console.log("点击 " + JSON.stringify(map));
+                JPushModule.jumpToPushActivity("MainActivity");
                 const routes = this.props.navigator.state.routeStack;
                 console.log(routes);
                 let lent = 0;

@@ -6,6 +6,8 @@ import {
     TouchableOpacity,
     Dimensions,
     TextInput,
+    Platform,
+
 } from 'react-native';
 import NavigationBar from '../../common/NavigationBar'
 import Btn from '../my/BaseBtn'
@@ -44,9 +46,12 @@ export default class SetUpServer extends React.Component {
     }
 
     _setSeverIP(IP){
-        let url = '/app/timestamp';
+
+        let url = IP+'/app/timestamp';
         //进行登录
-        dataRepository.fetchNetRepository('POST', url, null)
+        console.log('进入设置IP'+url);
+
+        this.fetchNetRepository('POST', url, null)
             .then((response) => {
                 if(response.success == true){
                     //设置成功后保存到本地并且更新单例中ip
@@ -64,7 +69,27 @@ export default class SetUpServer extends React.Component {
                 }
             });
     }
-
+    fetchNetRepository(method, url, params) {
+        console.log(url);
+        return new Promise((resolve, reject) => {
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify(params)
+            })
+                .then(response => response.json())
+                .then(json => {
+                    resolve(json);
+                })
+                .catch(error => {
+                    reject(error);
+                    console.log(error);
+                })
+        })
+    }
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -95,7 +120,7 @@ export default class SetUpServer extends React.Component {
                             clearButtonMode="while-editing"
                             style={styles.textInputSize}
                             defaultValue = {storage.getServerIP()?storage.getServerIP():''}
-                            onChangeText={(input) => this.setState({username: input})}>
+                            onChangeText={(input) => this.setState({serverIp: input})}>
                         </TextInput>
 
                     </View>
@@ -106,7 +131,7 @@ export default class SetUpServer extends React.Component {
 
 
                     <TouchableOpacity onPress={() => {
-                        this._setSeverIP(this.state.username);
+                        this._setSeverIP(this.state.serverIp);
                     }}>
                         <Btn text = {this.state.btnText}  />
                     </TouchableOpacity>
