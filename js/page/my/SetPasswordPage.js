@@ -22,9 +22,9 @@ export default class SetPasswordPage extends React.Component {
         this.state = {
             theme: this.props.theme,
             btnText: '确定',
-            userPassword:null,
-            newPassword:null,
-            twoNewPassword:null,
+            userPassword:'',
+            newPassword:'',
+            twoNewPassword:'',
         };
 
     }
@@ -49,6 +49,9 @@ export default class SetPasswordPage extends React.Component {
     }
 
     _setPassword() {
+
+        // console.log(storage.getUserInfo());
+
         let url = '/app/v2/user/password/modify';
         let params = {
             userId: storage.getLoginInfo().userId,
@@ -56,11 +59,11 @@ export default class SetPasswordPage extends React.Component {
             newPassword: this.state.newPassword,
         };
         // alert(JSON.stringify(response.data));
-        if (this.state.userPassword.length === 1) {
+        if (this.state.userPassword.length === 0) {
             this.refs.toast.show('*请输入原密码');
         } else {
 
-            if (this.state.newPassword.length === 1){
+            if (this.state.newPassword.length === 0){
                 this.refs.toast.show('*请输入新密码');
 
             }else {

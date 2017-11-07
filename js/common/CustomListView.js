@@ -160,7 +160,7 @@ export default class CustomListView extends Component {
                 // result.data = this._data;
                 // 如果第一页没有数据，显示没有数据提示页面
                 if ((this.page > 1 && (!result.data || result.data.length === 0))) {
-                    this.refs.toast.show(this.props.alertText);
+                    // this.refs.toast.show(this.props.alertText);
                 } else {
                     // 将请求数据保存到内存
                     this._data = this._data.concat(result.data);

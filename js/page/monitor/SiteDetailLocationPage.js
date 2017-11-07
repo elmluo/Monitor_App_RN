@@ -97,7 +97,7 @@ export default class LocationPage extends React.Component {
         // }
 
         // alert(JSON.stringify(source));
-
+        // 地图经纬度需要转换
         let gg=this._bd_decrypt(this.props.siteInfo.latitude, this.props.siteInfo.longitude);
         console.log(gg);
         let gg_lon = gg.gg_lon;
@@ -119,7 +119,6 @@ export default class LocationPage extends React.Component {
                     source={{
                         uri:uri
                     }}
-                    // source={source}
                     startInLoadingState={true}/>
             </View>
         )

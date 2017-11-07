@@ -18,7 +18,7 @@ export default class DataRepository {
     fetchNetRepository(method, url, params) {
         // let host = Platform.OS === 'ios'
         //     ? 'http://sc.kongtrolink.com'      // 在Info.plist中的App Transport Security Settings中添加Allow Arbitrary Loads，类型为Boolean，值为yes。可以用http请求，但是不能用https请求
-        //     : 'http://sc.kongtrolink.com';
+        //     : 'http://sc.kongtrolink.com';ß
 
         let host = storage.getServerIP()?storage.getServerIP():'http://sc.kongtrolink.com';
         let URL = host + url;

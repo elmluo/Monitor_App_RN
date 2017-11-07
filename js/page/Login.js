@@ -58,13 +58,13 @@ export default class Login extends Component {
                     dataRepository.saveRepository('user', params)
                         .then(() => {
                             console.log('用户信息已经保存');
-                        });
 
+                        });
                     //保存用户登录信息
                     storage.setUserInfo(params);
                     //根据登录返回 classes 判断是代理商还是普通用户
                     // alert('登录成功');
-
+                    // console.log(storage.getUserInfo());
                     if (response.data.classes === '代理商用户') {
                         // alert('代理商');
 
@@ -131,8 +131,22 @@ export default class Login extends Component {
                     }
 
                 } else {
-                    console.log('获取数据失败')
+                    // console.log('获取数据失败')
                     // alert(JSON.stringify(response.info));
+                    // alert(123456);
+
+
+                    // 显示提示框
+                    Alert.alert(
+                        response.info,
+                        '',
+                        [
+                            // {text: 'Ask me later', onPress: () => console.log('Ask me later pressed')},
+                            // {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                            {text: '确定', onPress: () => {}},
+                        ],
+                        { cancelable: false }
+                    )
                 }
 
             })
