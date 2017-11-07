@@ -63,6 +63,12 @@ export default class AlarmFilterSite extends Component {
     render() {
         let scope = this;
 
+        /**
+         * 判断站点是否在数组中, 若存在返回对应的{index: i}对象， 否则返回false
+         * @param site 站点名称
+         * @param list 站点数组
+         * @returns {*}
+         */
         let siteInList = (site, list)=>{
             let index;
             var l = list.filter((v, i)=>{
@@ -73,9 +79,12 @@ export default class AlarmFilterSite extends Component {
             });
 
             return l.length > 0 ? {index: index}: false;
-        }
+        };
 
-
+        /**
+         * 跳转到搜索页面
+         * @private
+         */
         let _pushToSearchPage = () => {
 
             scope.props.navigator.push({
@@ -90,7 +99,7 @@ export default class AlarmFilterSite extends Component {
                     ...scope.props
                 }
             });
-        }
+        };
 
         let _renderRow = (type) => {
             return (rowData, sectionID, rowID, hightlightRow) => {
@@ -100,7 +109,7 @@ export default class AlarmFilterSite extends Component {
                         onPress={() => {
                             let itr;
                             if (itr = siteInList(rowData, scope.state.siteList)) {
-                                itr = itr.index
+                                itr = itr.index;
                                 scope.state.siteList.splice(itr, 1);
                             } else {
                                 scope.state.siteList.push(rowData);
@@ -108,6 +117,7 @@ export default class AlarmFilterSite extends Component {
                             if (type !== 'search') {
                                 scope.setState({});
                             } else {
+                                // 根据navigator提供的api。操作路由栈，跳转到指定的路由页面
                                 const routes = this.props.navigator.state.routeStack;
                                 this.props.navigator.popToRoute(routes[2]);
                             }
@@ -126,12 +136,11 @@ export default class AlarmFilterSite extends Component {
                     </TouchableOpacity>)
 
             }
-        }
+        };
 
         let navigationBar =
             <NavigationBar
                 title={'站点选择'}
-
                 leftButton={this._renderLeftButton()}
                 style={this.state.theme.styles.navBar}/>;
 
@@ -162,10 +171,10 @@ export default class AlarmFilterSite extends Component {
 
                 {content}
 
-
                 <TouchableOpacity style = {{backgroundColor: "#FFFFFF"}}
                                   activeOpacity={0.5}
                                   onPress= {()=>{
+                                      // 点击确定按钮，将选中的设备列表传递给父组件
                                       this.props.selecteSite(this.state.siteList);
                                       this.props.navigator.pop();
                                   }}>

@@ -98,8 +98,11 @@ export default class SignalList extends React.Component {
         )
     }
     _renderCell(v, i) {
+        console.log(v);
         if (v.techType === "遥测") {
             let value;
+
+            // 空调设备较为特殊，后台返回数据可能和遥测对不上。
             if (v.unit === '%RH') {
                 value = <View>
                     <Text style={styles.cellLeftImageBgText}>{v.value}</Text>
@@ -110,6 +113,7 @@ export default class SignalList extends React.Component {
                     <Text style={styles.cellLeftImageBgText}>{v.value + '' + v.unit}</Text>
                 </View>
             }
+
             return (
                 <TouchableOpacity
                     onPress={() => {

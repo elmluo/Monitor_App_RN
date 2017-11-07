@@ -71,6 +71,7 @@ export default class DeviceTab extends Component {
      */
     _renderRow(rowData) {
         let fsuOnline;
+
         // 判断是否FSU还是一般设备
         if (rowData.fsuId) {
             if (rowData.online) {
@@ -111,7 +112,12 @@ export default class DeviceTab extends Component {
      */
     _renderListView() {
         let params = this.props.params;
-        params.system = this.state.selectedSystem;
+        // 当选择为全部系统的时候，默认不传递参数或者参数为null，
+        if (this.state.selectedSystem !== '全部系统') {
+            params.system = this.state.selectedSystem;
+        }else {
+            params.system = null;
+        }
         // alert(JSON.stringify(params));
         return (
             <CustomListView
@@ -231,11 +237,12 @@ export default class DeviceTab extends Component {
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             // alert(JSON.stringify(result.data));
 
-            // 默认显示系统列表下第一个系统下设备
-            params.system = result.data[0];
+            // 默认显示系统列表下第一个系统下设备，
+            let arr = ['全部系统'];
+            arr = arr.concat(result.data);
             this.setState({
-                systemList: result.data,
-                selectedSystem: result.data[0],
+                systemList: arr,
+                selectedSystem: arr[0],
             });
         });
     }

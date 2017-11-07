@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
     onlineRateText: {
-        width: 110,
+        width: 100,
         justifyContent: 'center',
         marginLeft: 20,
     },
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
         top: -height * 0.05,
         width: width,
         height: 0.45 * height,
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         paddingLeft: 16,
         paddingRight: 16,
     },

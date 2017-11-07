@@ -10,7 +10,8 @@ import {
     Image,
     ImageBackground,
     TouchableOpacity,
-    Dimensions
+    Dimensions,
+    ScrollView
 } from 'react-native'
 import StorageClass from '../../common/StorageClass'
 import NavigationBar from '../../common/NavigationBar'
@@ -25,6 +26,7 @@ export default class AlarmFilter extends Component {
 
     selectedArr = [];
     isSelected = false;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -64,6 +66,7 @@ export default class AlarmFilter extends Component {
             </View>
         )
     }
+
     _renderRightButton() {
         let scope = this;
         return (
@@ -88,13 +91,12 @@ export default class AlarmFilter extends Component {
     alarmTypeList = [];
 
 
-
     // 从外部传入的告警等级的筛选条件。使页面默认选择一种告警
     selectedAlarmLevels = this.props.filter ? (this.props.filter.level || []) : [];
 
     selectedDevices = this.props.filter ? (this.props.filter.deviceType || []) : []
 
-    componentDidMount () {
+    componentDidMount() {
         this.state.curSite = storageClass.getAlarmFilterSiteId();
     }
 
@@ -105,26 +107,35 @@ export default class AlarmFilter extends Component {
             title={'筛选'}
             style={this.state.theme.styles.navBar}
             leftButton={this._renderLeftButton()}
-            rightButton = {this._renderRightButton()}
+            rightButton={this._renderRightButton()}
         />;
 
+        /**
+         * 渲染设备类型DOM_LIST
+         * @returns {Array}
+         */
         let renderDeviceTypeList = function () {
             let selected = function (d) {
-                
-            }
+            };
 
             return scope.deviceTypeList.map(function (v, i) {
-                return <TouchableOpacity style = {[styles.deviceType, scope.selectedDevices.indexOf(v) > -1 ? {backgroundColor: "rgba(235,235,235,1)"}:{}]}
-                    key = {i}
+                return <TouchableOpacity
+                    style={[styles.deviceType, scope.selectedDevices.indexOf(v) > -1 ? {backgroundColor: "rgba(235,235,235,1)"} : {}]}
+                    key={i}
                     activeOpacity={0.5}
                     onPress={() => {
                         onPressHandler(v, 'selectedDevices');
                     }}>
-                        <Text style = {{padding: 13, paddingLeft: 16}}>{v}</Text>
+                    <Text style={{padding: 13, paddingLeft: 16}}>{v}</Text>
                 </TouchableOpacity>
             });
         }
 
+        /**
+         * 点击设备类型，实现复选功能代码逻辑
+         * @param v 选中的数据
+         * @param filed 被操作的对象
+         */
         let onPressHandler = function (v, filed) {
             var flag = scope[filed].indexOf(v);
 
@@ -134,46 +145,56 @@ export default class AlarmFilter extends Component {
                 scope[filed].splice(flag, 1);
             }
 
-            scope.setState({});            
+            scope.setState({});
         }
 
+        /**
+         * 点击确认按钮,执行筛选功能
+         */
         let onPressComfirm = function () {
             // alert(JSON.stringify(scope.state.curSite))
+
+            // 调用传入属性方法，将已选条件传递给父组件
             scope.props.setFilter({
                 level: scope.selectedAlarmLevels,
                 deviceType: scope.selectedDevices,
-                siteId: scope.state.curSite.length > 0 ? scope.state.curSite.map((v)=>{return v.siteId}) : undefined
-            })
+                siteId: scope.state.curSite.length > 0 ? scope.state.curSite.map((v) => {
+                    return v.siteId
+                }) : undefined
+            });
             scope.props.navigator.pop();
-        }
+        };
 
         return (
             <View style={styles.container}>
                 {navigationBar}
-                <View style={{flex: 1}}>
-                    <TouchableOpacity  style={styles.site}
-                        activeOpacity={0.5}
-                        onPress={() => {
-                            scope.props.navigator.push({
-                                component: AlarmFilterSite,
-                                params: {
-                                    ...scope.props,
-                                    selecteSite: function (site) {
-                                        scope.setState({
-                                            curSite: site
-                                        });
-                                        storageClass.setAlarmFilterSiteId(site);
-                                    },
-                                    siteList: scope.state.curSite
-                                }
-                            })
-                        }}>
-                        <View style = {{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <ScrollView style={{flex: 1}}>
+                    <TouchableOpacity style={styles.site}
+                                      activeOpacity={0.5}
+                                      onPress={() => {
+                                          scope.props.navigator.push({
+                                              component: AlarmFilterSite,
+                                              params: {
+                                                  ...scope.props,
+                                                  selecteSite: function (site) {
+                                                      scope.setState({
+                                                          curSite: site
+                                                      });
+                                                      storageClass.setAlarmFilterSiteId(site);
+                                                  },
+                                                  siteList: scope.state.curSite
+                                              }
+                                          })
+                                      }}>
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={styles.siteLeft}>
                                 <Text style={{lineHeight: 24}}>站点</Text>
                             </View>
                             <View style={styles.siteRight}>
-                                <Text numberOfLines = {1} style={{width: 120, textAlign: "right"}}>{this.state.curSite.reduce((o,v)=>{return o + ' ' + v.name}, '')}</Text>
+                                <Text numberOfLines={1}
+                                      style={{width: 120, textAlign: "right"}}>{this.state.curSite.reduce((o, v) => {
+                                    return o + ' ' + v.name
+                                }, '')}</Text>
                                 <Image
                                     style={{width: 24, height: 24}}
                                     source={require('../../../res/Image/BaseIcon/ic_listPush_nor.png')}
@@ -183,46 +204,48 @@ export default class AlarmFilter extends Component {
                     </TouchableOpacity>
 
                     <View style={styles.alarmLevel}>
-                        <Text style = {{
-                                borderBottomWidth: 2, 
-                                borderBottomColor: "#F3F3F3", 
-                                marginLeft: 16,
-                                paddingTop: 10,
-                                paddingBottom: 10
-                            }}>告警等级</Text>
+                        <Text style={{
+                            borderBottomWidth: 2,
+                            borderBottomColor: "#F3F3F3",
+                            marginLeft: 16,
+                            paddingTop: 10,
+                            paddingBottom: 10
+                        }}>告警等级</Text>
                         <View style={{flexDirection: 'row'}}>
-                            {scope.alarmTypeList.map(function (v) {
+                            {scope.alarmTypeList.map(function (v,i) {
 
-                                return <TouchableOpacity style={[styles.alarmLevelItem, scope.selectedAlarmLevels.indexOf(v.value) > -1 ? {backgroundColor: "rgba(235,235,235,1)"} : {}]}
+                                return <TouchableOpacity
+                                    key={i}
+                                    style={[styles.alarmLevelItem, scope.selectedAlarmLevels.indexOf(v.value) > -1 ? {backgroundColor: "rgba(235,235,235,1)"} : {}]}
                                     activeOpacity={0.5}
                                     onPress={() => {
                                         onPressHandler(v.value, 'selectedAlarmLevels')
                                     }}>
                                     <Text>{v.desc}</Text>
                                 </TouchableOpacity>
-                            })}   
+                            })}
                         </View>
                     </View>
 
                     <View style={styles.alarmLevel}>
-                        <Text style = {{
-                                borderBottomWidth: 2, 
-                                borderBottomColor: "#F3F3F3", 
-                                marginLeft: 16,
-                                paddingTop: 10,
-                                paddingBottom: 10
-                            }}>设备类型</Text>
+                        <Text style={{
+                            borderBottomWidth: 2,
+                            borderBottomColor: "#F3F3F3",
+                            marginLeft: 16,
+                            paddingTop: 10,
+                            paddingBottom: 10
+                        }}>设备类型</Text>
                         <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                            {renderDeviceTypeList()}                            
+                            {renderDeviceTypeList()}
                         </View>
                     </View>
 
-                </View>
-                    
-                <TouchableOpacity style = {{backgroundColor: "#FFFFFF"}}
-                    activeOpacity={0.5}
-                    onPress={onPressComfirm}>
-                    <Text style = {{padding: 14, textAlign: 'center', fontSize: 16, color: this.state.theme.themeColor}}>确定</Text>
+                </ScrollView>
+
+                <TouchableOpacity style={{backgroundColor: "#FFFFFF"}}
+                                  activeOpacity={0.5}
+                                  onPress={onPressComfirm}>
+                    <Text style={{padding: 14, textAlign: 'center', fontSize: 16, color: this.state.theme.themeColor}}>确定</Text>
                 </TouchableOpacity>
             </View>
         )

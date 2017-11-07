@@ -97,7 +97,7 @@ export default class LocationPage extends React.Component {
         // }
 
         // alert(JSON.stringify(source));
-
+        // 地图经纬度需要转换
         let gg=this._bd_decrypt(this.props.siteInfo.latitude, this.props.siteInfo.longitude);
         console.log(gg);
         let gg_lon = gg.gg_lon;
@@ -109,9 +109,8 @@ export default class LocationPage extends React.Component {
                 <WebView
                     // injectedJavaScript={insertJSToHtml}
                     source={{
-                        uri: `https://uri.amap.com/marker?position=${gg_lon},${gg_lat}&name=${this.props.siteInfo.name}&src=mypage&coordinate=gaode&callnative=0 `
+                        uri: `http://api.map.baidu.com/marker?location=${gg_lat},${gg_lon}&title=我的位置&content=百度奎科大厦&output=html&src=yourComponyName|yourAppName`
                     }}
-                    // source={source}
                     startInLoadingState={true}/>
             </View>
         )
