@@ -256,10 +256,16 @@ export default class Monitor extends Component {
                 for (let i = 0; i < results[2].data.length; i++) {
                     allCount += results[2].data[i].count
                 }
-                // console.log(allCount,123456);
+                if (results[1].data !== []) {
+                    this.setState({
+                        fsuWeekCount: results[1].data,
+                    })
+                } else {
+                    console.log('返回数据为空')
+                }
                 this.setState({
                     fsuCount: results[0].data,
-                    fsuWeekCount: results[1].data,
+                    // fsuWeekCount: results[1].data,
                     levelAlarm: results[2].data,
                     allCount: allCount
                 })

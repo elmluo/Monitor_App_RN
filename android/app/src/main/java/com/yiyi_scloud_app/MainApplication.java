@@ -21,7 +21,7 @@ public class MainApplication extends Application implements ReactApplication {
       return BuildConfig.DEBUG;
     }
     // 设置为 true 将不弹出 toast
-    private boolean SHUTDOWN_TOAST = true;
+    private boolean SHUTDOWN_TOAST = true;ß
     // 设置为 true 将不打印 log
     private boolean SHUTDOWN_LOG = false;
     @Override
