@@ -28,6 +28,7 @@ import NetInfoUtils from '../util/NetInfoUtils'
 import Storage from '../common/StorageClass'
 import NoContentPage from '../common/NoContentPage'
 import Toast, {DURATION} from 'react-native-easy-toast';
+import JPushModule from 'jpush-react-native';
 
 let storage = new Storage();
 
@@ -110,7 +111,16 @@ export default class CustomListView extends Component {
         let url = this.props.url;
         let params = this.props.params;
         params.page = this.page;
-
+        //判断是否有推送badge 有就清除
+        console.log('badge'+storage.getBadge());
+        if (storage.getBadge() !== 0){
+            this.timer = setTimeout(()=> {
+                clearTimeout(this.timer);
+                storage.setBadge(0);
+                JPushModule.setBadge(0);
+                DeviceEventEmitter.emit('setBadge', 101,0);
+            }, 0);
+        }
 
         // console.log(params);
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {

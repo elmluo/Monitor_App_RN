@@ -16,6 +16,7 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
+import pushDemo from '../demo/push_activity'
 
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
@@ -34,7 +35,10 @@ export default class Function extends Component {
     _IconView(icon, text, marginTop) {
         let viewWidth = width / 3;
         let iconView = <TouchableOpacity onPress={() => {
-            alert('此功能暂未开放')
+            this.props.navigator.push({
+                component:pushDemo
+            })
+            // alert('此功能暂未开放')
         }}>
             <View style={{marginTop: marginTop ? marginTop : 25, width: viewWidth, alignItems: 'center'}}>
                 <Image source={icon}/>

@@ -39,6 +39,7 @@ export default class Monitor extends Component {
             isLoading: false,
             noticeCount: null,
             isShowNoticeBar: false,
+            alarmCount:0,
             fsuCount: [     // 初始化的数据结构和操作的数据结构统一
                 {item: "在线", count: 2},
                 {item: "离线", count: 0}
@@ -481,6 +482,7 @@ export default class Monitor extends Component {
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
                 console.log("获取推送消息 " + JSON.stringify(message));
+                storage.setBadge(message.aps.badge);
                 this.timer = setTimeout(()=> {
                     clearTimeout(this.timer);
                     DeviceEventEmitter.emit('setBadge', message.type,message.aps.badge);
@@ -488,25 +490,34 @@ export default class Monitor extends Component {
 
             });
             //点击跳转
+
             JPushModule.addReceiveOpenNotificationListener((map) => {
                 console.log("点击 " + JSON.stringify(map));
-
-                const routes = this.props.navigator.state.routeStack;
-                console.log(routes);
-                let lent = 0;
-                for (let i = 0;i<routes.length;i++){
-                    if (routes[i].component.name === "BulletinList"){
-                        this.props.navigator.popToRoute(routes[i]);
-                    }else {
-                        lent++;
+                if (map.type === '200'){
+                    const routes = this.props.navigator.state.routeStack;
+                    console.log(routes);
+                    let lent = 0;
+                    for (let i = 0;i<routes.length;i++){
+                        if (routes[i].component.name === "BulletinList"){
+                            this.props.navigator.popToRoute(routes[i]);
+                        }else {
+                            lent++;
+                        }
                     }
+                    if (lent == routes.length){
+                        this.props.navigator.push({
+                            component: BulletinList,
+                            params: {...this.props}
+                        })
+                    }
+                }else {
+                    storage.setBadge(map.aps.badge);
+                    this.timer = setTimeout(()=> {
+                        clearTimeout(this.timer);
+                        DeviceEventEmitter.emit('setBadge', map.type,map.aps.badge);
+                    }, 0);
                 }
-                if (lent == routes.length){
-                    this.props.navigator.push({
-                        component: BulletinList,
-                        params: {...this.props}
-                    })
-                }
+
 
 
             });
@@ -519,55 +530,54 @@ export default class Monitor extends Component {
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
                 console.log("获取推送消息 " + JSON.stringify(message));
-
-                this.timer = setTimeout(()=> {
-                    clearTimeout(this.timer);
-                    DeviceEventEmitter.emit('setBadge', message.type,0);
-                }, 0);
+                console.log('告警安卓badge'+this.state.alarmCount);
+                if(JSON.parse(message.extras).type !== '200'){
+                    this.state.alarmCount++;
+                    storage.setBadge(this.state.alarmCount);
+                    this.timer = setTimeout(()=> {
+                        clearTimeout(this.timer);
+                        DeviceEventEmitter.emit('setBadge', message.extras.type,this.state.alarmCount);
+                    }, 0);
+                }
 
 
             });
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
                 console.log("点击 " + JSON.stringify(map));
-                JPushModule.jumpToPushActivity("MainActivity");
+                // JPushModule.jumpToPushActivity("MainActivity");
                 const routes = this.props.navigator.state.routeStack;
                 console.log(routes);
-                let lent = 0;
-                for (let i = 0;i<routes.length;i++){
-                    if (routes[i].component.name === "BulletinList"){
-                        this.props.navigator.popToRoute(routes[i]);
-                    }else {
-                        lent++;
+                console.log(map.extras+'  extras');
+                console.log(JSON.parse(map.extras).type+'  type');
+                if (JSON.parse(map.extras).type === '200'){
+                    const routes = this.props.navigator.state.routeStack;
+                    console.log(routes);
+                    let lent = 0;
+                    for (let i = 0;i<routes.length;i++){
+                        if (routes[i].component.name === "BulletinList"){
+                            this.props.navigator.popToRoute(routes[i]);
+                        }else {
+                            lent++;
+                        }
                     }
-                }
-                if (lent == routes.length){
-                    this.props.navigator.push({
-                        component: BulletinList,
-                        params: {...this.props}
-                    })
+                    if (lent == routes.length){
+                        this.props.navigator.push({
+                            component: BulletinList,
+                            params: {...this.props}
+                        })
+                    }
+                }else {
+                    storage.setBadge(this.state.alarmCount);
+                    this.timer = setTimeout(()=> {
+                        clearTimeout(this.timer);
+                        DeviceEventEmitter.emit('setBadge', map.extras.type,this.state.alarmCount);
+                    }, 0);
                 }
 
 
             });
-            JPushModule.addOpenNotificationLaunchAppListener((map)=>{
-                const routes = this.props.navigator.state.routeStack;
-                console.log(routes);
-                let lent = 0;
-                for (let i = 0;i<routes.length;i++){
-                    if (routes[i].component.name === "BulletinList"){
-                        this.props.navigator.popToRoute(routes[i]);
-                    }else {
-                        lent++;
-                    }
-                }
-                if (lent == routes.length){
-                    this.props.navigator.push({
-                        component: BulletinList,
-                        params: {...this.props}
-                    })
-                }
-            })
+
         }
 
 
@@ -589,6 +599,11 @@ export default class Monitor extends Component {
     componentWillUnmount() {
         // 组件卸载后取消定时器，防止多余异常出现
         // this.timer && clearTimeout(this.timer);
+        JPushModule.removeConnectionChangeListener();
+        JPushModule.removeOpenNotificationLaunchAppEventListener();
+        JPushModule.removeReceiveNotificationListener();
+
+
         this.listener.remove();
     }
 }
