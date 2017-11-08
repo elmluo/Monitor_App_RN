@@ -121,15 +121,11 @@ export default class Alarm extends Component {
         if (this.state.filter.deviceType && this.state.filter.deviceType.length === 0) {
             this.state.filter.deviceType = undefined;
         }
-
-        this.timer = setTimeout(()=> {
+        this.timer = setTimeout(() => {
             clearTimeout(this.timer);
             DeviceEventEmitter.emit('custom_listView_alarm', this.state.filter);
         }, 0);
-        // this.timerDadge = setTimeout(()=> {
-        //     clearTimeout(this.timerDadge);
-        //     DeviceEventEmitter.emit('setBadge', 101,0);
-        // }, 0);
+
         // alert(JSON.stringify(this.state.filter))
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,

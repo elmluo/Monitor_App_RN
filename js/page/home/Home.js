@@ -227,7 +227,6 @@ export default class Monitor extends Component {
                 this.setState({
                     isShowNoticeBar: false,
                 });
-                DeviceEventEmitter.emit('setNoticeBadge', 'none');
             } else {
                 // 发送通知显示底部首页badge
                 DeviceEventEmitter.emit('setNoticeBadge', result.data);
@@ -542,15 +541,20 @@ export default class Monitor extends Component {
 
 
             });
+
+            this.listener = DeviceEventEmitter.addListener('clearAndroidBadge', () => {
+                this.setState({
+                    alarmCount: 0,
+                })
+            });
+
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
                 console.log("点击 " + JSON.stringify(map));
-                // JPushModule.jumpToPushActivity("MainActivity");
                 const routes = this.props.navigator.state.routeStack;
-                console.log(routes);
-                console.log(map.extras+'  extras');
-                console.log(JSON.parse(map.extras).type+'  type');
                 if (JSON.parse(map.extras).type === '200'){
+                    //跳转详情页面 清除this.state.alarmCount
+                    this.state.alarmCount = 0;
                     const routes = this.props.navigator.state.routeStack;
                     console.log(routes);
                     let lent = 0;

@@ -21,7 +21,8 @@ import {
     RefreshControl,
     TouchableOpacity,
     InteractionManager,
-    DeviceEventEmitter
+    DeviceEventEmitter,
+    Platform
 } from 'react-native'
 import DataRepository from '../expand/dao/Data'
 import NetInfoUtils from '../util/NetInfoUtils'
@@ -112,13 +113,20 @@ export default class CustomListView extends Component {
         let params = this.props.params;
         params.page = this.page;
         //判断是否有推送badge 有就清除
-        console.log('badge'+storage.getBadge());
-        if (storage.getBadge() !== 0){
+        console.log('alarmBadge'+storage.getBadge());
+        alert(123);
+        if (storage.getBadge() != 0 && storage.getBadge() != null){
             this.timer = setTimeout(()=> {
                 clearTimeout(this.timer);
                 storage.setBadge(0);
-                JPushModule.setBadge(0);
-                DeviceEventEmitter.emit('setBadge', 101,0);
+                if (Platform.OS === 'ios'){
+                    JPushModule.setBadge(0, (badgeNumber) => {
+                        console.log(badgeNumber)
+                    });
+                }else {
+                    DeviceEventEmitter.emit('clearAndroidBadge');
+                }
+                DeviceEventEmitter.emit('setBadge', '101',0);
             }, 0);
         }
 

@@ -181,7 +181,6 @@ export default class AlarmTab extends Component {
                 renderRow={this._renderRow.bind(this)}   // bind(this)机制需要熟悉
                 alertText={'没有更多数据了~'}
             />;
-
         return (
             <View style={styles.container}>
                 {content}
