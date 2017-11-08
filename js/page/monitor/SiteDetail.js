@@ -1,7 +1,3 @@
-/**
- * Created by penn on 2016/12/14.
- */
-
 import React, {Component} from 'react';
 import {
     StyleSheet,
@@ -20,6 +16,7 @@ import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-v
 import Storage from '../../common/StorageClass'
 import DeviceTab from './SiteDetailDeviceTab'
 import LocationPage from './SiteDetailLocationPage';
+import BackPressComponent from '../../common/BackPressComponent'
 
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
@@ -29,9 +26,30 @@ export default class SiteDetail extends Component {
 
     constructor(props) {
         super(props);
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
         }
+    }
+
+    componentDidMount() {
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
     }
 
     _renderLeftButton() {
@@ -157,12 +175,6 @@ export default class SiteDetail extends Component {
                 {content}
             </View>
         )
-    }
-
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(()=> {
-
-        })
     }
 }
 

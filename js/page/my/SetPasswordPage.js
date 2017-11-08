@@ -12,6 +12,7 @@ import Btn from '../my/BaseBtn'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
 import Toast, {DURATION} from 'react-native-easy-toast';
+import BackPressComponent from '../../common/BackPressComponent'
 
 let storage = new Storage();
 let dataRepository = new DataRepository();
@@ -19,6 +20,7 @@ let {width, height} = Dimensions.get('window')
 export default class SetPasswordPage extends React.Component {
     constructor(props) {
         super(props);
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
             btnText: '确定',
@@ -27,6 +29,26 @@ export default class SetPasswordPage extends React.Component {
             twoNewPassword:'',
         };
 
+    }
+
+    componentDidMount() {
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
     }
 
     //返回按钮

@@ -1,7 +1,3 @@
-/**
- * Created by penn on 2017/2/12.
- */
-
 
 import React, {Component, PropTypes} from "react";
 import {BackHandler} from "react-native";

@@ -77,12 +77,13 @@ export default class WelcomePage extends Component {
             appId: 'YiYi',
             os: Platform.OS,
         };
+
         return new Promise((resolve, reject) => {
             dataRepository.fetchNetRepository('POST', url, params)
                 .then(response => {
                     dataRepository.fetchLocalRepository(url).then((localData) => {
-                        console.log(localData);
-                        console.log(response.data);
+                        // console.log(localData);
+                        // console.log(response.data);
                         if (localData) {
                             // 若之前登陆过，比较、跟新本地版本信息
                             if (response.data.version === localData.version) {
@@ -185,9 +186,9 @@ export default class WelcomePage extends Component {
             }
             if (alias !== undefined) {
                 JPushModule.setAlias(alias, () => {
-                    console.log("Set alias succeed"+ alias);
+                    // console.log("Set alias succeed"+ alias);
                 }, () => {
-                    console.log("Set alias failed");
+                    // console.log("Set alias failed");
                 });
 
             }

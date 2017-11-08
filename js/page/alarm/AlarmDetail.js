@@ -15,14 +15,36 @@ import {
 import NavigationBar from '../../common/NavigationBar'
 import ViewUtils from '../../util/ViewUtils'
 import Utils from '../../util/Utils'
+import BackPressComponent from '../../common/BackPressComponent'
 
 let {width, height} = Dimensions.get('window')
 export default class AlarmDetail extends Component {
     constructor(props) {
         super(props);
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
         }
+    }
+
+    componentDidMount() {
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
     }
 
     _renderLeftButton() {

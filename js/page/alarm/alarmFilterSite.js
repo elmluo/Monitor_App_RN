@@ -21,6 +21,7 @@ import CustomListView from '../../common/CustomListView'
 import DataRepository from '../../expand/dao/Data'
 import ViewUtils from '../../util/ViewUtils'
 import Utils from '../../util/Utils'
+import BackPressComponent from '../../common/BackPressComponent'
 
 let storageClass = new StorageClass();
 let {width, height} = Dimensions.get('window');
@@ -30,6 +31,7 @@ export default class AlarmFilterSite extends Component {
     isSelected = false;
     constructor(props) {
         super(props);
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
             selectedArr: [],
@@ -37,6 +39,27 @@ export default class AlarmFilterSite extends Component {
         }
     }
 
+    componentDidMount() {
+        this.state.siteList = [].concat(this.props.siteList);
+        DeviceEventEmitter.emit('custom_listView');
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
+    }
 
     _renderLeftButton() {
         return (
@@ -56,10 +79,7 @@ export default class AlarmFilterSite extends Component {
         )
     }
 
-    componentDidMount() {
-        this.state.siteList = [].concat(this.props.siteList);
-        DeviceEventEmitter.emit('custom_listView');
-    }
+
     render() {
         let scope = this;
 

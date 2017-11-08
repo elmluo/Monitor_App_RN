@@ -50,17 +50,27 @@ export default class Alarm extends Component {
                             component: AlarmFilter,
                             params: {
                                 ...scope.props,
+                                // 将子组件筛选结果保存到alarm的state
                                 setFilter: (v) => {
                                     scope.setState({
                                         filter: v
                                     })
+                                    // console.log(v)
                                 },
                                 filter: scope.state.filter
                             }
                         })
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
-                        <Text style={{color: '#FFFFFF'}}>
+                        <Text style={
+                            (
+                                !!this.state.filter.deviceType
+                                || !!this.state.filter.level
+                                || !!this.state.filter.siteId
+                            )
+                                ? {color: '#AEFFFF'}
+                                : {color: '#FFFFFF'}
+                        }>
                             筛选
                         </Text>
                     </View>
@@ -104,8 +114,14 @@ export default class Alarm extends Component {
     render() {
         // this.state.filter.level = this.props.crossPageData ? this.props.crossPageData.level || [] : [];
         // this.props.setCrossPageData(null);
+        /**
+         * 从首页点击饼图进入
+         *     清空筛选条件，
+         *     添加点击的告警等级为筛选条件
+         */
         if (this.props.crossPageData && this.props.crossPageData.level) {
             // alert(JSON.stringify(this.props.crossPageData.level))
+            this.state.filter = {};
             this.state.filter.level = this.props.crossPageData.level;
             this.props.setCrossPageData(null, false);
         }
@@ -122,7 +138,7 @@ export default class Alarm extends Component {
             this.state.filter.deviceType = undefined;
         }
 
-        this.timer = setTimeout(()=> {
+        this.timer = setTimeout(() => {
             clearTimeout(this.timer);
             DeviceEventEmitter.emit('custom_listView_alarm', this.state.filter);
         }, 0);

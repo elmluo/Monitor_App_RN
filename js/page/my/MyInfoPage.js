@@ -1,7 +1,3 @@
-/**
- * Created by penn on 2016/12/14.
- */
-
 import React, {Component} from 'react';
 import {
     StyleSheet,
@@ -12,7 +8,8 @@ import {
     ScrollView,
     RefreshControl,
     TouchableOpacity,
-    InteractionManager
+    InteractionManager,
+    BackHandler
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -21,6 +18,7 @@ import LoginPage from '../Login'
 import SetPasswordPage from '../my/SetPasswordPage'
 import Storage from '../../common/StorageClass'
 import JPushModule from 'jpush-react-native';
+import BackPressComponent from '../../common/BackPressComponent'
 
 let storage = new Storage();
 
@@ -42,6 +40,7 @@ export default class MyInfoPage extends Component {
     constructor(props) {
         super(props);
         // 初始化类实例
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.dataRepository = new DataRepository();
         this.state = {
             personInfo: null,
@@ -51,10 +50,31 @@ export default class MyInfoPage extends Component {
         }
     }
 
+    componentDidMount() {
+        // 获取数据
+        this._onLoad();
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
+    }
+
     /**
      * 获取信息列表
      */
-
     _onLoad() {
         // 开启加载动画
         this.setState({
@@ -64,46 +84,46 @@ export default class MyInfoPage extends Component {
         //去缓存中拿 stamp、userId
         dataRepository.fetchLocalRepository('/app/v2/user/login').then(result => {
 
-        let params = {
-            stamp: result.stamp,
-            userId:result.userId,
-        };
-        // alert(JSON.stringify(params));
-        //获取个人信息
-        dataRepository.fetchNetRepository('POST', url, params)
-            .then((result) => {
-                // alert(JSON.stringify(result));
-                this.setState({
-                    personInfo: result.data
-                });
-                let _URL_CompanyInfoGet = '/app/v2/company/info/get';
-                let parameters_Company = {
-                    companyId:result.data.companyId
-                };
+            let params = {
+                stamp: result.stamp,
+                userId: result.userId,
+            };
+            // alert(JSON.stringify(params));
+            //获取个人信息
+            dataRepository.fetchNetRepository('POST', url, params)
+                .then((result) => {
+                    // alert(JSON.stringify(result));
+                    this.setState({
+                        personInfo: result.data
+                    });
+                    let _URL_CompanyInfoGet = '/app/v2/company/info/get';
+                    let parameters_Company = {
+                        companyId: result.data.companyId
+                    };
 
-                // alert(JSON.stringify(result));
-                //获取企业信息
-                dataRepository.fetchNetRepository('POST', _URL_CompanyInfoGet, parameters_Company)
-                    .then(result => {
+                    // alert(JSON.stringify(result));
+                    //获取企业信息
+                    dataRepository.fetchNetRepository('POST', _URL_CompanyInfoGet, parameters_Company)
+                        .then(result => {
 
-                        this.setState({
-                            personCompany: result.data,
-                            isLoading: false   // 关闭加载动画
-                        });
+                            this.setState({
+                                personCompany: result.data,
+                                isLoading: false   // 关闭加载动画
+                            });
 
-                    })
-                    .catch(error => {
-                        this.setState({
-                            personCompany: JSON.stringify(error)
-                        });
-                    })
-            })
+                        })
+                        .catch(error => {
+                            this.setState({
+                                personCompany: JSON.stringify(error)
+                            });
+                        })
+                })
 
-            .catch(error => {
-                this.setState({
-                    personInfo: JSON.stringify(error)
-                });
-            })
+                .catch(error => {
+                    this.setState({
+                        personInfo: JSON.stringify(error)
+                    });
+                })
         })
     }
 
@@ -118,12 +138,6 @@ export default class MyInfoPage extends Component {
         })
     }
 
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(()=>{
-            // 组件装载完，获取数据
-            this._onLoad()
-        });
-    }
     //设置返回按钮
     _renderLeftButton() {
         return (
@@ -142,16 +156,18 @@ export default class MyInfoPage extends Component {
             </View>
         )
     }
+
     // cell 封装
-    getItem(tag,leftIcon, text, rightIcon, rightText) {
-        return ViewUtils.getCellItem(() => this.onClick(tag),leftIcon, text, rightIcon, rightText);
+    getItem(tag, leftIcon, text, rightIcon, rightText) {
+        return ViewUtils.getCellItem(() => this.onClick(tag), leftIcon, text, rightIcon, rightText);
     }
+
     //修改密码点击时间
     onClick(tab) {
         switch (tab) {
             case MORE_INFO.User_Password:
                 this.props.navigator.push({
-                    component:SetPasswordPage,
+                    component: SetPasswordPage,
                     params: {
                         theme: this.theme,
                         ...this.props
@@ -161,6 +177,7 @@ export default class MyInfoPage extends Component {
 
         }
     }
+
     //初始化退出登录按钮
     _renderRightButton() {
         return (
@@ -171,9 +188,10 @@ export default class MyInfoPage extends Component {
                         null,
                         [
                             {text: '取消', onPress: () => console.log('Foo Pressed!')},
-                            {text: '退出', onPress:() => {
-                            ///退出登录操作
-                               let alias = storage.getLoginInfo().userId;
+                            {
+                                text: '退出', onPress: () => {
+                                ///退出登录操作
+                                let alias = storage.getLoginInfo().userId;
                                 // if (alias !== undefined) {
                                 //     JPushModule.deleteAlias(alias, () => {
                                 //         console.log("Delete alias succeed");
@@ -181,15 +199,16 @@ export default class MyInfoPage extends Component {
                                 //         console.log("Delete alias failed");
                                 //     });
                                 // }
-                             this.dataRepository.removeLocalRepository('user');
-                             this.dataRepository.removeLocalRepository('/app/v2/user/info/get')
-                                 .then(()=> {
+                                this.dataRepository.removeLocalRepository('user');
+                                this.dataRepository.removeLocalRepository('/app/v2/user/info/get')
+                                    .then(() => {
 
-                                     this._pushToLogin();
+                                        this._pushToLogin();
 
-                                 });
+                                    });
 
-                    }},
+                            }
+                            },
                         ]
                     )}>
                     <View style={{padding: 5, marginRight: 8}}>
@@ -240,24 +259,24 @@ export default class MyInfoPage extends Component {
                     <View style={{flex: 1}}>
                         {/*{个人信息板块}*/}
                         <View style={{position: 'relative', top: 6}}>
-                            {this.getItem(null,require('../../../res/Image/Login/ic_user_hl.png'),'个人信息',null,null)}
+                            {this.getItem(null, require('../../../res/Image/Login/ic_user_hl.png'), '个人信息', null, null)}
                             <View style={styles.line}/>
-                            {this.getItem(null, null,'用户名', null, this.state.personInfo?this.state.personInfo.name:'--')}
+                            {this.getItem(null, null, '用户名', null, this.state.personInfo ? this.state.personInfo.name : '--')}
                             <View style={styles.line}/>
-                            {this.getItem(null, null,'手机', null, this.state.personInfo?this.state.personInfo.phone:'--')}
+                            {this.getItem(null, null, '手机', null, this.state.personInfo ? this.state.personInfo.phone : '--')}
                             <View style={styles.line}/>
-                            {this.getItem(MORE_INFO.User_Password, null,'密码', require('../../../res/Image/BaseIcon/ic_listPush_nor.png'), null)}
+                            {this.getItem(MORE_INFO.User_Password, null, '密码', require('../../../res/Image/BaseIcon/ic_listPush_nor.png'), null)}
                             <View style={styles.line}/>
-                            {this.getItem(null, null,'所在企业', null,  this.state.personCompany?this.state.personCompany.name:'--')}
+                            {this.getItem(null, null, '所在企业', null, this.state.personCompany ? this.state.personCompany.name : '--')}
                         </View>
 
                         {/*{企业信息板块}*/}
                         <View style={{position: 'relative', marginTop: 10}}>
-                            {this.getItem(null,require('../../../res/Image/Login/ic_company_hl.png'),'企业信息',null,null)}
+                            {this.getItem(null, require('../../../res/Image/Login/ic_company_hl.png'), '企业信息', null, null)}
                             <View style={styles.line}/>
-                            {this.getItem(null, null,'企业名称', null, this.state.personCompany?this.state.personCompany.name:'--')}
+                            {this.getItem(null, null, '企业名称', null, this.state.personCompany ? this.state.personCompany.name : '--')}
                             <View style={styles.line}/>
-                            {this.getItem(null, null,'联系邮箱', null, this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
+                            {this.getItem(null, null, '联系邮箱', null, this.state.personCompany ? this.state.personCompany.contactsEmail : '--')}
                         </View>
                     </View>
                 </ScrollView>

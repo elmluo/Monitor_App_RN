@@ -19,6 +19,7 @@ import DataRepository from '../../expand/dao/Data'
 import AlarmFilterSite from './alarmFilterSite'
 import ViewUtils from '../../util/ViewUtils'
 import Utils from '../../util/Utils'
+import BackPressComponent from '../../common/BackPressComponent'
 
 let storageClass = new StorageClass();
 let {width, height} = Dimensions.get('window')
@@ -29,11 +30,12 @@ export default class AlarmFilter extends Component {
 
     constructor(props) {
         super(props);
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
             selectedArr: [],
             curSite: []
-        }
+        };
         let dataRepository = new DataRepository();
         dataRepository.fetchNetRepository('POST', '/app/v2/alarm/condition', {stamp: storageClass.getLoginInfo().stamp}).then(result => {
             if (result.success === true) {
@@ -46,6 +48,28 @@ export default class AlarmFilter extends Component {
         }).catch(error => {
             alert(JSON.stringify(error));
         })
+    }
+
+    componentDidMount() {
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+
+        this.state.curSite = storageClass.getAlarmFilterSiteId();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
     }
 
 
@@ -96,9 +120,6 @@ export default class AlarmFilter extends Component {
 
     selectedDevices = this.props.filter ? (this.props.filter.deviceType || []) : []
 
-    componentDidMount() {
-        this.state.curSite = storageClass.getAlarmFilterSiteId();
-    }
 
     render() {
         let scope = this;
@@ -154,7 +175,7 @@ export default class AlarmFilter extends Component {
         let onPressComfirm = function () {
             // alert(JSON.stringify(scope.state.curSite))
 
-            // 调用传入属性方法，将已选条件传递给父组件
+            // 调用传入属性方法，将已选条件传给Alarm.js中的父组件
             scope.props.setFilter({
                 level: scope.selectedAlarmLevels,
                 deviceType: scope.selectedDevices,

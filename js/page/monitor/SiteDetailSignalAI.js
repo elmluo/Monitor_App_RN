@@ -16,6 +16,7 @@ import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
 import Utils from '../../util/Utils'
 import AIChart from './AIChart'
+import BackPressComponent from '../../common/BackPressComponent'
 
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
@@ -26,6 +27,7 @@ export default class SiteDetailSignalAI extends React.Component {
 
     constructor(props) {
         super(props);
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
             signalHistoryList: [],
@@ -34,6 +36,26 @@ export default class SiteDetailSignalAI extends React.Component {
             // 初始化列表状态机对象
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
         };
+    }
+
+    componentDidMount() {
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
     }
 
     _renderLeftButton() {

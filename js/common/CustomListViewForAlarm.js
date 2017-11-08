@@ -263,16 +263,20 @@ export default class CustomListView extends Component {
                 : 'noData';
 
         if (this.state.noNetWork) {
-            content = <NoContentPage type='noNetWork'/>
+            content = <NoContentPage
+                type='noNetWork'
+                onClick={() => {
+                    this._onRefresh.bind();
+                }}
+            />
         } else {
             if (this.state.noData) {
-                content =
-                    <NoContentPage
-                        type={noData}
-                        onClick={() => {
-                            this._onRefresh.bind();
-                            // alert('click me');
-                        }}/>
+                content = <NoContentPage
+                    type={noData}
+                    onClick={() => {
+                        this._onRefresh.bind();
+                    }}
+                />
             } else {
                 content = this._renderListView();
             }

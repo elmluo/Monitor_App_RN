@@ -151,7 +151,7 @@ export default class Monitor extends Component {
                 stamp: data.stamp
             };
             dataRepository.fetchNetRepository('POST', URL, params).then(result => {
-                // console.log(result);
+                // // console.log(result);
                 // alert(JSON.stringify({'fsu数量': result}));
                 // this.setState({
                 //     fsuCount: result.data
@@ -174,10 +174,10 @@ export default class Monitor extends Component {
                 stamp: data.stamp
             };
             dataRepository.fetchNetRepository('POST', URL, params).then((result) => {
-                // console.log(result);
+                // // console.log(result);
                 // 获取 一周fsu数量
                 // alert(JSON.stringify({'一周FSU': result}));
-                // console.log(result);
+                // // console.log(result);
                 // this.setState({
                 //     fsuWeekCount: result.data
                 // })
@@ -214,19 +214,18 @@ export default class Monitor extends Component {
      * @private
      */
     _getNoticeNotReadCount() {
-        // console.log('点我了');
+        // // console.log('点我了');
         let url = '/app/v2/notice/unread/count';
         let params = {
             stamp: storage.getLoginInfo().stamp,
             userId: storage.getLoginInfo().userId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            // console.log(result);
+            // // console.log(result);
             if (result.data === 0 || result.data === null) {
                 this.setState({
                     isShowNoticeBar: false,
                 });
-                DeviceEventEmitter.emit('setNoticeBadge', 'none');
             } else {
                 // 发送通知显示底部首页badge
                 DeviceEventEmitter.emit('setNoticeBadge', result.data);
@@ -250,19 +249,18 @@ export default class Monitor extends Component {
                 this._getWeekFsuCount(stamp),
                 this._getAlarmCount(stamp),
             ]).then((results) => {
-                console.log(results);
+                // console.log(results);
                 // 计算告警数量总和
                 let allCount = 0;
                 for (let i = 0; i < results[2].data.length; i++) {
                     allCount += results[2].data[i].count
                 }
                 if (results[1].data.length !== 0) {
-                    console.log(results[1].data)
                     this.setState({
                         fsuWeekCount: results[1].data,
                     })
                 } else {
-                    console.log('返回数据为空')
+                    // console.log('返回数据为空')
                 }
                 this.setState({
                     fsuCount: results[0].data,
@@ -316,7 +314,7 @@ export default class Monitor extends Component {
         let onlineCount = this.state.fsuCount[0].count;
         let outLintCount = this.state.fsuCount[1].count;
         let sum = onlineCount + outLintCount;
-        // console.log(sum);
+        // // console.log(sum);
         let onlineRateStyle;
         if (height < 667) {
             onlineRateStyle = {
@@ -477,10 +475,10 @@ export default class Monitor extends Component {
 
 
         if (Platform.OS === 'ios'){
-            console.log("iOS : ");
+            // console.log("iOS : ");
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                console.log("获取推送消息 " + JSON.stringify(message));
+                // console.log("获取推送消息 " + JSON.stringify(message));
                 this.timer = setTimeout(()=> {
                     clearTimeout(this.timer);
                     DeviceEventEmitter.emit('setBadge', message.type,message.aps.badge);
@@ -489,10 +487,10 @@ export default class Monitor extends Component {
             });
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
-                console.log("点击 " + JSON.stringify(map));
+                // console.log("点击 " + JSON.stringify(map));
 
                 const routes = this.props.navigator.state.routeStack;
-                console.log(routes);
+                // console.log(routes);
                 let lent = 0;
                 for (let i = 0;i<routes.length;i++){
                     if (routes[i].component.name === "BulletinList"){
@@ -511,14 +509,14 @@ export default class Monitor extends Component {
 
             });
         }else {
-            console.log("Android: ");
+            // // console.log("Android: ");
             JPushModule.notifyJSDidLoad((resultCode) =>{
-                console.log("注册事件: ", resultCode);
+                // console.log("注册事件: ", resultCode);
 
             });
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                console.log("获取推送消息 " + JSON.stringify(message));
+                // console.log("获取推送消息 " + JSON.stringify(message));
 
                 this.timer = setTimeout(()=> {
                     clearTimeout(this.timer);
@@ -529,10 +527,10 @@ export default class Monitor extends Component {
             });
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
-                console.log("点击 " + JSON.stringify(map));
+                // console.log("点击 " + JSON.stringify(map));
                 JPushModule.jumpToPushActivity("MainActivity");
                 const routes = this.props.navigator.state.routeStack;
-                console.log(routes);
+                // console.log(routes);
                 let lent = 0;
                 for (let i = 0;i<routes.length;i++){
                     if (routes[i].component.name === "BulletinList"){
@@ -552,7 +550,7 @@ export default class Monitor extends Component {
             });
             JPushModule.addOpenNotificationLaunchAppListener((map)=>{
                 const routes = this.props.navigator.state.routeStack;
-                console.log(routes);
+                // console.log(routes);
                 let lent = 0;
                 for (let i = 0;i<routes.length;i++){
                     if (routes[i].component.name === "BulletinList"){

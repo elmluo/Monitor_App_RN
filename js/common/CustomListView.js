@@ -6,7 +6,7 @@
  *      alertText   [string]    easyToast组件,提示的文本内容
  *      renderRow   [Function]  原生listView组件渲染列表cell内容
  *      fusList     [Array]     根据业务需求，需要则列表页传入某些特定的数据
- *      noDateType  [string]    请求没有获得数据的时候，或者获取数据为空，需要实现的提示图片的类型，目前支持'noData（没有数据）、noAlarm（没有告警）'两种图片
+ *      noDateType  [string]    请求没有获得数据的时候，或者获取数据为空，需要实现的提示图片的类型，目前支持'noData（没有数据）、noAlarm（没有告警）'两种图片, 如果不传改属性。默认为noData类型图片
  *
  *
  *
@@ -115,7 +115,7 @@ export default class CustomListView extends Component {
         // console.log(params);
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
             if (result.success === true) {
-                // alert(JSON.stringify(result.data));
+                // alert(JSON.stringify(result));
                 // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
                     // alert(page);
@@ -125,6 +125,7 @@ export default class CustomListView extends Component {
                         noNetWord: false,
                         noData: true
                     })
+                    // console.log(result.data)
                 } else {
                     // 将请求数据保存到内存
                     this._data = this._data.concat(result.data);
@@ -258,16 +259,22 @@ export default class CustomListView extends Component {
                 : 'noData';
 
         if (this.state.noNetWork) {
-            content = <NoContentPage type='noNetWork'/>
+            content = <NoContentPage
+                type='noNetWork'
+                onClick={() => {
+                    this._onRefresh.bind();
+                    // alert('点我了')
+                }}
+            />
         } else {
             if (this.state.noData) {
-                content =
-                    <NoContentPage
-                        type={noData}
-                        onClick={() => {
-                            this._onRefresh.bind();
-                            // alert('click me');
-                        }}/>
+                content = <NoContentPage
+                    type={noData}
+                    onClick={() => {
+                        this._onRefresh.bind();
+                        // alert('点我了')
+                    }}
+                />
             } else {
                 content = this._renderListView();
             }

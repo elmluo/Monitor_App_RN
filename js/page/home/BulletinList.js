@@ -18,6 +18,7 @@ import DataRepository from '../../expand/dao/Data';
 import Storage from '../../common/StorageClass';
 import CustomListView from "../../common/CustomListView";
 import Utils from '../../util/Utils'
+import BackPressComponent from '../../common/BackPressComponent'
 
 let storage = new Storage();
 let dataRepository = new DataRepository();
@@ -26,9 +27,30 @@ let dataRepository = new DataRepository();
 export default class BulletinList extends Component {
     constructor(props) {
         super(props);
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
         }
+    }
+
+    componentDidMount() {
+        // android物理返回监听事件
+        this.backPress.componentDidMount();
+    }
+
+    componentWillUnmount() {
+        // 卸载android物理返回键监听
+        this.backPress.componentWillUnmount();
+    }
+
+    /**
+     * 点击 android 返回键触发
+     * @param e 事件对象
+     * @returns {boolean}
+     */
+    onBackPress(e) {
+        this.props.navigator.pop();
+        return true;
     }
 
     /**
@@ -120,7 +142,7 @@ export default class BulletinList extends Component {
 
         let list =  <CustomListView
             {...this.props}
-            noDataType={'onData'}
+            noDataType={'noData'}
             url={URL}
             params={params}
             renderRow={this._renderRow.bind(this)}   // bind(this)机制需要熟悉
@@ -146,11 +168,6 @@ export default class BulletinList extends Component {
                 ...this.props,
                 theme: this.state.theme
             }
-        })
-    }
-
-    componentDidMount() {
-        InteractionManager.runAfterInteractions(() => {
         })
     }
 }
