@@ -39,6 +39,7 @@ export default class Monitor extends Component {
             isLoading: false,
             noticeCount: null,
             isShowNoticeBar: false,
+            alarmCount:0,
             fsuCount: [     // 初始化的数据结构和操作的数据结构统一
                 {item: "在线", count: 2},
                 {item: "离线", count: 0}
@@ -151,7 +152,7 @@ export default class Monitor extends Component {
                 stamp: data.stamp
             };
             dataRepository.fetchNetRepository('POST', URL, params).then(result => {
-                // // console.log(result);
+                // console.log(result);
                 // alert(JSON.stringify({'fsu数量': result}));
                 // this.setState({
                 //     fsuCount: result.data
@@ -174,10 +175,10 @@ export default class Monitor extends Component {
                 stamp: data.stamp
             };
             dataRepository.fetchNetRepository('POST', URL, params).then((result) => {
-                // // console.log(result);
+                // console.log(result);
                 // 获取 一周fsu数量
                 // alert(JSON.stringify({'一周FSU': result}));
-                // // console.log(result);
+                // console.log(result);
                 // this.setState({
                 //     fsuWeekCount: result.data
                 // })
@@ -214,14 +215,14 @@ export default class Monitor extends Component {
      * @private
      */
     _getNoticeNotReadCount() {
-        // // console.log('点我了');
+        // console.log('点我了');
         let url = '/app/v2/notice/unread/count';
         let params = {
             stamp: storage.getLoginInfo().stamp,
             userId: storage.getLoginInfo().userId
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            // // console.log(result);
+            // console.log(result);
             if (result.data === 0 || result.data === null) {
                 this.setState({
                     isShowNoticeBar: false,
@@ -314,7 +315,7 @@ export default class Monitor extends Component {
         let onlineCount = this.state.fsuCount[0].count;
         let outLintCount = this.state.fsuCount[1].count;
         let sum = onlineCount + outLintCount;
-        // // console.log(sum);
+        // console.log(sum);
         let onlineRateStyle;
         if (height < 667) {
             onlineRateStyle = {
@@ -475,10 +476,11 @@ export default class Monitor extends Component {
 
 
         if (Platform.OS === 'ios'){
-            // console.log("iOS : ");
+            console.log("iOS : ");
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                // console.log("获取推送消息 " + JSON.stringify(message));
+                console.log("获取推送消息 " + JSON.stringify(message));
+                storage.setBadge(message.aps.badge);
                 this.timer = setTimeout(()=> {
                     clearTimeout(this.timer);
                     DeviceEventEmitter.emit('setBadge', message.type,message.aps.badge);
@@ -486,25 +488,34 @@ export default class Monitor extends Component {
 
             });
             //点击跳转
-            JPushModule.addReceiveOpenNotificationListener((map) => {
-                // console.log("点击 " + JSON.stringify(map));
 
-                const routes = this.props.navigator.state.routeStack;
-                // console.log(routes);
-                let lent = 0;
-                for (let i = 0;i<routes.length;i++){
-                    if (routes[i].component.name === "BulletinList"){
-                        this.props.navigator.popToRoute(routes[i]);
-                    }else {
-                        lent++;
+            JPushModule.addReceiveOpenNotificationListener((map) => {
+                console.log("点击 " + JSON.stringify(map));
+                if (map.type === '200'){
+                    const routes = this.props.navigator.state.routeStack;
+                    console.log(routes);
+                    let lent = 0;
+                    for (let i = 0;i<routes.length;i++){
+                        if (routes[i].component.name === "BulletinList"){
+                            this.props.navigator.popToRoute(routes[i]);
+                        }else {
+                            lent++;
+                        }
                     }
+                    if (lent == routes.length){
+                        this.props.navigator.push({
+                            component: BulletinList,
+                            params: {...this.props}
+                        })
+                    }
+                }else {
+                    storage.setBadge(map.aps.badge);
+                    this.timer = setTimeout(()=> {
+                        clearTimeout(this.timer);
+                        DeviceEventEmitter.emit('setBadge', map.type,map.aps.badge);
+                    }, 0);
                 }
-                if (lent == routes.length){
-                    this.props.navigator.push({
-                        component: BulletinList,
-                        params: {...this.props}
-                    })
-                }
+
 
 
             });
@@ -516,56 +527,60 @@ export default class Monitor extends Component {
             });
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                // console.log("获取推送消息 " + JSON.stringify(message));
-
-                this.timer = setTimeout(()=> {
-                    clearTimeout(this.timer);
-                    DeviceEventEmitter.emit('setBadge', message.type,0);
-                }, 0);
+                console.log("获取推送消息 " + JSON.stringify(message));
+                console.log('告警安卓badge'+this.state.alarmCount);
+                if(JSON.parse(message.extras).type !== '200'){
+                    this.state.alarmCount++;
+                    storage.setBadge(this.state.alarmCount);
+                    this.timer = setTimeout(()=> {
+                        clearTimeout(this.timer);
+                        DeviceEventEmitter.emit('setBadge', message.extras.type,this.state.alarmCount);
+                    }, 0);
+                }
 
 
             });
+
+            this.listener = DeviceEventEmitter.addListener('clearAndroidBadge', () => {
+                this.setState({
+                    alarmCount: 0,
+                })
+            });
+
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
-                // console.log("点击 " + JSON.stringify(map));
-                JPushModule.jumpToPushActivity("MainActivity");
+                console.log("点击 " + JSON.stringify(map));
                 const routes = this.props.navigator.state.routeStack;
-                // console.log(routes);
-                let lent = 0;
-                for (let i = 0;i<routes.length;i++){
-                    if (routes[i].component.name === "BulletinList"){
-                        this.props.navigator.popToRoute(routes[i]);
-                    }else {
-                        lent++;
+                if (JSON.parse(map.extras).type === '200'){
+                    //跳转详情页面 清除this.state.alarmCount
+                    this.state.alarmCount = 0;
+                    const routes = this.props.navigator.state.routeStack;
+                    console.log(routes);
+                    let lent = 0;
+                    for (let i = 0;i<routes.length;i++){
+                        if (routes[i].component.name === "BulletinList"){
+                            this.props.navigator.popToRoute(routes[i]);
+                        }else {
+                            lent++;
+                        }
                     }
-                }
-                if (lent == routes.length){
-                    this.props.navigator.push({
-                        component: BulletinList,
-                        params: {...this.props}
-                    })
+                    if (lent == routes.length){
+                        this.props.navigator.push({
+                            component: BulletinList,
+                            params: {...this.props}
+                        })
+                    }
+                }else {
+                    storage.setBadge(this.state.alarmCount);
+                    this.timer = setTimeout(()=> {
+                        clearTimeout(this.timer);
+                        DeviceEventEmitter.emit('setBadge', map.extras.type,this.state.alarmCount);
+                    }, 0);
                 }
 
 
             });
-            JPushModule.addOpenNotificationLaunchAppListener((map)=>{
-                const routes = this.props.navigator.state.routeStack;
-                // console.log(routes);
-                let lent = 0;
-                for (let i = 0;i<routes.length;i++){
-                    if (routes[i].component.name === "BulletinList"){
-                        this.props.navigator.popToRoute(routes[i]);
-                    }else {
-                        lent++;
-                    }
-                }
-                if (lent == routes.length){
-                    this.props.navigator.push({
-                        component: BulletinList,
-                        params: {...this.props}
-                    })
-                }
-            })
+
         }
 
 
@@ -587,6 +602,11 @@ export default class Monitor extends Component {
     componentWillUnmount() {
         // 组件卸载后取消定时器，防止多余异常出现
         // this.timer && clearTimeout(this.timer);
+        JPushModule.removeConnectionChangeListener();
+        JPushModule.removeOpenNotificationLaunchAppEventListener();
+        JPushModule.removeReceiveNotificationListener();
+
+
         this.listener.remove();
     }
 }

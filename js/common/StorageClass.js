@@ -65,13 +65,13 @@ export default class LocalStorageClass {
     }
 
     /**
-     *  保存安卓推送条数
-     * @param androidBage
+     *  保存推送条数
+     * @param bage
      */
-    setAndroidBadge(badge){
+    setBadge(badge){
         this.badge = badge;
     }
-    getAndroidBadge(){
+    getBadge(){
         return this.badge;
     }
 

@@ -34,9 +34,7 @@ public class MainActivity extends ReactActivity {
     protected void onResume() {
         super.onResume();
         JPushInterface.onResume(this);
-                Intent intent = new Intent(this,MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
     }
 
     @Override

@@ -74,7 +74,7 @@ export default class Main extends BaseComponent {
         super.componentDidMount();
         this.DeviceEvent = DeviceEventEmitter.addListener('setBadge', (type, badge) => {
             console.log('Main' + type + badge);
-            if (type == 200) {
+            if (type == '200') {
                 //
                 // this.setState({
                 //     homeBadge:badge,

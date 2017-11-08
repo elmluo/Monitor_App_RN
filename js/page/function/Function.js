@@ -12,6 +12,7 @@ import {
     RefreshControl,
     TouchableOpacity,
     Dimensions,
+    Alert,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -34,7 +35,14 @@ export default class Function extends Component {
     _IconView(icon, text, marginTop) {
         let viewWidth = width / 3;
         let iconView = <TouchableOpacity onPress={() => {
-            alert('此功能暂未开放')
+            Alert.alert(
+                '此功能暂未开放',
+                '',
+                [
+                    {text: '确定', onPress: () => {}},
+                ],
+                { cancelable: false }
+            )
         }}>
             <View style={{marginTop: marginTop ? marginTop : 25, width: viewWidth, alignItems: 'center'}}>
                 <Image source={icon}/>
