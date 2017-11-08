@@ -32,7 +32,11 @@ export default class WelcomePage extends Component {
 
     componentDidMount() {
         // SplashScreen.hide();
-
+        // 取本地存储的用户名和密码
+        dataRepository.fetchLocalRepository('user')
+            .then((userInfo) => {
+                storage.setUserInfo(userInfo);
+            });
         new ThemeDao().getTheme().then((data) => {
             this.theme = data;
         });

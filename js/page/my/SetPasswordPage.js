@@ -22,9 +22,9 @@ export default class SetPasswordPage extends React.Component {
         this.state = {
             theme: this.props.theme,
             btnText: '确定',
-            userPassword:'',
-            newPassword:'',
-            twoNewPassword:'',
+            userPassword: '',
+            newPassword: '',
+            twoNewPassword: '',
         };
 
     }
@@ -62,53 +62,48 @@ export default class SetPasswordPage extends React.Component {
         if (this.state.userPassword.length === 0) {
             this.refs.toast.show('*请输入原密码');
         } else {
-
-            if (this.state.newPassword.length === 0){
+            if (this.state.newPassword.length === 0) {
                 this.refs.toast.show('*请输入新密码');
-
-            }else {
-                if (storage.getUserInfo().password !== this.state.userPassword) {
-                    this.refs.toast.show('*与原密码不一致');
+            } else {
+                if (this.state.twoNewPassword.length === 0) {
+                    this.refs.toast.show('*请再输入一次密码');
                 } else {
-                    if (/^[0-9a-zA-Z_]{1,}$/.test(this.state.newPassword) && this.state.newPassword.length > 5 && this.state.newPassword.length < 21) {
-
-                        if (this.state.newPassword !== this.state.twoNewPassword) {
-                            this.refs.toast.show('*两次输入密码不一致');
-
-                        } else {
-                            if (this.state.newPassword === this.state.userPassword) {
-                                this.refs.toast.show('*不能与原密码相同');
-
-                            } else {
-                                dataRepository.fetchNetRepository('POST', url, params)
-                                    .then((response) => {
-                                        if (response.success === true) {
-                                            let userInfo = {
-                                                username:storage.getUserInfo().username,
-                                                password:this.state.newPassword,
-                                            }
-                                            storage.setUserInfo(userInfo);
-                                            dataRepository.saveRepository('user', userInfo)
-                                                .then(() => {
-                                                    console.log('用户信息已经保存');
-                                                    this.props.navigator.pop();
-                                                });
-                                        } else {
-                                            this.refs.toast.show('*设置失败请重试');
-                                        }
-
-                                    });
-                            }
-                        }
-
+                    if (storage.getUserInfo().password !== this.state.userPassword) {
+                        this.refs.toast.show('*与原密码不一致');
                     } else {
-                        this.refs.toast.show('*输入长度为6~20的字母/数字/下划线');
+                        if (/^[0-9a-zA-Z_]{1,}$/.test(this.state.newPassword) && this.state.newPassword.length > 5 && this.state.newPassword.length < 21) {
+                            if (this.state.newPassword !== this.state.twoNewPassword) {
+                                this.refs.toast.show('*两次输入密码不一致');
+                            } else {
+                                if (this.state.newPassword === this.state.userPassword) {
+                                    this.refs.toast.show('*不能与原密码相同');
+                                } else {
+                                    dataRepository.fetchNetRepository('POST', url, params)
+                                        .then((response) => {
+                                            if (response.success === true) {
+                                                let userInfo = {
+                                                    username: storage.getUserInfo().username,
+                                                    password: this.state.newPassword,
+                                                };
+                                                storage.setUserInfo(userInfo);
+                                                dataRepository.saveRepository('user', userInfo)
+                                                    .then(() => {
+                                                        console.log('用户信息已经保存');
+                                                        this.props.navigator.pop();
+                                                    });
+                                            } else {
+                                                this.refs.toast.show('*设置失败请重试');
+                                            }
+                                        });
+                                }
+                            }
+                        } else {
+                            this.refs.toast.show('*输入长度为6~20的字母/数字/下划线');
+                        }
                     }
                 }
             }
-
         }
-
     }
 
     render() {
@@ -175,13 +170,13 @@ export default class SetPasswordPage extends React.Component {
                 </View>
                 <Toast
                     ref="toast"
-                    style={{backgroundColor:'white'}}
+                    style={{backgroundColor: 'white'}}
                     position='bottom'
                     positionValue={80}
                     fadeInDuration={500}
                     fadeOutDuration={1000}
                     opacity={0.8}
-                    textStyle={{color:'red'}}
+                    textStyle={{color: 'red'}}
                 />
                 <View style={{marginTop: 60, width: width, height: 50, backgroundColor: '#FFF'}}>
 
