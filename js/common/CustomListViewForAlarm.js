@@ -62,7 +62,7 @@ export default class CustomListView extends Component {
                 refreshing={this.state.isLoading}
                 onRefresh={() => {
                     // 刷新的时候从第一页重新获取数据
-                    this._onRefresh(true);
+                    this._onRefresh();
                 }}/>
         )
     }
@@ -115,7 +115,7 @@ export default class CustomListView extends Component {
         // 判断是否有推送badge 有就清除
         // console.log('alarmBadge'+storage.getBadge());
         // alert(123);
-        if (storage.getBadge() != 0 && storage.getBadge() != null){
+        if (storage.getBadge() !== 0 && storage.getBadge() !== null){
             this.timer = setTimeout(()=> {
                 clearTimeout(this.timer);
                 storage.setBadge(0);
@@ -222,7 +222,13 @@ export default class CustomListView extends Component {
                     this.props.params[i] = p[i];
                 }
             }
-            this._onRefresh(true);
+
+            // 首次加载告警
+            this.timer = setTimeout(()=> {
+                clearTimeout(this.timer);
+                this._onRefresh();
+            },100);
+
         });
 
         // console.log(this.props.params);

@@ -155,7 +155,7 @@ export default class Alarm extends Component {
         this.timer = setTimeout(() => {
             clearTimeout(this.timer);
             DeviceEventEmitter.emit('custom_listView_alarm', this.state.filter);
-        }, 0);
+        }, 100);
 
         // alert(JSON.stringify(this.state.filter))
         let statusBar = {
