@@ -67,8 +67,13 @@ export default class Login extends Component {
                     // console.log(storage.getUserInfo());
                     if (response.data.classes === '代理商用户') {
                         // alert('代理商');
+                        let companyData = {
+                            userId:response.data.userId,
+                            agencyId:response.data.companyId,
+                        }
+                        storage.setCompanyData(companyData);
 
-                        this._pushToCompanyPage();
+                        this._pushToCompanyPage(response.data.userId,response.data.companyId);
 
                     } else {
                         // alert('普通用户');
@@ -131,11 +136,6 @@ export default class Login extends Component {
                     }
 
                 } else {
-                    // console.log('获取数据失败')
-                    // alert(JSON.stringify(response.info));
-                    // alert(123456);
-
-
                     // 显示提示框
                     Alert.alert(
                         response.info,
@@ -173,6 +173,7 @@ export default class Login extends Component {
                 console.log("Set alias failed");
             });
         }
+        storage.setIsClasses(false);
         this._pushToMainPage();
 
 
@@ -196,11 +197,13 @@ export default class Login extends Component {
      * 登录到企业列表
      * @private
      */
-    _pushToCompanyPage() {
+    _pushToCompanyPage(userId,agencyId) {
         this.props.navigator.push({
             component: CompanyPage,
             params: {
                 theme: this.theme,
+                userId:userId,
+                agencyId:agencyId,
                 ...this.props
             }
         });
