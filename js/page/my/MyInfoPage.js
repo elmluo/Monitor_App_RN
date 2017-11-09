@@ -12,7 +12,8 @@ import {
     ScrollView,
     RefreshControl,
     TouchableOpacity,
-    InteractionManager
+    InteractionManager,
+    Dimensions,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -21,9 +22,10 @@ import LoginPage from '../Login'
 import SetPasswordPage from '../my/SetPasswordPage'
 import Storage from '../../common/StorageClass'
 import JPushModule from 'jpush-react-native';
+import CompanyListPage from '../my/CompanyListPage'
 
 let storage = new Storage();
-
+let {width,height} = Dimensions.get('window');
 export const MORE_INFO = {
     User_Info: '个人信息',
     User_Name: '用户名',
@@ -172,22 +174,7 @@ export default class MyInfoPage extends Component {
                         [
                             {text: '取消', onPress: () => console.log('Foo Pressed!')},
                             {text: '退出', onPress:() => {
-                            ///退出登录操作
-                               let alias = storage.getLoginInfo().userId;
-                                // if (alias !== undefined) {
-                                //     JPushModule.deleteAlias(alias, () => {
-                                //         console.log("Delete alias succeed");
-                                //     }, () => {
-                                //         console.log("Delete alias failed");
-                                //     });
-                                // }
-                             this.dataRepository.removeLocalRepository('user');
-                             this.dataRepository.removeLocalRepository('/app/v2/user/info/get')
-                                 .then(()=> {
-
-                                     this._pushToLogin();
-
-                                 });
+                            this._clearData();
 
                     }},
                         ]
@@ -198,6 +185,32 @@ export default class MyInfoPage extends Component {
                 </TouchableOpacity>
             </View>
         )
+    }
+    //清空缓存数据
+    _clearData(){
+        this.dataRepository.removeLocalRepository('user');
+        this.dataRepository.removeLocalRepository('/app/v2/user/info/get')
+            .then(()=> {
+                //删除注册的推送
+                JPushModule.deleteAlias((result)=>{
+                    // console.log('清除成功');
+                });
+                this._pushToLogin();
+
+            });
+    }
+
+    _postCompanyListPage(){
+        let companyData = storage.getCompanyData();
+        this.props.navigator.push({
+            component: CompanyListPage,
+            params: {
+                theme: this.theme,
+                userId:companyData.userId,
+                agencyId:companyData.agencyId,
+                ...this.props
+            },
+        })
     }
 
     render() {
@@ -213,6 +226,7 @@ export default class MyInfoPage extends Component {
                 leftButton={this._renderLeftButton()}
                 rightButton={this._renderRightButton()}
             />;
+        let isClasses =storage.getIsClasses();
         return (
             <View style={styles.container}>
                 {navigationBar}
@@ -240,7 +254,7 @@ export default class MyInfoPage extends Component {
                     <View style={{flex: 1}}>
                         {/*{个人信息板块}*/}
                         <View style={{position: 'relative', top: 6}}>
-                            {this.getItem(null,require('../../../res/Image/Login/ic_user_hl.png'),'个人信息',null,null)}
+                            {this.getItem(null,require('../../../res/Image/Login/ic_user_hl.png'),'个人信息',null,' ')}
                             <View style={styles.line}/>
                             {this.getItem(null, null,'用户名', null, this.state.personInfo?this.state.personInfo.name:'--')}
                             <View style={styles.line}/>
@@ -253,13 +267,28 @@ export default class MyInfoPage extends Component {
 
                         {/*{企业信息板块}*/}
                         <View style={{position: 'relative', marginTop: 10}}>
-                            {this.getItem(null,require('../../../res/Image/Login/ic_company_hl.png'),'企业信息',null,null)}
+                            {this.getItem(null,require('../../../res/Image/Login/ic_company_hl.png'),'企业信息',null,'  ')}
                             <View style={styles.line}/>
                             {this.getItem(null, null,'企业名称', null, this.state.personCompany?this.state.personCompany.name:'--')}
                             <View style={styles.line}/>
                             {this.getItem(null, null,'联系邮箱', null, this.state.personCompany?this.state.personCompany.contactsEmail:'--')}
                         </View>
+                        <View style={{position: 'relative', marginTop: 20}}>
+                            {isClasses?<TouchableOpacity onPress={() => {
+                                this._postCompanyListPage();
+                            }}>
+                                <View style = {{backgroundColor:'rgb(60,127,252)',left:16,width:width-32,height:44,borderRadius:22,alignItems:'center',justifyContent:'center'}}>
+                                    <Text style = {{fontSize:17,textAlign:'center',color:'white'}}>切换企业</Text>
+                                </View>
+
+                            </TouchableOpacity>:<View></View>}
+
+                        </View>
+
+
                     </View>
+
+
                 </ScrollView>
 
             </View>
@@ -325,6 +354,7 @@ const styles = StyleSheet.create({
         paddingLeft: 6,
         paddingRight: 6,
         borderRadius: 3,
+
     },
     tier: {
         fontSize: 12,

@@ -74,5 +74,25 @@ export default class LocalStorageClass {
     getBadge(){
         return this.badge;
     }
+    /**
+     * 判断是否是代理商用户
+     * @param isClasses
+     */
+    setIsClasses(isClasses){
+        this.isClasses = isClasses;
+    }
+    getIsClasses(){
+        return this.isClasses;
+    }
+
+    /**
+     * 保存userId与agencyId 切换代理商用户时用到
+     */
+    setCompanyData(companyData){
+        this.companyData = companyData;
+    }
+    getCompanyData(){
+        return this.companyData;
+    }
 
 }

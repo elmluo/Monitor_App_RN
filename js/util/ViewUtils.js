@@ -86,7 +86,43 @@ export default class ViewUtils {
             </TouchableHighlight>
         )
     }
+    /**
+     * 获取代理商cell
+     * @param leftIcon 左侧图标
+     * @param text 显示的文本
+     * @param expandableIco 右侧图标
+     * @param rightText 显示右侧文本
+     * @return {XML}
+     */
+    static getCompanyCellItem(leftIcon, text, expandableIco,rightText) {
+        return (
+                <View style={[styles.cell_item_container]}>
+                    <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                        {
+                            leftIcon ?
+                                <Image source={leftIcon}
+                                   resizeMode='stretch'
+                                   style={{opacity: 1, width: 16, height: 16, marginRight: 14}}/>:
+                                <View></View>
 
+
+                        }
+                        <Text style = {{color:'rgb(126,126,126)',fontSize:14,textAlign:'left'}}>{text}</Text>
+                    </View>
+                    <View style={{alignItems: 'center', flexDirection: 'row'}}>
+                        {expandableIco?
+                            <Image source={expandableIco}
+                                   style={{
+                                       height: 22,
+                                       width: 22,
+                                       opacity: 1
+                                   }}/> :
+                            <Text style = {{color:'rgb(68,68,68)',fontSize:14}}>{rightText?rightText:'--'}</Text>
+                        }
+                    </View>
+                </View>
+        )
+    }
     static getLeftButton(callBack) {
         return <TouchableOpacity
             style={{padding: 8}}

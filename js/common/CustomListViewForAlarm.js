@@ -114,7 +114,7 @@ export default class CustomListView extends Component {
         params.page = this.page;
         //判断是否有推送badge 有就清除
         console.log('alarmBadge'+storage.getBadge());
-        alert(123);
+        // alert(123);
         if (storage.getBadge() != 0 && storage.getBadge() != null){
             this.timer = setTimeout(()=> {
                 clearTimeout(this.timer);

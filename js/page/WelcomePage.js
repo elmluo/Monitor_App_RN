@@ -10,6 +10,7 @@ import {
     Platform,
     ImageBackground,
     Dimensions,
+    Alert
 } from 'react-native'
 import Main from './Main'
 import Login from './Login'
@@ -17,6 +18,7 @@ import ThemeDao from '../expand/dao/ThemeDao'
 import JPushModule from 'jpush-react-native';
 import DataRepository from '../expand/dao/Data'
 import Storage from '../common/StorageClass'
+import CompanyPage from './my/CompanyListPage'
 
 let storage = new Storage();
 let {width, height} = Dimensions.get('window');
@@ -153,18 +155,66 @@ export default class WelcomePage extends Component {
                 username: userData.username,
                 password: userData.password
             };
+            //进行登录
+            console.log(userData+'登录信息');
             dataRepository.fetchNetRepository('POST', url, params)
                 .then((response) => {
+                    console.log(response+'登录完成');
+
                     if (response['success'] === true) {
-                        this._JPushSetAlias();
+
+
+
+                        //根据登录返回 classes 判断是代理商还是普通用户
+                        if (response.data.classes === '代理商用户') {
+                            // alert('代理商');
+                            let companyData = {
+                                userId:response.data.userId,
+                                agencyId:response.data.companyId,
+                            }
+
+                            //代理商存储userId与agecyId 以便用户切换企业时使用
+                            storage.setCompanyData(companyData);
+                            this._pushToCompanyPage(response.data.userId,response.data.companyId);
+
+                        } else {
+                            this._JPushSetAlias();
+                        }
 
                     } else {
-                        console.log('response.info')
+                        // 显示提示框
+                        Alert.alert(
+                            response.info,
+                            '',
+                            [
+                                {text: '确定', onPress: () => {}},
+                            ],
+                            { cancelable: false }
+                        )
                     }
+
                 })
                 .catch(error => {
                     console.log(error);
+                    alert('获取数据失败');
+
                 })
+        });
+    }
+
+    /**
+     * 登录到企业列表
+     * @private
+     */
+    _pushToCompanyPage(userId,agencyId) {
+        this.props.navigator.resetTo({
+            component: CompanyPage,
+            params: {
+                theme: this.theme,
+                userId:userId,
+                agencyId:agencyId,
+                ...this.props
+            }
         });
     }
 
@@ -178,15 +228,12 @@ export default class WelcomePage extends Component {
         })
     }
 
-
+    //从缓存中取userId 进行推送注册并跳转主页
     _JPushSetAlias() {
 
         dataRepository.fetchLocalRepository('/app/v2/user/login').then((userData) => {
 
             let alias = userData.userId;
-            if(Platform.OS == 'android'){
-                JPushModule.initPush();
-            }
             if (alias !== undefined) {
                 JPushModule.setAlias(alias, () => {
                     console.log("Set alias succeed"+ alias);
@@ -195,9 +242,9 @@ export default class WelcomePage extends Component {
                 });
 
             }
+            this._pushToMainPage();
 
         });
-        this._pushToMainPage();
 
 
     }
