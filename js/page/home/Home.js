@@ -300,7 +300,6 @@ export default class Monitor extends Component {
                             })
                         }}/>
                 </View>
-
             )
         } else {
             return null
@@ -317,9 +316,11 @@ export default class Monitor extends Component {
         let sum = onlineCount + outLintCount;
         // console.log(sum);
         let onlineRateStyle;
+        // alert(height);
         if (height < 667) {
             onlineRateStyle = {
-                flexDirection: 'row-reverse',
+                // flexDirection: 'row-reverse',
+                flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 position: 'absolute',
@@ -369,6 +370,7 @@ export default class Monitor extends Component {
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => {
+                            DeviceEventEmitter.emit('turn_to_firstPage');
                             this.props.routerChange('tb_alarm', {level: ['1']});
                         }}>
                         <HomeAlarmCell count={this.state.levelAlarm[0].count}
@@ -379,6 +381,7 @@ export default class Monitor extends Component {
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => {
+                            DeviceEventEmitter.emit('turn_to_firstPage');
                             this.props.routerChange('tb_alarm', {level: ['2']});
                         }}>
                         <HomeAlarmCell count={this.state.levelAlarm[1].count}
@@ -389,6 +392,7 @@ export default class Monitor extends Component {
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => {
+                            DeviceEventEmitter.emit('turn_to_firstPage');
                             this.props.routerChange('tb_alarm', {level: ['3']});
                         }}>
                         <HomeAlarmCell count={this.state.levelAlarm[2].count}
@@ -399,6 +403,7 @@ export default class Monitor extends Component {
                     <TouchableOpacity
                         activeOpacity={1}
                         onPress={() => {
+                            DeviceEventEmitter.emit('turn_to_firstPage');
                             this.props.routerChange('tb_alarm', {level: ['4']});
                         }}>
                         <HomeAlarmCell count={this.state.levelAlarm[3].count}
@@ -642,7 +647,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
     onlineRateText: {
-        width: 100,
+        width: 130 ,
         justifyContent: 'center',
         marginLeft: 20,
     },

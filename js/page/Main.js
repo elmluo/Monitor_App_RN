@@ -139,16 +139,20 @@ export default class Main extends BaseComponent {
         })
     }
 
-    _renderTab(Component, selectedTab, title, renderIcon, badge) {
+    _renderTab(Component, selectedTab, title, renderIcon,renderSelectedIcon, badge) {
         return (
             <TabNavigator.Item
                 selected={this.state.selectedTab === selectedTab}
                 selectedTitleStyle={this.state.theme.styles.selectedTitleStyle}
                 title={title}
-                renderIcon={() => <Image style={styles.image}
-                                         source={renderIcon}/>}
-                renderSelectedIcon={() => <Image style={[styles.image, this.state.theme.styles.tabBarSelectedIcon]}
-                                                 source={renderIcon}/>}
+                titleStyle={styles.titleStyle}
+                renderIcon={() => <Image
+                    style={styles.image}
+                    source={renderIcon}/>}
+                renderSelectedIcon={() => <Image
+                    // style={[styles.image, this.state.theme.styles.tabBarSelectedIcon]}
+                    style={[styles.image]}
+                    source={renderSelectedIcon}/>}
                 renderBadge={() => {
                     let textData = badge;
                     if (textData) {
@@ -187,15 +191,16 @@ export default class Main extends BaseComponent {
     render() {
         return (
             <View style={styles.container}>
-                <TabNavigator>
-                    {this._renderTab(Home, 'tb_home', '首页', require('../../res/Image/Tab/tab_home_nor.png'), this.state.homeBadge)}
-                    {this._renderTab(Monitor, 'tb_monitor', '监控', require('../../res/Image/Tab/tab_monitor_nor.png'), null)}
-                    {this._renderTab(Alarm, 'tb_alarm', '告警', require('../../res/Image/Tab/tab_alarm_nor.png'), this.state.alarmBadge)}
-                    {this._renderTab(Function, 'tb_function', '功能', require('../../res/Image/Tab/tab_subsystem_nor.png'), null)}
-                    {/*{this._renderTab(PopularPage,'tb_popular','告警',require('../../res/images/ic_polular.png'))}*/}
-                    {/*{this._renderTab(TrendingPage,'tb_trending','趋势',require('../../res/images/ic_trending.png'))}*/}
-                    {/*{this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'))}*/}
-                    {this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'))}
+                <TabNavigator
+                    tabBarStyle={styles.tabBarStyle}>
+                    {this._renderTab(Home, 'tb_home', '首页', require('../../res/Image/Tab/tab_home_nor.png'),require('../../res/Image/Tab/tab_home_hl.png'), this.state.homeBadge)}
+                    {this._renderTab(Monitor, 'tb_monitor', '监控', require('../../res/Image/Tab/tab_monitor_nor.png'), require('../../res/Image/Tab/tab_monitor_hl.png'), null)}
+                    {this._renderTab(Alarm, 'tb_alarm', '告警', require('../../res/Image/Tab/tab_alarm_nor.png'), require('../../res/Image/Tab/tab_alarm_hl.png'), this.state.alarmBadge)}
+                    {this._renderTab(Function, 'tb_function', '功能', require('../../res/Image/Tab/tab_subsystem_nor.png'), require('../../res/Image/Tab/tab_subsystem_hl.png'), null)}
+                    {/*{this._renderTab(PopularPage,'tb_popular','告警',require('../../res/images/ic_polular.png'),require('../../res/images/ic_polular.png'))}*/}
+                    {/*{this._renderTab(TrendingPage,'tb_trending','趋势',require('../../res/images/ic_trending.png'), require('../../res/images/ic_trending.png'))}*/}
+                    {/*{this._renderTab(FavoritePage,'tb_favorite','收藏',require('../../res/images/ic_favorite.png'), require('../../res/images/ic_favorite.png'))}*/}
+                    {/*{this._renderTab(MyPage,'tb_my','我的',require('../../res/images/ic_my.png'),require('../../res/images/ic_my.png'))}*/}
                 </TabNavigator>
                 <Toast ref={(toast) => this.toast = toast}/>
             </View>
@@ -207,9 +212,17 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    tabBarStyle: {
+        backgroundColor: '#ffffff',
+    },
+    titleStyle: {
+        fontSize: 10,
+    },
     image: {
-        height: 22,
-        width: 22,
+        position: 'relative',
+        top: 5,
+        height: 30,
+        width: 30,
     },
     badge: {
         flex: 1,

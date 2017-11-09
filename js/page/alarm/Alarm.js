@@ -26,7 +26,8 @@ export default class Alarm extends Component {
         this.dataRepository = new DataRepository();
         this.state = {
             theme: this.props.theme,
-            initialPage: 1,
+            initialPage: 0,
+            page: 0,
             isHisAlarm: true,
             focusPage: 1,
             alarmPage: 1,
@@ -38,6 +39,19 @@ export default class Alarm extends Component {
                 siteId: []
             }
         };
+    }
+
+    componentDidMount() {
+        // 监听，让tab切换到第一个
+        this.listener = DeviceEventEmitter.addListener('turn_to_firstPage',()=> {
+            this.setState({
+                page: 0,
+            })
+        })
+    }
+
+    componentWillUnmount() {
+        this.listener.remove();
     }
 
     _renderRightButton() {
@@ -158,11 +172,18 @@ export default class Alarm extends Component {
         let content =
             <ScrollableTabView
                 ref='scrollableTabView'
+                tabBarPosition={'top'}
                 tabBarUnderlineStyle={{backgroundColor: 'white', height: 2}}
                 tabBarInactiveTextColor='mintcream'
                 tabBarActiveTextColor='#FFFFFF'
                 tabBarBackgroundColor={this.state.theme.themeColor}
-                initialPage={0}>
+                initialPage={0}
+                onChangeTab={(obj)=> {
+                    // 切换页面触发事件
+                    // obj={i: 2, ref: {…}, from: 1}
+                    this.state.page = obj.i;
+                }}
+                page={this.state.page}>
                 <AlarmTab tabLabel='实时告警'
                           {...this.props}
                           params={{...this._this_Params(1, true), ...this.state.filter}}
