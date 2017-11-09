@@ -1,3 +1,15 @@
+/**
+ *------------------- 自定义列表组件：-------------------------
+ * 传入属性(this.props.)
+ *      title       [string]    搜索placeholder
+ *      hisArr      [string]    本地存储AsyncStorage的key
+ *      rul         [string]    请求地址
+ *      params      [object]    post请求参数
+ *      renderRow   [Function]  原生listView组件渲染列表cell内容
+ *      ...this.props  基于来自于父组件之外的更高层级， 的属性
+ *----------------------------------------------------------
+ */
+
 import React from 'react';
 import {
     StyleSheet,
@@ -9,29 +21,39 @@ import {
     StatusBar,
     Platform,
 } from 'react-native';
-
-import Storage from '../common/StorageClass'
+import DataRepository from '../expand/dao/Data';
+import Storage from '../common/StorageClass';
 import Searchbox from "../common/Searchbox";
 import Toast from 'react-native-easy-toast';
 import SearchResult from './SearchResultPage'
 import BackPressComponent from '../common/BackPressComponent'
 
 let storage = new Storage();
+let dataRepository = new DataRepository();
 
 export default class ComponentName extends React.Component {
-
     constructor(props) {
         super(props);
         this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
         this.state = {
             theme: this.props.theme,
-            hisArr: storage.getAllSearchHistory(),
+            hisArr: []
         };
     }
 
     componentDidMount() {
         // android物理返回监听事件
         this.backPress.componentDidMount();
+
+        // 获取AsyncStorage本地数据
+        dataRepository.fetchLocalRepository(this.props.hisArr).then((result)=> {
+            if (result) {
+                this.setState({hisArr: result})
+            } else {
+                this.setState({hisArr: []})
+            }
+            console.log(result)
+        });
     }
 
     componentWillUnmount() {
@@ -50,31 +72,29 @@ export default class ComponentName extends React.Component {
         return true;
     }
 
+    /**
+     * 保存字段到AsyncStorage
+     */
     _addSearchHistory(item) {
-        // 保存到storage中
-        storage.addSearchHistory(item);
+        this.state.hisArr.push(item);
+        dataRepository.saveRepository(this.props.hisArr, this.state.hisArr);
         // 更新视图
-        this.setState({
-            hisArr: storage.getAllSearchHistory()
-        })
+        this.setState({})
     }
 
     _deleteHistoryButton(item) {
-        // 删除storage中的对应项
-        storage.deleteSearchHistory(item);
+        this.state.hisArr.splice(this.hisArr.indexOf(item), 1);
+        dataRepository.saveRepository(this.props.hisArr, this.state.hisArr);
         // 更新视图
-        this.setState({
-            hisArr: storage.getAllSearchHistory()
-        })
+        this.setState({})
     }
 
     _deleteAllHistory() {
         // 删除storage中所有项
-        storage.deleteAllSearchHistory();
+        this.state.hisArr = [];
+        dataRepository.saveRepository(this.props.hisArr, this.state.hisArr);
         // 更新试图
-        this.setState({
-            hisArr: storage.getAllSearchHistory()
-        })
+        this.setState({})
     }
 
     _pushToSearchResult(searchText) {
@@ -127,9 +147,9 @@ export default class ComponentName extends React.Component {
                     <ScrollView>
                         <View style={styles.searchHistoryContent}>
                             {
-                                this.state.hisArr.map((item) => {
+                                this.state.hisArr.map((item, index, arr) => {
                                     // return this._renderHistoryButton(item)
-                                    return <View style={styles.historyButton}>
+                                    return <View key={index} style={styles.historyButton}>
                                         <TouchableOpacity
                                             onPress={() => {
                                                 // 点击记录按钮，搜索点击内容

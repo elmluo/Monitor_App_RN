@@ -51,7 +51,6 @@ export default class DataRepository {
                     reject(error);
                     console.log(error);
                     alert('获取数据出错');
-                    console.log(params,url,3444444444)
                 })
             })
         }
