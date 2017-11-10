@@ -15,7 +15,7 @@ import Utils from '../../util/Utils'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
 import Toast from 'react-native-easy-toast'
-
+import LoadingView from '../../common/LoadingView'
 let storage = new Storage();
 /**
  * 封装一个单独的组件类，
@@ -29,6 +29,7 @@ export default class AlarmTab extends Component {
         this.dataRepository = new DataRepository();
         this.state = {
             isLoading: false,
+            visible:false,
             dataSource: new ListView.DataSource({
                 rowHasChanged: (r1, r2) => r1 !== r2
             }),
@@ -37,7 +38,7 @@ export default class AlarmTab extends Component {
 
     _postSelectedAlarm(rowData) {
         this.setState({
-            isLoading: true
+            visible:true,
         });
         let url = '/app/v2/alarm/focus/change';
         let params = {
@@ -52,6 +53,9 @@ export default class AlarmTab extends Component {
         // alert(JSON.stringify(params));
         this.dataRepository.fetchNetRepository('POST', url, params)
             .then(result => {
+                this.setState({
+                    visible:false,
+                });
                 if (result.success === true) {
                     this.setState({
                         url: this.props.url,
@@ -190,6 +194,7 @@ export default class AlarmTab extends Component {
         return (
             <View style={styles.container}>
                 {content}
+                <LoadingView showLoading={ this.state.visible} />
                 <Toast
                     ref="toast"
                     style={{backgroundColor: 'rgba(0,0,0,0.3)'}}

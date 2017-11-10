@@ -27,6 +27,7 @@ import BulletinSlideBar from './BulletinSlideBar'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
 import JPushModule from 'jpush-react-native';
+import LoadingView from '../../common/LoadingView'
 
 let storage = new Storage();
 let dataRepository = new DataRepository();
@@ -40,6 +41,8 @@ export default class Monitor extends Component {
             noticeCount: null,
             isShowNoticeBar: false,
             alarmCount:0,
+            visible:false,
+            visibleCount:0,
             fsuCount: [     // 初始化的数据结构和操作的数据结构统一
                 {item: "在线", count: 2},
                 {item: "离线", count: 0}
@@ -243,6 +246,13 @@ export default class Monitor extends Component {
      * @private
      */
     _refreshData() {
+        //显示加载动画
+        if (this.state.visibleCount === 0){
+            this.setState({
+                visible:true,
+            })
+        }
+
         this._getStamp().then((stamp) => {
             // 三个请求操作都是promise操作的话，用Promise.all()
             Promise.all([
@@ -267,7 +277,9 @@ export default class Monitor extends Component {
                     fsuCount: results[0].data,
                     // fsuWeekCount: results[1].data,
                     levelAlarm: results[2].data,
-                    allCount: allCount
+                    allCount: allCount,
+                    visible:false,
+                    visibleCount:1,
                 })
             });
             // this._getFsuCount(stamp);
@@ -465,7 +477,7 @@ export default class Monitor extends Component {
             <View style={styles.container}>
                 {navigationBar}
                 {content}
-
+                <LoadingView showLoading={ this.state.visible} />
             </View>
         )
     }
@@ -542,8 +554,6 @@ export default class Monitor extends Component {
                         DeviceEventEmitter.emit('setBadge', message.extras.type,this.state.alarmCount);
                     }, 0);
                 }
-
-
             });
 
             this.listener = DeviceEventEmitter.addListener('clearAndroidBadge', () => {

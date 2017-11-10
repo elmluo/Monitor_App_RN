@@ -91,7 +91,7 @@ export default class SetPasswordPage extends React.Component {
                     this.refs.toast.show('*请再输入一次密码');
                 } else {
                     if (storage.getUserInfo().password !== this.state.userPassword) {
-                        this.refs.toast.show('*与原密码不一致');
+                        this.refs.toast.show('*原密码输入错误');
                     } else {
                         if (/^[0-9a-zA-Z_]{1,}$/.test(this.state.newPassword) && this.state.newPassword.length > 5 && this.state.newPassword.length < 21) {
                             if (this.state.newPassword !== this.state.twoNewPassword) {

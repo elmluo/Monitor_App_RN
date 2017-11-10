@@ -20,6 +20,7 @@ import Utils from '../../util/Utils';
 import SiteDetailSignalAI from './SiteDetailSignalAI'
 import BackPressComponent from '../../common/BackPressComponent'
 import Toast from 'react-native-easy-toast'
+import LoadingView from '../../common/LoadingView'
 
 
 let {width, height} = Dimensions.get('window');
@@ -33,6 +34,7 @@ export default class SignalList extends React.Component {
         this.state = {
             theme: this.props.theme,
             signalList: [],
+            visible:false,
         };
     }
 
@@ -81,9 +83,15 @@ export default class SignalList extends React.Component {
             stamp: storage.getLoginInfo().stamp,
             deviceId: this.props.deviceInfo.deviceId,
         };
+        this.setState({
+            visible:true,
+        })
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             // console.log(result);
             // dataModel: name, signalId, techType, threshold, time, unit, value
+            this.setState({
+                visible:false,
+            })
             if (result.success === true) {
                 this.setState({
                     signalList: result.data,
@@ -267,6 +275,7 @@ export default class SignalList extends React.Component {
             <View style={styles.container}>
                 {navigationBar}
                 {scrollView}
+                <LoadingView showLoading={ this.state.visible} />
                 <Toast
                     ref="toast"
                     style={{backgroundColor: 'rgba(0,0,0,0.3)'}}
