@@ -7,7 +7,8 @@ import {
     Alert,
     TouchableOpacity,
     Image,
-    DeviceEventEmitter
+    DeviceEventEmitter,
+    Dimensions,
 } from 'react-native';
 import AlarmDetail from './AlarmDetail'
 import CustomListViewForAlarm from '../../common/CustomListViewForAlarm'
@@ -16,7 +17,9 @@ import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
 import Toast from 'react-native-easy-toast'
 
+let {width, height} = Dimensions.get('window');
 let storage = new Storage();
+
 /**
  * 封装一个单独的组件类，
  * 充当scrollableTabView的tab页面
@@ -104,14 +107,14 @@ export default class AlarmTab extends Component {
                                 alignItems: 'center',
                                 marginBottom: 10
                             }}>
-                                <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
+                                <Text numberOfLines={1} style={{color: '#444444', fontSize: 16, width: width* 0.4}}>{rowData.name}</Text>
                                 <Text style={{
                                     color: '#7E7E7E',
                                     fontSize: 12
                                 }}>{Utils.FormatTime(new Date(rowData.reportTime), 'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                             <View>
-                                <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
+                                <Text numberOfLines={1} style={{color: '#7E7E7E', fontSize: 14, width: width* 0.4}}>{rowData.siteName}</Text>
                             </View>
                             <View>
                                 <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.deviceName}</Text>

@@ -7,10 +7,12 @@ import {
     Alert,
     Image,
     TouchableOpacity,
+    Dimensions,
 } from 'react-native';
 
 import NavigationBar from '../../common/NavigationBar'
 import BackPressComponent from '../../common/BackPressComponent'
+let {width, height} = Dimensions.get('window');
 
 export default class FsuInfo extends React.Component {
     constructor(props) {
@@ -69,7 +71,7 @@ export default class FsuInfo extends React.Component {
 
                 <View style={styles.fsuInfoCell}>
                     <Text style={styles.fsuInfoCellKeyText}>站点名称</Text>
-                    <Text style={styles.fsuInfoCellValueText}>{this.props.siteInfo.name}</Text>
+                    <Text numberOfLines={2} style={[styles.fsuInfoCellValueText, {width: width* 0.4, textAlign: 'right'}]}>{this.props.siteInfo.name}</Text>
                 </View>
 
                 <View style={styles.fsuInfoCell}>
@@ -150,7 +152,7 @@ let styles = new StyleSheet.create({
     },
     fsuInfoCellValueText: {
         fontSize: 14,
-        color: '#444444'
+        color: '#444444',
     },
     onlineState: {
         backgroundColor: '#949494',

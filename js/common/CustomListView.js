@@ -202,6 +202,12 @@ export default class CustomListView extends Component {
         this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
             this._onRefresh(true);
         });
+        // 组件加载完毕，监听事件-重新加载数据。
+        this.listener = DeviceEventEmitter.addListener('custom_listView_update', () => {
+            this.setState({});
+            this.state.dataSource.cloneWithRows(this._data)
+            alert('custom_listView_update')
+        });
 
         // console.log(this.props.params);
 

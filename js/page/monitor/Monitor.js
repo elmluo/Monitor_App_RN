@@ -56,7 +56,8 @@ export default class Monitor extends Component {
      */
     _renderRow(rowData, sectionID, rowID, hightlightRow) {
         let fsuOnline =
-            rowData.fsuOnline ? <View style={[styles.onlineState, {backgroundColor: '#3C7FFC'}]}><Text style={styles.operationStateText}>在线</Text></View>
+            rowData.fsuOnline ? <View style={[styles.onlineState, {backgroundColor: '#3C7FFC'}]}><Text
+                    style={styles.operationStateText}>在线</Text></View>
                 : <View style={styles.onlineState}><Text style={styles.operationStateText}>离线</Text></View>;
 
         let operationState;
@@ -81,7 +82,7 @@ export default class Monitor extends Component {
                 }}>
                 <View style={styles.row}>
                     <View style={styles.rowTop}>
-                        <Text style={styles.name}>{rowData.name}</Text>
+                        <Text numberOfLines={1} style={styles.name}>{rowData.name}</Text>
                         <View style={styles.rowTopRight}>
                             <Text style={styles.rowTopRightText}>设备数量：</Text>
                             <Text style={styles.rowTopRightText}>{rowData.deviceCount ? rowData.deviceCount : 0}</Text>
@@ -124,6 +125,7 @@ export default class Monitor extends Component {
             }
         });
     }
+
     render() {
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
@@ -201,7 +203,8 @@ const styles = StyleSheet.create({
     },
     name: {
         color: '#444444',
-        fontSize: 14
+        fontSize: 14,
+        width: width * 0.55
     },
     rowTopRightText: {
         color: '#7E7E7E',
