@@ -50,7 +50,7 @@ export default class SortKeyPage extends Component {
         this.languageDao.fetch().then((data)=> {
             this.getCheckedItems(data);
         }).catch((error)=> {
-            console.log(error);
+            // console.log(error);
         });
     }
 

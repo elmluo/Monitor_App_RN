@@ -481,10 +481,10 @@ export default class Monitor extends Component {
 
 
         if (Platform.OS === 'ios'){
-            console.log("iOS : ");
+            // console.log("iOS : ");
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                console.log("获取推送消息 " + JSON.stringify(message));
+                // console.log("获取推送消息 " + JSON.stringify(message));
                 storage.setBadge(message.aps.badge);
                 this.timer = setTimeout(()=> {
                     clearTimeout(this.timer);
@@ -495,10 +495,10 @@ export default class Monitor extends Component {
             //点击跳转
 
             JPushModule.addReceiveOpenNotificationListener((map) => {
-                console.log("点击 " + JSON.stringify(map));
+                // console.log("点击 " + JSON.stringify(map));
                 if (map.type === '200'){
                     const routes = this.props.navigator.state.routeStack;
-                    console.log(routes);
+                    // console.log(routes);
                     let lent = 0;
                     for (let i = 0;i<routes.length;i++){
                         if (routes[i].component.name === "BulletinList"){
@@ -532,8 +532,8 @@ export default class Monitor extends Component {
             });
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                console.log("获取推送消息 " + JSON.stringify(message));
-                console.log('告警安卓badge'+this.state.alarmCount);
+                // console.log("获取推送消息 " + JSON.stringify(message));
+                // console.log('告警安卓badge'+this.state.alarmCount);
                 if(JSON.parse(message.extras).type !== '200'){
                     this.state.alarmCount++;
                     storage.setBadge(this.state.alarmCount);
@@ -554,13 +554,13 @@ export default class Monitor extends Component {
 
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
-                console.log("点击 " + JSON.stringify(map));
+                // console.log("点击 " + JSON.stringify(map));
                 const routes = this.props.navigator.state.routeStack;
                 if (JSON.parse(map.extras).type === '200'){
                     //跳转详情页面 清除this.state.alarmCount
                     this.state.alarmCount = 0;
                     const routes = this.props.navigator.state.routeStack;
-                    console.log(routes);
+                    // console.log(routes);
                     let lent = 0;
                     for (let i = 0;i<routes.length;i++){
                         if (routes[i].component.name === "BulletinList"){

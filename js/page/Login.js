@@ -57,7 +57,7 @@ export default class Login extends Component {
                     // 保存用户登录信息
                     dataRepository.saveRepository('user', params)
                         .then(() => {
-                            console.log('用户信息已经保存');
+                            // console.log('用户信息已经保存');
 
                         });
                     //保存用户登录信息
@@ -121,13 +121,13 @@ export default class Login extends Component {
                                                         alert(error)
                                                     });
                                             } else {
-                                                console.log('获取数据失败')
+                                                // console.log('获取数据失败')
 
                                             }
                                         });
 
                                 } else {
-                                    console.log('获取数据失败')
+                                    // console.log('获取数据失败')
                                 }
                             })
                             .catch(error => {
@@ -151,7 +151,7 @@ export default class Login extends Component {
 
             })
             .catch(error => {
-                console.log(error);
+                // console.log(error);
                 alert('获取数据失败');
 
             })
@@ -168,9 +168,9 @@ export default class Login extends Component {
         // alert(JSON.stringify(alias));
         if (alias !== undefined) {
             JPushModule.setAlias(alias, () => {
-                console.log("Set alias succeed", alias);
+                // console.log("Set alias succeed", alias);
             }, () => {
-                console.log("Set alias failed");
+                // console.log("Set alias failed");
             });
         }
         storage.setIsClasses(false);

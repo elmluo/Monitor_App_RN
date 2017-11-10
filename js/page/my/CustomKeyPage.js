@@ -50,7 +50,7 @@ export default class CustomKeyPage extends Component {
                 dataArray: data
             })
         }).catch((error)=> {
-            console.log(error);
+            // console.log(error);
         });
     }
 

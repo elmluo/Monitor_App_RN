@@ -49,7 +49,7 @@ export default class SetUpServer extends React.Component {
 
         let url = IP+'/app/timestamp';
         //进行登录
-        console.log('进入设置IP'+url);
+        // console.log('进入设置IP'+url);
 
         this.fetchNetRepository('POST', url, null)
             .then((response) => {
@@ -70,7 +70,7 @@ export default class SetUpServer extends React.Component {
             });
     }
     fetchNetRepository(method, url, params) {
-        console.log(url);
+        // console.log(url);
         return new Promise((resolve, reject) => {
             fetch(url, {
                 method: method,
@@ -86,7 +86,7 @@ export default class SetUpServer extends React.Component {
                 })
                 .catch(error => {
                     reject(error);
-                    console.log(error);
+                    // console.log(error);
                 })
         })
     }

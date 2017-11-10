@@ -47,7 +47,7 @@ export default class ForgetPasswordPage extends React.Component {
     countdownfn(time, callback, begin) {
         if (time > 0) {
             this.state.begin = 1;
-            console.log("===lin===>");
+            // console.log("===lin===>");
             let that = this;
             let interval = setInterval(function () {
                 if (that.state.timeLeft < 1) {
@@ -89,10 +89,10 @@ export default class ForgetPasswordPage extends React.Component {
                                 return;
                             }
                             let time = this.state.timeLeft;
-                            console.log("===lin===> time " + time);
+                            // console.log("===lin===> time " + time);
                             let afterEnd = this.afterEnd;
                             let begin = this.state.begin;
-                            console.log("===lin===> start " + begin);
+                            // console.log("===lin===> start " + begin);
                             this.countdownfn(time, afterEnd, begin)
                         } else {
                             this.refs.toast.show('*获取验证码失败请重试');
@@ -110,7 +110,7 @@ export default class ForgetPasswordPage extends React.Component {
      * @private
      */
     _afterEnd(that) {
-        console.log('------------time over');
+        // console.log('------------time over');
         that.setState({
             textColor : 'rgb(60,127,252)',
             begin : 0,

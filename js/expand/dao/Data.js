@@ -49,7 +49,7 @@ export default class DataRepository {
                 })
                 .catch(error => {
                     reject(error);
-                    console.log(error);
+                    // console.log(error);
                     alert('获取数据出错');
                 })
             })
@@ -121,9 +121,9 @@ export default class DataRepository {
             AsyncStorage.removeItem(url, (error)=>{
                 if (!error) {
                     resolve();
-                    console.log('success')
+                    // console.log('success')
                 } else {
-                    console.log('failure');
+                    // console.log('failure');
                     reject(error)
                 }
             });

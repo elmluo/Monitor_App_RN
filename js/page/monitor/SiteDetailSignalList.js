@@ -82,7 +82,7 @@ export default class SignalList extends React.Component {
             deviceId: this.props.deviceInfo.deviceId,
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            console.log(result);
+            // console.log(result);
             // dataModel: name, signalId, techType, threshold, time, unit, value
             if (result.success === true) {
                 this.setState({
@@ -126,7 +126,7 @@ export default class SignalList extends React.Component {
         )
     }
     _renderCell(v, i) {
-        console.log(v);
+        // console.log(v);
         if (v.techType === "遥测") {
             let value;
 

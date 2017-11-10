@@ -124,7 +124,7 @@ export default class AboutMePage extends Component {
                 var url='mailto://'+tab.account;
                 Linking.canOpenURL(url).then(supported => {
                     if (!supported) {
-                        console.log('Can\'t handle url: ' + url);
+                        // console.log('Can\'t handle url: ' + url);
                     } else {
                         return Linking.openURL(url);
                     }

@@ -109,7 +109,7 @@ export default class SiteDetail extends Component {
             siteId: this.props.siteInfo.siteId,
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            console.log(result);
+            // console.log(result);
 
         })
     }
