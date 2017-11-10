@@ -117,7 +117,8 @@ export default class HomeStatisticChart extends Component {
                     },
                     axisLabel: {    // 坐标标签刻度值设置
                         interval: 3,
-                        color: '#7E7E7E'
+                        color: '#7E7E7E',
+                        fontSize: 10,
                     },
                     splitLine: {
                         interval: 3,
@@ -130,7 +131,7 @@ export default class HomeStatisticChart extends Component {
             ],
             yAxis: [
                 {
-                    interval: 5, // 数据最大值的80%
+                    interval: 4, // 数据最大值的80%
                     show: true,
                     axisTick: {
                         show: false

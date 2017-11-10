@@ -14,6 +14,7 @@ import CustomListViewForAlarm from '../../common/CustomListViewForAlarm'
 import Utils from '../../util/Utils'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
+import Toast from 'react-native-easy-toast'
 
 let storage = new Storage();
 /**
@@ -34,7 +35,7 @@ export default class AlarmTab extends Component {
         }
     }
 
-    _postSelectedAlarm(alarmId) {
+    _postSelectedAlarm(rowData) {
         this.setState({
             isLoading: true
         });
@@ -42,7 +43,7 @@ export default class AlarmTab extends Component {
         let params = {
             userId: storage.getLoginInfo().userId,
             stamp: storage.getLoginInfo().stamp,
-            alarmId: alarmId,
+            alarmId: rowData.alarmId,
         };
 
 
@@ -55,6 +56,9 @@ export default class AlarmTab extends Component {
                     this.setState({
                         url: this.props.url,
                     });
+                    console.log(this);
+                    let alertText = !rowData.focus ? '添加关注成功' : '取消关注成功';
+                    this.refs.toast.show(alertText);
 
                     // 发送通知，自定义列表刷新
                     this.timer = setTimeout(() => {
@@ -101,7 +105,10 @@ export default class AlarmTab extends Component {
                                 marginBottom: 10
                             }}>
                                 <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
-                                <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils.FormatTime(new Date(rowData.reportTime),'yyyy-MM-dd hh:mm')}</Text>
+                                <Text style={{
+                                    color: '#7E7E7E',
+                                    fontSize: 12
+                                }}>{Utils.FormatTime(new Date(rowData.reportTime), 'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                             <View>
                                 <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
@@ -119,7 +126,7 @@ export default class AlarmTab extends Component {
                 <View style={{position: 'absolute', right: 10, bottom: 10}}>
                     {!this.props.isAlarm ?
                         <TouchableOpacity onPress={() => {
-                            this._postSelectedAlarm(rowData.alarmId);
+                            this._postSelectedAlarm(rowData);
                         }}>
                             <View style={{width: 100, height: 50, alignItems: 'center', justifyContent: 'center'}}>
                                 {
@@ -151,7 +158,6 @@ export default class AlarmTab extends Component {
                         </TouchableOpacity>
                         : <View></View>
                     }
-
                 </View>
             </View>
 
@@ -184,6 +190,16 @@ export default class AlarmTab extends Component {
         return (
             <View style={styles.container}>
                 {content}
+                <Toast
+                    ref="toast"
+                    style={{backgroundColor: 'rgba(0,0,0,0.3)'}}
+                    position='bottom'
+                    positionValue={300}
+                    fadeInDuration={0}
+                    fadeOutDuration={0}
+                    opacity={0.8}
+                    textStyle={{color: '#000000'}}
+                />
             </View>
         )
     }

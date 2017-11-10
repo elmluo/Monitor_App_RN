@@ -83,7 +83,7 @@ export default class ComponentName extends React.Component {
     }
 
     _deleteHistoryButton(item) {
-        this.state.hisArr.splice(this.hisArr.indexOf(item), 1);
+        this.state.hisArr.splice(this.state.hisArr.indexOf(item), 1);
         dataRepository.saveRepository(this.props.hisArr, this.state.hisArr);
         // 更新视图
         this.setState({})

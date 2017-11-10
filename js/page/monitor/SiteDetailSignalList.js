@@ -19,6 +19,8 @@ import DataRepository from '../../expand/dao/Data'
 import Utils from '../../util/Utils';
 import SiteDetailSignalAI from './SiteDetailSignalAI'
 import BackPressComponent from '../../common/BackPressComponent'
+import Toast from 'react-native-easy-toast'
+
 
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
@@ -86,7 +88,11 @@ export default class SignalList extends React.Component {
                 this.setState({
                     signalList: result.data,
                 })
+            } else {
+                this.refs.toast.show(result.info);
             }
+        }).catch((error)=> {
+            this.refs.toast.show('网络连接不稳定，请重试！');
         })
 
 
@@ -261,6 +267,16 @@ export default class SignalList extends React.Component {
             <View style={styles.container}>
                 {navigationBar}
                 {scrollView}
+                <Toast
+                    ref="toast"
+                    style={{backgroundColor: 'rgba(0,0,0,0.3)'}}
+                    position='bottom'
+                    positionValue={300}
+                    fadeInDuration={500}
+                    fadeOutDuration={1000}
+                    opacity={0.8}
+                    textStyle={{color: '#000000'}}
+                />
             </View>
         )
     }
