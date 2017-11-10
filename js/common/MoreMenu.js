@@ -115,7 +115,7 @@ export default class MoreMenu extends Component {
                 var url = 'mailto://crazycodeboy@gmail.com';
                 Linking.canOpenURL(url).then(supported => {
                     if (!supported) {
-                        console.log('Can\'t handle url: ' + url);
+                        // console.log('Can\'t handle url: ' + url);
                     } else {
                         return Linking.openURL(url);
                     }

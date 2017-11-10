@@ -154,7 +154,7 @@ export default class CustomListView extends Component {
                     })
                 }
             } else {
-                console.log('连接服务失败');
+                // console.log('连接服务失败');
             }
         }).catch(error => {
             this.setState({
@@ -187,7 +187,7 @@ export default class CustomListView extends Component {
                     })
                 }
             } else {
-                console.log('连接服务失败');
+                // console.log('连接服务失败');
             }
         }).catch(error => {
             this.setState({

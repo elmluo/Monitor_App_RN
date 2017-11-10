@@ -126,7 +126,7 @@ export default class SearchPage extends Component {
             this.flushFavoriteState();
         }).catch((error)=> {
             this.flushFavoriteState();
-            console.log(error);
+            // console.log(error);
         });
     }
     loadData(){

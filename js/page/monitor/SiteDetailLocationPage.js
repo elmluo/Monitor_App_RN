@@ -121,7 +121,7 @@ export default class LocationPage extends React.Component {
         // alert(JSON.stringify(source));
         // 地图经纬度需要转换
         let gg=this._bd_decrypt(this.props.siteInfo.latitude, this.props.siteInfo.longitude);
-        console.log(gg);
+        // console.log(gg);
         let gg_lon = gg.gg_lon;
         let gg_lat = gg.gg_lat;
         let uri;

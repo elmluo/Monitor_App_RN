@@ -95,9 +95,9 @@ export default class CompanyListPage extends Component {
             };
             this.dataRepository.fetchNetRepository('POST', url, params)
                 .then(result => {
-                    console.log(JSON.stringify(result));
+                    // console.log(JSON.stringify(result));
                     this.setState({
-                        result: JSON.stringify(result),
+                        // result: JSON.stringify(result),
                         personCompany: result.data,
                         dataSource: this.state.dataSource.cloneWithRows(result.data),  // 实时跟新列表数据源
                         isLoading: false   // 关闭加载动画
@@ -181,9 +181,9 @@ export default class CompanyListPage extends Component {
         // alert(JSON.stringify(alias));
         if (alias !== undefined) {
             JPushModule.setAlias(alias, () => {
-                console.log("Set alias succeed", alias);
+                // console.log("Set alias succeed", alias);
             }, () => {
-                console.log("Set alias failed");
+                // console.log("Set alias failed");
             });
         }
         storage.setIsClasses(true);

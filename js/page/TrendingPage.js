@@ -255,7 +255,7 @@ class TrendingTab extends Component {
             this.flushFavoriteState();
         }).catch((error)=> {
             this.flushFavoriteState();
-            console.log(error);
+            // console.log(error);
         });
     }
 
@@ -284,7 +284,7 @@ class TrendingTab extends Component {
                 this.getFavoriteKeys();
             })
             .catch(error=> {
-                console.log(error);
+                // console.log(error);
                 this.updateState({
                     isLoading: false
                 });

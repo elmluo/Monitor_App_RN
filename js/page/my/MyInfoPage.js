@@ -14,7 +14,6 @@ import {
     TouchableOpacity,
     InteractionManager,
     Dimensions,
-    InteractionManager,
     BackHandler
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'

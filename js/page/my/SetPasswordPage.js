@@ -110,7 +110,7 @@ export default class SetPasswordPage extends React.Component {
                                                 storage.setUserInfo(userInfo);
                                                 dataRepository.saveRepository('user', userInfo)
                                                     .then(() => {
-                                                        console.log('用户信息已经保存');
+                                                        // console.log('用户信息已经保存');
                                                         this.props.navigator.pop();
                                                     });
                                             } else {

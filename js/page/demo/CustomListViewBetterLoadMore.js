@@ -83,14 +83,14 @@ export default class RefreshLoadMoreListView extends React.Component {
                             noData: true
                         })
                     } else {
-                        console.log(JSON.stringify(result));
+                        // console.log(JSON.stringify(result));
                         this.setState({
                             result: JSON.stringify(result),
                             dataSource: this._dataSource.cloneWithRows(result.data),
                             isLoading: false,
                             noData: false,
                         });
-                        console.log(1234567);
+                        // console.log(1234567);
                         let timer = setTimeout(()=> {
                             clearTimeout(timer);
                             this.refs.listView.resetStatus();  //重置上拉加载的状态
@@ -98,7 +98,7 @@ export default class RefreshLoadMoreListView extends React.Component {
                         }, 500)
                     }
                 } else {
-                    console.log('连接服务失败')
+                    // console.log('连接服务失败')
                 }
             }).catch(error => {
                 this.setState({
@@ -138,19 +138,19 @@ export default class RefreshLoadMoreListView extends React.Component {
                         });
                         end(result.data);
                     } else {
-                        console.log(JSON.stringify(result));
+                        // console.log(JSON.stringify(result));
                         this.setState({
                             result: JSON.stringify(result),
                             dataSource: this._dataSource.cloneWithRows(result.data),
                             isLoading: false,
                             noData: false,
                         });
-                        console.log(1234567);
+                        // console.log(1234567);
                         this.refs.listView.resetStatus();  //重置上拉加载的状态
                         end(result.data.length < 20) // 返回的长度小于20调用即可停止刷新。
                     }
                 } else {
-                    console.log('连接服务失败')
+                    // console.log('连接服务失败')
                 }
             }).catch(error => {
                 this.setState({
