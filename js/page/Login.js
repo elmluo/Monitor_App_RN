@@ -22,6 +22,7 @@ import ForgetPasswordPage from './my/ForgetPasswordPage'
 import SetUpServer from './my/SetUpServer'
 import Storage from '../common/StorageClass'
 import JPushModule from 'jpush-react-native';
+import LoadingView from '../common/LoadingView'
 
 let dataRepository = new DataRepository();
 let Dimensions = require('Dimensions');
@@ -35,6 +36,7 @@ export default class Login extends Component {
             pushMsg: '',
             username: '',
             userpwd: '',
+            visible:false,
 
 
         }
@@ -48,20 +50,19 @@ export default class Login extends Component {
             password: this.state.userpwd
         };
         //进行登录
-
+        this.setState({
+            visible:true,
+        })
         dataRepository.fetchNetRepository('POST', url, params)
             .then((response) => {
+                console.log('技术支持账号'+JSON.stringify(response));
+                this.setState({
+                    visible:false,
+                })
 
                 if (response['success'] === true) {
 
-                    // 保存用户登录信息
-                    dataRepository.saveRepository('user', params)
-                        .then(() => {
-                            // console.log('用户信息已经保存');
 
-                        });
-                    //保存用户登录信息
-                    storage.setUserInfo(params);
                     //根据登录返回 classes 判断是代理商还是普通用户
                     // alert('登录成功');
                     // console.log(storage.getUserInfo());
@@ -71,10 +72,27 @@ export default class Login extends Component {
                             userId:response.data.userId,
                             agencyId:response.data.companyId,
                         }
+                        // 保存用户登录信息
+                        dataRepository.saveRepository('user', params)
+                            .then(() => {
+                                // console.log('用户信息已经保存');
+
+                            });
+                        //保存用户登录信息
+                        storage.setUserInfo(params);
                         storage.setCompanyData(companyData);
 
                         this._pushToCompanyPage(response.data.userId,response.data.companyId);
 
+                    } else if (response.data.classes === '技术支持用户'){
+                        Alert.alert(
+                            '技术支持账号暂不支持',
+                            '',
+                            [
+                                {text: '确定', onPress: () => {}},
+                            ],
+                            { cancelable: false }
+                        )
                     } else {
                         // alert('普通用户');
                         // 获取用户信息 主要保存：companyId、userId
@@ -105,13 +123,21 @@ export default class Login extends Component {
                                                     tag: companyResponse.data.stamp,
                                                     alias: companyResponse.data.userId,
                                                 });
+
                                                 dataRepository.saveRepository(url, {
                                                     companyId: response.data.companyId,
                                                     stamp: companyResponse.data.stamp,
                                                     userId: response.data.userId
                                                 })
                                                     .then(() => {
+                                                        // 保存用户登录信息
+                                                        dataRepository.saveRepository('user', params)
+                                                            .then(() => {
+                                                                // console.log('用户信息已经保存');
 
+                                                            });
+                                                        //保存用户登录信息
+                                                        storage.setUserInfo(params);
                                                         let userId = response.data.userId;
 
                                                         this._JPushSetAlias(userId)
