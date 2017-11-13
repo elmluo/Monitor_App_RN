@@ -63,6 +63,8 @@ export default class BulletinList extends Component {
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
                     onPress={() => {
+                        // 发送通知： 首页重新获取未读公告数量，
+                        DeviceEventEmitter.emit('getNoticeNotReadCount');
                         this.props.navigator.pop();
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
@@ -91,9 +93,6 @@ export default class BulletinList extends Component {
                 activeOpacity={0.5}
                 onPress={() => {
                     this._pushToDetail(rowData);
-
-                    // 发送通知： 首页重新获取未读公告数量，
-                    DeviceEventEmitter.emit('getNoticeNotReadCount')
                 }}>
                 <View style={styles.cell}>
                     <View style={styles.cellTop}>

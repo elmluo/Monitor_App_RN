@@ -95,7 +95,7 @@ export default class Monitor extends Component {
      * @private
      */
     _renderRightButton() {
-        let image = this.state.noticeCount
+        let image = !!this.state.noticeCount
             ? <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_selected.png')}/>
             : <Image style={{width: 24, height: 24}} source={require('../../../res/Image/Nav/ic_notice_nor.png')}/>;
         return (
@@ -226,13 +226,15 @@ export default class Monitor extends Component {
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
             // console.log(result);
+            // 发送通知显示底部首页badge
+            DeviceEventEmitter.emit('setNoticeBadge', result.data);
             if (result.data === 0 || result.data === null) {
                 this.setState({
                     isShowNoticeBar: false,
+                    noticeCount: result.data,
+
                 });
             } else {
-                // 发送通知显示底部首页badge
-                DeviceEventEmitter.emit('setNoticeBadge', result.data);
                 this.setState({
                     isShowNoticeBar: true,
                     noticeCount: result.data,
@@ -496,7 +498,7 @@ export default class Monitor extends Component {
             // console.log("iOS : ");
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                // console.log("获取推送消息 " + JSON.stringify(message));
+                console.log("获取推送消息 " + JSON.stringify(message));
                 storage.setBadge(message.aps.badge);
                 this.timer = setTimeout(()=> {
                     clearTimeout(this.timer);
@@ -507,8 +509,8 @@ export default class Monitor extends Component {
             //点击跳转
 
             JPushModule.addReceiveOpenNotificationListener((map) => {
-                // console.log("点击 " + JSON.stringify(map));
-                if (map.type === '200'){
+                console.log("点击 " + JSON.stringify(map));
+                if (map.type == 200){
                     const routes = this.props.navigator.state.routeStack;
                     // console.log(routes);
                     let lent = 0;
@@ -544,15 +546,17 @@ export default class Monitor extends Component {
             });
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
-                // console.log("获取推送消息 " + JSON.stringify(message));
-                // console.log('告警安卓badge'+this.state.alarmCount);
-                if(JSON.parse(message.extras).type !== '200'){
+                console.log("获取推送消息 " + JSON.stringify(message));
+                console.log('告警安卓badge'+this.state.alarmCount);
+                if(JSON.parse(message.extras).type != 200){
                     this.state.alarmCount++;
                     storage.setBadge(this.state.alarmCount);
                     this.timer = setTimeout(()=> {
                         clearTimeout(this.timer);
                         DeviceEventEmitter.emit('setBadge', message.extras.type,this.state.alarmCount);
                     }, 0);
+                }else {
+                    this._getNoticeNotReadCount();
                 }
             });
 
@@ -564,9 +568,9 @@ export default class Monitor extends Component {
 
             //点击跳转
             JPushModule.addReceiveOpenNotificationListener((map) => {
-                // console.log("点击 " + JSON.stringify(map));
+                console.log("点击 " + JSON.stringify(map));
                 const routes = this.props.navigator.state.routeStack;
-                if (JSON.parse(map.extras).type === '200'){
+                if (JSON.parse(map.extras).type == 200){
                     //跳转详情页面 清除this.state.alarmCount
                     this.state.alarmCount = 0;
                     const routes = this.props.navigator.state.routeStack;

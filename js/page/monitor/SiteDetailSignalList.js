@@ -164,7 +164,7 @@ export default class SignalList extends React.Component {
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{Utils._Time(v.time)}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(v.time,'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>
@@ -215,7 +215,7 @@ export default class SignalList extends React.Component {
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{Utils._Time(v.time)}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(v.time,'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>
@@ -233,7 +233,7 @@ export default class SignalList extends React.Component {
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{Utils._Time(v.time)}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(v.time,'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>

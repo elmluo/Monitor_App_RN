@@ -14,7 +14,8 @@ import {
     TouchableOpacity,
     InteractionManager,
     Dimensions,
-    BackHandler
+    BackHandler,
+    Platform
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
@@ -214,9 +215,14 @@ export default class MyInfoPage extends Component {
             .then(()=> {
                 //删除注册的推送
                 JPushModule.deleteAlias((result)=>{
-                    // console.log('清除成功');
+                    console.log(result+'清除成功');
+                    if (Platform.OS === 'ios'){
+
+                    }else {
+                        JPushModule.clearAllNotifications();
+                    }
+                    this._pushToLogin();
                 });
-                this._pushToLogin();
 
             });
     }

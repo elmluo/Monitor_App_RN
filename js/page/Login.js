@@ -12,7 +12,9 @@ import {
     Image,
     Alert,
     ImageBackground,
-    StatusBar
+    StatusBar,
+    PermissionsAndroid,
+    Platform
 } from 'react-native'
 
 import Main from './Main'
@@ -39,6 +41,21 @@ export default class Login extends Component {
             visible:false,
 
 
+        }
+    }
+    _requestCameraPermission() {
+        const granted = PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            {
+                'title': 'Cool Photo App Camera Permission',
+                'message': 'Cool Photo App needs access to your camera ' +
+                'so you can take awesome pictures.'
+            }
+        )
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("You can use the camera")
+        } else {
+            console.log("Camera permission denied")
         }
     }
 
@@ -266,6 +283,7 @@ export default class Login extends Component {
     /*设置背景图片*/
 
     render() {
+        // this._requestCameraPermission();
         return (
             <View style={styles.container}>
                 {/*背景*/}
