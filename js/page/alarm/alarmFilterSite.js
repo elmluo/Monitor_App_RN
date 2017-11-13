@@ -97,7 +97,7 @@ export default class AlarmFilterSite extends Component {
                 }
                 return v.siteId === site.siteId;
             });
-            console.log(site.siteId);
+
             return l.length > 0 ? {index: index}: false;
         };
 
@@ -106,6 +106,7 @@ export default class AlarmFilterSite extends Component {
          * @private
          */
         let _pushToSearchPage = () => {
+
             scope.props.navigator.push({
                 component: SearchPage,
                 params: {
@@ -136,7 +137,6 @@ export default class AlarmFilterSite extends Component {
                             }
                             if (type !== 'search') {
                                 scope.setState({});
-                                DeviceEventEmitter.emit("custom_listView_update")
                             } else {
                                 // 根据navigator提供的api。操作路由栈，跳转到指定的路由页面
                                 const routes = this.props.navigator.state.routeStack;
@@ -145,9 +145,7 @@ export default class AlarmFilterSite extends Component {
                         }}>
                         <View style={[styles.row, (siteInList(rowData, scope.state.siteList)  ? {backgroundColor: "rgba(235,235,235,1)"}:{})]}>
                             <View style={styles.rowTop}>
-                                <Text
-                                    numberOfLines={1}
-                                    style={styles.name}>{rowData.name}</Text>
+                                <Text style={styles.name}>{rowData.name}</Text>
                             </View>
                             <View style={styles.rowBottom}>
                                 <Text style={styles.tier}>{rowData.tier}</Text>
@@ -243,8 +241,7 @@ const styles = StyleSheet.create({
     },
     name: {
         color: '#444444',
-        fontSize: 14,
-        width: width,
+        fontSize: 14
     },
     rowTopRightText: {
         color: '#7E7E7E',

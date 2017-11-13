@@ -48,6 +48,42 @@ export default class CustomListView extends Component {
     }
 
     /**
+     * 一旦传入属性变化。
+     * @param nextProps
+     */
+    componentWillReceiveProps(nextProps) {
+    }
+
+    /**
+     * 组件装载，执行监听通知等操作
+     */
+    componentDidMount() {
+
+        // 组件加载完毕，监听事件-从头加载数据。
+        this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
+            this._onRefresh(true);
+        });
+
+        // // 组件加载完毕，刷新组件
+        this.listener = DeviceEventEmitter.addListener('custom_listView_update', () => {
+            this.forceUpdate();
+        });
+
+        // console.log(this.props.params);
+        InteractionManager.runAfterInteractions(() => {
+            NetInfoUtils.checkNetworkState((isConnectedNet) => {
+                if (isConnectedNet) {
+                    this._onRefresh();
+                } else {
+                    this.setState({
+                        noNetWork: true
+                    });
+                }
+            });
+        });
+    }
+
+    /**
      *
      */
     _renderRefreshControl() {
@@ -110,16 +146,11 @@ export default class CustomListView extends Component {
         let url = this.props.url;
         let params = this.props.params;
         params.page = this.page;
-
-
-        // console.log(params);
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
             if (result.success === true) {
                 // alert(JSON.stringify(result));
                 // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
-                    // alert(page);
-                    // console.log('第一页');
                     this.setState({
                         isLoading: false,
                         noNetWord: false,
@@ -167,7 +198,7 @@ export default class CustomListView extends Component {
                     this._data = this._data.concat(result.data);
                     this.setState({
                         dataSource: this.state.dataSource.cloneWithRows(this._data),
-                    })
+                    });
                 }
             } else {
                 // console.log('连接服务失败');
@@ -177,52 +208,6 @@ export default class CustomListView extends Component {
                 result: JSON.stringify(error)
             });
         })
-    }
-
-    /**
-     * 一旦传入属性变化。
-     * @param nextProps
-     */
-    componentWillReceiveProps(nextProps) {
-        // 如果传入自动刷新，组件每次加载都会自动加载数据一次。
-        // if (this.props.isAutoRefresh) {
-        //     console.log(this.props);
-        //     alert(JSON.stringify(nextProps.params));
-        //     this.props = nextProps;
-        //     this._onRefresh()
-        // }
-    }
-
-    /**
-     * 组件装载，执行监听通知等操作
-     */
-    componentDidMount() {
-
-        // 组件加载完毕，监听事件-重新加载数据。
-        this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
-            this._onRefresh(true);
-        });
-        // 组件加载完毕，监听事件-重新加载数据。
-        this.listener = DeviceEventEmitter.addListener('custom_listView_update', () => {
-            this.setState({});
-            this.state.dataSource.cloneWithRows(this._data)
-            alert('custom_listView_update')
-        });
-
-        // console.log(this.props.params);
-
-        InteractionManager.runAfterInteractions(() => {
-            NetInfoUtils.checkNetworkState((isConnectedNet) => {
-                if (isConnectedNet) {
-                    this._onRefresh();
-                } else {
-                    this.setState({
-                        noNetWork: true
-                    });
-                }
-            });
-        });
-
     }
 
     /**
