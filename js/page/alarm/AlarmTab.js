@@ -50,29 +50,22 @@ export default class AlarmTab extends Component {
             stamp: storage.getLoginInfo().stamp,
             alarmId: rowData.alarmId,
         };
-
-
         // 切换不同标签页，通过tabBle
-        // alert(JSON.stringify(url));
-        // alert(JSON.stringify(params));
         this.dataRepository.fetchNetRepository('POST', url, params)
             .then(result => {
+                console.log(result);
                 this.setState({
-                    visible:false,
+                    visible: false,
                 });
                 if (result.success === true) {
-                    this.setState({
-                        url: this.props.url,
-                    });
-                    console.log(this);
                     let alertText = !rowData.focus ? '添加关注成功' : '取消关注成功';
                     this.refs.toast.show(alertText);
-
-                    // 发送通知，自定义列表刷新
+                    this.setState({});
+                    // 发送通知，改变listView数据源，重新刷新
                     this.timer = setTimeout(() => {
                         clearTimeout(this.timer);
-                        DeviceEventEmitter.emit('custom_listView_alarm');
-                    });
+                        DeviceEventEmitter.emit('custom_listView_alarm_update');
+                    },0);
                 }
             })
     }

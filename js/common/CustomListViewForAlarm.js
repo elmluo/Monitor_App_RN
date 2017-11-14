@@ -40,12 +40,79 @@ export default class CustomListView extends Component {
         this.dataRepository = new DataRepository();
         this.page = 1;
         this._data = [];
+        this.copySource = [];
         this.state = {
             noNetWork: false,
             noData: false,
             isLoading: false,
             theme: this.props.theme,
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+        }
+    }
+
+    /**
+     * 一旦传入属性变化。
+     * @param nextProps
+     */
+    componentWillReceiveProps(nextProps) {
+        // 如果传入自动刷新，组件每次加载都会自动加载数据一次。
+        // if (this.props.isAutoRefresh) {
+        //     console.log(this.props);
+        //     alert(JSON.stringify(nextProps.params));
+        //     this.props = nextProps;
+        //     this._onRefresh()
+        // }
+    }
+
+    /**
+     * 组件装载，执行监听通知等操作
+     */
+    componentDidMount() {
+        // 组件加载完毕，监听事件-重新加载数据。
+        this.listener = DeviceEventEmitter.addListener('custom_listView_alarm', (p) => {
+            // 当params想要修改的时候，可以传入参数p进行覆盖。可以覆盖原有的字段或者属性
+            if (p) {
+                for (let i in p) {
+                    this.props.params[i] = p[i];
+                }
+            }
+
+            // 首次加载告警
+            this.timer = setTimeout(() => {
+                clearTimeout(this.timer);
+                this._onRefresh();
+            }, 100);
+
+        });
+
+        //  组件加载完毕，刷新listView数据源
+        this.listener = DeviceEventEmitter.addListener('custom_listView_alarm_update', () => {
+            this.copySource = this.objDeepCopy(this._data);
+            this.setState({
+                dataSource: this.state.dataSource.cloneWithRows(this.copySource),
+            });
+        });
+
+        InteractionManager.runAfterInteractions(() => {
+            NetInfoUtils.checkNetworkState((isConnectedNet) => {
+                if (isConnectedNet) {
+                    this._onRefresh();
+                } else {
+                    this.setState({
+                        noNetWork: true
+                    });
+                }
+            });
+        });
+
+    }
+
+    /**
+     * 组件卸载，清除事件监听
+     */
+    componentWillUnmount() {
+        if (this.listener) {
+            this.listener.remove();
         }
     }
 
@@ -115,15 +182,15 @@ export default class CustomListView extends Component {
         // 判断是否有推送badge 有就清除
         // console.log('alarmBadge'+storage.getBadge());
         // alert(123);
-        if (storage.getBadge() !== 0 && storage.getBadge() !== null){
-            this.timer = setTimeout(()=> {
+        if (storage.getBadge() !== 0 && storage.getBadge() !== null) {
+            this.timer = setTimeout(() => {
                 clearTimeout(this.timer);
                 storage.setBadge(0);
-                if (Platform.OS === 'ios'){
+                if (Platform.OS === 'ios') {
                     JPushModule.setBadge(0, (badgeNumber) => {
                         console.log(badgeNumber)
                     });
-                }else {
+                } else {
                     DeviceEventEmitter.emit('clearAndroidBadge');
                 }
                 DeviceEventEmitter.emit('setBadge', '101', 0);
@@ -164,6 +231,21 @@ export default class CustomListView extends Component {
     }
 
     /**
+     * 对象数组深拷贝
+     */
+
+    objDeepCopy(source) {
+        let sourceCopy = source instanceof Array ? [] : {};
+        for (let item in source) {
+            sourceCopy[item] =
+                typeof source[item] === 'object'
+                    ? this.objDeepCopy(source[item])
+                    : source[item];
+        }
+        return sourceCopy;
+    }
+
+    /**
      * 上拉加载更多
      * @private
      */
@@ -174,13 +256,10 @@ export default class CustomListView extends Component {
         params.page = this.page;
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
             if (result.success === true) {
-                // mock数据
-                // result.data = this._data;
                 // 如果第一页没有数据，显示没有数据提示页面
                 if ((this.page > 1 && (!result.data || result.data.length === 0))) {
                     // this.refs.toast.show(this.props.alertText);
                 } else {
-                    // 将请求数据保存到内存
                     this._data = this._data.concat(result.data);
                     this.setState({
                         dataSource: this.state.dataSource.cloneWithRows(this._data),
@@ -196,65 +275,6 @@ export default class CustomListView extends Component {
         })
     }
 
-    /**
-     * 一旦传入属性变化。
-     * @param nextProps
-     */
-    componentWillReceiveProps(nextProps) {
-        // 如果传入自动刷新，组件每次加载都会自动加载数据一次。
-        // if (this.props.isAutoRefresh) {
-        //     console.log(this.props);
-        //     alert(JSON.stringify(nextProps.params));
-        //     this.props = nextProps;
-        //     this._onRefresh()
-        // }
-    }
-
-    /**
-     * 组件装载，执行监听通知等操作
-     */
-    componentDidMount() {
-        // 组件加载完毕，监听事件-重新加载数据。
-        this.listener = DeviceEventEmitter.addListener('custom_listView_alarm', (p) => {
-            // 当params想要修改的时候，可以传入参数p进行覆盖。可以覆盖原有的字段或者属性
-            if (p) {
-                for (let i in p) {
-                    this.props.params[i] = p[i];
-                }
-            }
-
-            // 首次加载告警
-            this.timer = setTimeout(()=> {
-                clearTimeout(this.timer);
-                this._onRefresh();
-            },100);
-
-        });
-
-        // console.log(this.props.params);
-
-        InteractionManager.runAfterInteractions(() => {
-            NetInfoUtils.checkNetworkState((isConnectedNet) => {
-                if (isConnectedNet) {
-                    this._onRefresh();
-                } else {
-                    this.setState({
-                        noNetWork: true
-                    });
-                }
-            });
-        });
-
-    }
-
-    /**
-     * 组件卸载，清除事件监听
-     */
-    componentWillUnmount() {
-        if (this.listener) {
-            this.listener.remove();
-        }
-    }
 
     _renderListView() {
         return (

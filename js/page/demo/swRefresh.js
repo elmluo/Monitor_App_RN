@@ -18,7 +18,7 @@ export default class RefreshLoadMoreListView extends React.Component {
     _page = 0;
     _dataSource = new ListView.DataSource({rowHasChanged: (row1, row2) => row1 !== row2});
 
-
+    list=[];
     constructor(props) {
         super(props);
         // 初始状态
@@ -33,12 +33,21 @@ export default class RefreshLoadMoreListView extends React.Component {
 
     _renderRow(rowData) {
         // alert(JSON.stringify(rowData));
+
+        let itemInList = function(item, list) {
+
+        };
+
         return (
             <View style={{height: 100}}>
-                <View>
-                    <Text>123</Text>
-                </View>
+                <TouchableOpacity
+                    onPress={()=> {
 
+                    }}>
+                    <View style={(itemInList(rowData)? {backgroundColor: 'red'} :{})}>
+                        <Text>{rowData}</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         )
     }

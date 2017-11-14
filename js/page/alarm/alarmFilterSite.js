@@ -123,6 +123,7 @@ export default class AlarmFilterSite extends Component {
         };
 
         let _renderRow = (type) => {
+            console.log('renderRow调用');
             return (rowData, sectionID, rowID, hightlightRow) => {
                 return (
                     <TouchableOpacity
@@ -137,6 +138,7 @@ export default class AlarmFilterSite extends Component {
                             }
                             if (type !== 'search') {
                                 scope.setState({});
+                                DeviceEventEmitter.emit('custom_listView_update')
                             } else {
                                 // 根据navigator提供的api。操作路由栈，跳转到指定的路由页面
                                 const routes = this.props.navigator.state.routeStack;
@@ -172,7 +174,6 @@ export default class AlarmFilterSite extends Component {
                 params={{
                     stamp: storageClass.getLoginInfo().stamp
                 }}
-                // bind(this)机制需要熟悉
                 renderRow={_renderRow()}
                 // renderHeader={this._renderHeader.bind(this)}
                 alertText={'没有更多数据了~'}/>;
