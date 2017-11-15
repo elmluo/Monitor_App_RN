@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import AlarmDetail from './AlarmDetail'
 import CustomListViewForAlarm from '../../common/CustomListViewForAlarm'
+import CustomListViewForFocusAlarm from '../../common/CustomListViewForFocusAlarm'
 import Utils from '../../util/Utils'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
@@ -52,7 +53,7 @@ export default class AlarmTab extends Component {
             } else {
                 this.setState({hisArr: []})
             }
-            console.log(result);
+            // console.log(result);
         });
 
         /**
@@ -69,7 +70,7 @@ export default class AlarmTab extends Component {
                 } else {
                     this.setState({hisArr: []})
                 }
-                console.log(result);
+                // console.log(result);
             });
         });
     }
@@ -121,31 +122,32 @@ export default class AlarmTab extends Component {
         // 切换不同标签页，通过tabBle
         this.dataRepository.fetchNetRepository('POST', url, params)
             .then(result => {
-                console.log(result);
+                // console.log(result);
                 this.setState({
                     visible: false,
                 });
                 if (result.success === true) {
-
                     this.refs.toast.show(result.info);
                     this.setState({});
-                    console.log(this.alarmInAlarms(rowData.alarmId, this.state.hisArr));
-
                     if (this.alarmInAlarms(rowData.alarmId, this.state.hisArr)) {
                         this.state.hisArr.splice(this.state.hisArr.indexOf(rowData.alarmId), 1);
                         this.dataRepository.saveRepository(this.focusKey, this.state.hisArr);
-                        console.log(this.state.hisArr);
-
                     } else {
                         this.state.hisArr.push(rowData.alarmId);
                         this.dataRepository.saveRepository(this.focusKey, this.state.hisArr);
-                        console.log(this.state.hisArr);
                     }
-
                     // 发送通知，改变listView数据源，重新刷新
                     this.timer = setTimeout(() => {
                         clearTimeout(this.timer);
-                        DeviceEventEmitter.emit('custom_listView_alarm_update');
+                        // 如果是关注告警列表，点击'关注'重新刷新，否则更新listView
+                        if (this.props.isFocusAlarm) {
+                            DeviceEventEmitter.emit('refresh_focus_alarm');
+                            DeviceEventEmitter.emit('custom_listView_alarm');
+                        } else {
+                            DeviceEventEmitter.emit('custom_listView_alarm_update');
+                            DeviceEventEmitter.emit('refresh_focus_alarm');
+                        }
+
                     }, 0);
                 }
             })
@@ -264,10 +266,16 @@ export default class AlarmTab extends Component {
     }
 
     render() {
-        // this.props.params.level = ['2', '1'];
-        // this.props.params.siteId = ['57abe9d355545eeda80722e5']
-        let content =
-            <CustomListViewForAlarm
+        let content = !!this.props.isFocusAlarm ?
+            <CustomListViewForFocusAlarm
+                {...this.props}
+                noDataType={'noAlarm'}
+                url={this.props.url}
+                params={{...this.props.params}}
+                renderRow={this._renderRow.bind(this)}
+                alertText={'没有更多数据了~'}
+            />
+            : <CustomListViewForAlarm
                 {...this.props}
                 noDataType={'noAlarm'}
                 url={this.props.url}

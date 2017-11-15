@@ -258,7 +258,7 @@ class AlarmTabAlarm extends Component {
                             marginBottom: 10
                         }}>
                             <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
-                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils.FormatTime(new Date(rowData.reportTime), 'yyyy-MM-dd hh:mm')}</Text>
                         </View>
                         <View>
                             <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>
