@@ -26,6 +26,7 @@ let storage = new Storage();
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
 let CalendarManager = NativeModules.CalendarManager;
+let Updata = NativeModules.UpdateApp;
 
 export default class WelcomePage extends Component {
     constructor(props) {
@@ -72,11 +73,12 @@ export default class WelcomePage extends Component {
             '版本更新',
             '检测到新版本，是否立即更新？',
             [
-                {text: '退出程序', onPress: () => Platform.OS === 'ios'?CalendarManager.exitApplication():console.log('android!')},
+                {text: '退出程序', onPress: () => Platform.OS === 'ios'?CalendarManager.exitApplication():Updata.updateExite()},
                 {text: '立即更新', onPress:() => {
-                    Platform.OS === 'ios'?CalendarManager.upDate():console.log('立即更新Android!')
+                    Platform.OS === 'ios'?CalendarManager.upDate():Updata.updateDialog(this.state.result.version,this.state.result.url);
                 }},
-            ]
+            ],
+        { cancelable: false }
         )
     }
 
@@ -98,14 +100,13 @@ export default class WelcomePage extends Component {
                     //
                     console.log("App Version", DeviceInfo.getVersion()); // e.g. 1.1.0
                     if (DeviceInfo.getVersion() < response.data.version) {
-
                         resolve(true);
                     }else {
                         resolve(false);
                     }
 
                     this.setState({
-                        result: response
+                        result: response.data
                     })
                 })
                 .catch((error =>{

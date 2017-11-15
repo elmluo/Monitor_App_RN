@@ -4,9 +4,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.reactnativejpush.JPushPackage;
+import util.UpdateAppUtils;
+
 import com.facebook.react.ReactActivity;
+import com.facebook.react.bridge.ReactMethod;
 
 public class MainActivity extends ReactActivity {
+
+    public MainActivity() {
+        mainActivity = this;
+    }
+    public static MainActivity getMainActivity() {
+        return mainActivity;
+    }
+
+    private static MainActivity mainActivity;
 
     /**
      * Returns the name of the main component registered from JavaScript.
@@ -42,8 +54,6 @@ public class MainActivity extends ReactActivity {
         super.onDestroy();
     }
 
-    public void updateDialog (){
-//        UpdateChecker.checkForDialog(MainActivity.getMainActivity());
 
-    }
+
 }
