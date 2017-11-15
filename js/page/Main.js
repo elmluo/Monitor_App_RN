@@ -74,11 +74,8 @@ export default class Main extends BaseComponent {
         super.componentDidMount();
         this.DeviceEvent = DeviceEventEmitter.addListener('setBadge', (type, badge) => {
             // console.log('Main' + type + badge);
-            if (type == '200') {
-                //
-                // this.setState({
-                //     homeBadge:badge,
-                // })
+            if (type == 200) {
+                //公告推送不进行设置
             } else {
                 this.setState({
                     alarmBadge: badge,
@@ -92,7 +89,6 @@ export default class Main extends BaseComponent {
                 homeBadge: badge,
             })
         });
-
 
         this.listener = DeviceEventEmitter.addListener('ACTION_HOME',
             (action, params) => this.onAction(action, params));

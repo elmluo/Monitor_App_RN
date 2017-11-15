@@ -10,7 +10,8 @@ import {
     Platform,
     ImageBackground,
     Dimensions,
-    Alert
+    Alert,
+    NativeModules
 } from 'react-native'
 import Main from './Main'
 import Login from './Login'
@@ -19,10 +20,13 @@ import JPushModule from 'jpush-react-native';
 import DataRepository from '../expand/dao/Data'
 import Storage from '../common/StorageClass'
 import CompanyPage from './my/CompanyListPage'
+import DeviceInfo from 'react-native-device-info'
 
 let storage = new Storage();
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
+let CalendarManager = NativeModules.CalendarManager;
+
 export default class WelcomePage extends Component {
     constructor(props) {
         super(props);
@@ -42,27 +46,18 @@ export default class WelcomePage extends Component {
         new ThemeDao().getTheme().then((data) => {
             this.theme = data;
         });
-        // this.timer=setTimeout(()=> {
-        //     // SplashScreen.hide();
-        //     this.props.navigator.resetTo({
-        //         component: Login,
-        //         params:{
-        //             theme:this.theme,
-        //             ...this.props
-        //         }
-        //     });
-        // }, 1000);
 
         this._checkNeedUpdate().then((isUpdate) => {
             if (isUpdate === false) {
                 return this._checkUser()
             } else {
                 // 欢迎页面有关跟新交互代码逻辑
+                //进行更新提示
+                this._checkoutUpData();
             }
         }).then((isSaved) => {
             isSaved
                 ? this._toLogin()
-                // ? this._pushToLoginPage()
                 : this._pushToLoginPage();
         })
     }
@@ -70,6 +65,19 @@ export default class WelcomePage extends Component {
     componentWillUnmount() {
         // 组件卸载后取消定时器，防止多余异常出现
         // this.timer && clearTimeout(this.timer);
+    }
+    //版本更新提示
+    _checkoutUpData(){
+        Alert.alert(
+            '版本更新',
+            '检测到新版本，是否立即更新？',
+            [
+                {text: '退出程序', onPress: () => Platform.OS === 'ios'?CalendarManager.exitApplication():console.log('android!')},
+                {text: '立即更新', onPress:() => {
+                    Platform.OS === 'ios'?CalendarManager.upDate():console.log('立即更新Android!')
+                }},
+            ]
+        )
     }
 
     /**
@@ -83,41 +91,35 @@ export default class WelcomePage extends Component {
             appId: 'YiYi',
             os: Platform.OS,
         };
-
         return new Promise((resolve, reject) => {
             dataRepository.fetchNetRepository('POST', url, params)
                 .then(response => {
-                    dataRepository.fetchLocalRepository(url).then((localData) => {
-                        // console.log(localData);
-                        // console.log(response.data);
-                        if (localData) {
-                            // 若之前登陆过，比较、跟新本地版本信息
-                            if (response.data.version === localData.version) {
-                                resolve(false);
-                            } else {
-                                dataRepository.saveRepository(url, response.data)
-                                    .then((error) => {
-                                        reject(error);
-                                    });
-                            }
-                        } else {
-                            // 若首次打开，保存版本信息,进入登陆页面
-                            dataRepository.saveRepository(url, response.data)
-                                .then((error) => {
-                                    resolve(false);
-                                });
-                        }
+                    console.log('获取版本号：' + JSON.stringify(response));
+                    //
+                    console.log("App Version", DeviceInfo.getVersion()); // e.g. 1.1.0
+                    if (DeviceInfo.getVersion() < response.data.version) {
 
-
-                    })
-                        .catch(error => {
-                            reject(error)
-                        });
+                        resolve(true);
+                    }else {
+                        resolve(false);
+                    }
 
                     this.setState({
                         result: response
                     })
                 })
+                .catch((error =>{
+                    Alert.alert(
+                        '网络错误',
+                        '获取数据失败请重试/检测网络状况',
+                        [
+                            {text: '取消', onPress: () => {}},
+                            {text: '重试', onPress:() => {
+                                this._checkNeedUpdate();
+                            }},
+                        ]
+                    )
+                }))
         });
     }
 
@@ -157,10 +159,10 @@ export default class WelcomePage extends Component {
                 password: userData.password
             };
             //进行登录
-            console.log(userData+'登录信息');
+            console.log(userData + '登录信息');
             dataRepository.fetchNetRepository('POST', url, params)
                 .then((response) => {
-                    console.log(response+'登录完成');
+                    console.log(response + '登录完成');
 
                     if (response['success'] === true) {
 
@@ -170,13 +172,13 @@ export default class WelcomePage extends Component {
                         if (response.data.classes === '代理商用户') {
                             // alert('代理商');
                             let companyData = {
-                                userId:response.data.userId,
-                                agencyId:response.data.companyId,
+                                userId: response.data.userId,
+                                agencyId: response.data.companyId,
                             }
 
                             //代理商存储userId与agecyId 以便用户切换企业时使用
                             storage.setCompanyData(companyData);
-                            this._pushToCompanyPage(response.data.userId,response.data.companyId);
+                            this._pushToCompanyPage(response.data.userId, response.data.companyId);
 
                         } else {
                             this._JPushSetAlias();
@@ -188,9 +190,12 @@ export default class WelcomePage extends Component {
                             response.info,
                             '',
                             [
-                                {text: '确定', onPress: () => {}},
+                                {
+                                    text: '确定', onPress: () => {
+                                }
+                                },
                             ],
-                            { cancelable: false }
+                            {cancelable: false}
                         )
                     }
 
@@ -207,13 +212,13 @@ export default class WelcomePage extends Component {
      * 登录到企业列表
      * @private
      */
-    _pushToCompanyPage(userId,agencyId) {
+    _pushToCompanyPage(userId, agencyId) {
         this.props.navigator.resetTo({
             component: CompanyPage,
             params: {
                 theme: this.theme,
-                userId:userId,
-                agencyId:agencyId,
+                userId: userId,
+                agencyId: agencyId,
                 ...this.props
             }
         });
@@ -272,11 +277,11 @@ export default class WelcomePage extends Component {
         //去拿本地是否有服务器IP 没有则设置默认IP
         dataRepository.fetchLocalRepository('Environment_Domain')
             .then((result) => {
-            if (result){
-                storage.setServerAddress(result);
-            }else {
-                storage.setServerAddress('http://sc.kongtrolink.com');
-            }
+                if (result) {
+                    storage.setServerAddress(result);
+                } else {
+                    storage.setServerAddress('http://sc.kongtrolink.com');
+                }
             });
         return (
             <View style={styles.container}>

@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     InteractionManager,
     ScrollView,
+    DeviceEventEmitter,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import Storage from '../../common/StorageClass'
@@ -42,6 +43,8 @@ export default class BulletinDetail extends Component {
                 <TouchableOpacity
                     onPress={() => {
                         this.props.navigator.pop();
+                        DeviceEventEmitter.emit('custom_listView');
+
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
                         <Image
