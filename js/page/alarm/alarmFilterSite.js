@@ -111,7 +111,7 @@ export default class AlarmFilterSite extends Component {
                 component: SearchPage,
                 params: {
                     title: '请输入站点名称',
-                    hisArr: 'site_hisArr_alarm',
+                    hisArrName: 'site_hisArr_alarm',
                     url: '/app/v2/site/list',
                     params: {
                         stamp: storageClass.getLoginInfo().stamp

@@ -80,7 +80,7 @@ export default class CustomListView extends Component {
             // 首次加载告警
             this.timer = setTimeout(() => {
                 clearTimeout(this.timer);
-                this._onRefresh();
+                this._onRefresh(true);
             }, 100);
 
         });
@@ -96,7 +96,7 @@ export default class CustomListView extends Component {
         InteractionManager.runAfterInteractions(() => {
             NetInfoUtils.checkNetworkState((isConnectedNet) => {
                 if (isConnectedNet) {
-                    this._onRefresh();
+                    this._onRefresh(true);
                 } else {
                     this.setState({
                         noNetWork: true

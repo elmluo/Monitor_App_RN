@@ -182,6 +182,8 @@ export default class Alarm extends Component {
                     // 切换页面触发事件
                     // obj={i: 2, ref: {…}, from: 1}
                     this.state.page = obj.i;
+                    DeviceEventEmitter.emit('custom_listView_alarm');
+                    DeviceEventEmitter.emit('get_focus_alarm_list');
                 }}
                 page={this.state.page}>
                 <AlarmTab tabLabel='实时告警'

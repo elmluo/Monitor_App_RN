@@ -19,30 +19,98 @@ import Toast from 'react-native-easy-toast'
 
 let {width, height} = Dimensions.get('window');
 import LoadingView from '../../common/LoadingView'
-let storage = new Storage();
 
+let storage = new Storage();
+// 根据不同的用户，保存不同本地的关注列表，添加不同的key。
 /**
  * 封装一个单独的组件类，
  * 充当scrollableTabView的tab页面
  */
 export default class AlarmTab extends Component {
 
-
     constructor(props) {
         super(props);
+        this.focusKey = 'focus_alarm_list' + storage.getLoginInfo().userId;
         this.dataRepository = new DataRepository();
         this.state = {
+            hisArr: [],
             isLoading: false,
-            visible:false,
+            visible: false,
             dataSource: new ListView.DataSource({
                 rowHasChanged: (r1, r2) => r1 !== r2
             }),
         }
     }
 
+    componentDidMount() {
+        // DeviceEventEmitter.emit('custom_listView_alarm');
+
+        // 获取AsyncStorage本地数据
+        this.dataRepository.fetchLocalRepository(this.focusKey).then((result) => {
+            if (!!result) {
+                this.setState({hisArr: result})
+            } else {
+                this.setState({hisArr: []})
+            }
+            console.log(result);
+        });
+
+        /**
+         * 每次父组件切换tab页面
+         *      从后台重新获取告警已关注列表
+         *      更新本地已关注告警列表
+         *      获取本地已关注告警列表到组件状态机。
+         */
+        this.listener = DeviceEventEmitter.addListener('get_focus_alarm_list', () => {
+            this.getFocusedList();
+            this.dataRepository.fetchLocalRepository(this.focusKey).then((result) => {
+                if (!!result) {
+                    this.setState({hisArr: result})
+                } else {
+                    this.setState({hisArr: []})
+                }
+                console.log(result);
+            });
+        });
+    }
+
+    componentWillUnmount() {
+        this.listener.remove();
+    }
+
+    /**
+     * 判断选告警是否在关注告警本地数组中
+     * @param alarmId
+     * @param hisArr
+     * @returns {boolean}
+     */
+    alarmInAlarms(alarmId, hisArr) {
+        return hisArr.indexOf(alarmId) !== -1;
+    }
+
+    /**
+     * 获取服务端已关注告警数据列表
+     *  重新更新本地已关注数据列表
+     */
+    getFocusedList() {
+        let url = '/app/v2/alarm/focus/list';
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            userId: storage.getLoginInfo().userId,
+            size: 50,
+            page: 1,
+        };
+        this.dataRepository.fetchNetRepository('POST', url, params).then((result) => {
+            let arr = result.data.map((v, i, arr) => {
+                return v.alarmId
+            });
+            this.dataRepository.saveRepository(this.focusKey, arr);
+        })
+    };
+
     _postSelectedAlarm(rowData) {
         this.setState({
-            visible:true,
+            visible: true,
         });
         let url = '/app/v2/alarm/focus/change';
         let params = {
@@ -58,14 +126,27 @@ export default class AlarmTab extends Component {
                     visible: false,
                 });
                 if (result.success === true) {
-                    let alertText = !rowData.focus ? '添加关注成功' : '取消关注成功';
-                    this.refs.toast.show(alertText);
+
+                    this.refs.toast.show(result.info);
                     this.setState({});
+                    console.log(this.alarmInAlarms(rowData.alarmId, this.state.hisArr));
+
+                    if (this.alarmInAlarms(rowData.alarmId, this.state.hisArr)) {
+                        this.state.hisArr.splice(this.state.hisArr.indexOf(rowData.alarmId), 1);
+                        this.dataRepository.saveRepository(this.focusKey, this.state.hisArr);
+                        console.log(this.state.hisArr);
+
+                    } else {
+                        this.state.hisArr.push(rowData.alarmId);
+                        this.dataRepository.saveRepository(this.focusKey, this.state.hisArr);
+                        console.log(this.state.hisArr);
+                    }
+
                     // 发送通知，改变listView数据源，重新刷新
                     this.timer = setTimeout(() => {
                         clearTimeout(this.timer);
                         DeviceEventEmitter.emit('custom_listView_alarm_update');
-                    },0);
+                    }, 0);
                 }
             })
     }
@@ -86,6 +167,7 @@ export default class AlarmTab extends Component {
             default:
                 alarmIconSource = require('../../../res/Image/BaseIcon/ic_fourAlarm_nor.png');
         }
+
         return (
             <View style={{position: 'relative'}}>
                 <TouchableOpacity
@@ -105,14 +187,19 @@ export default class AlarmTab extends Component {
                                 alignItems: 'center',
                                 marginBottom: 10
                             }}>
-                                <Text numberOfLines={1} style={{color: '#444444', fontSize: 16, width: width* 0.4}}>{rowData.name}</Text>
+                                <Text numberOfLines={1}
+                                      style={{color: '#444444', fontSize: 16, width: width * 0.4}}>{rowData.name}</Text>
                                 <Text style={{
                                     color: '#7E7E7E',
                                     fontSize: 12
                                 }}>{Utils.FormatTime(new Date(rowData.reportTime), 'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                             <View>
-                                <Text numberOfLines={1} style={{color: '#7E7E7E', fontSize: 14, width: width* 0.4}}>{rowData.siteName}</Text>
+                                <Text numberOfLines={1} style={{
+                                    color: '#7E7E7E',
+                                    fontSize: 14,
+                                    width: width * 0.4
+                                }}>{rowData.siteName}</Text>
                             </View>
                             <View>
                                 <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.deviceName}</Text>
@@ -131,7 +218,7 @@ export default class AlarmTab extends Component {
                         }}>
                             <View style={{width: 100, height: 50, alignItems: 'center', justifyContent: 'center'}}>
                                 {
-                                    rowData.focus
+                                    this.alarmInAlarms(rowData.alarmId, this.state.hisArr)
                                         ? <View style={{
                                             width: 100,
                                             alignItems: 'center',
@@ -191,7 +278,7 @@ export default class AlarmTab extends Component {
         return (
             <View style={styles.container}>
                 {content}
-                <LoadingView showLoading={ this.state.visible} />
+                <LoadingView showLoading={this.state.visible}/>
                 <Toast
                     ref="toast"
                     style={{backgroundColor: 'rgba(0,0,0,0.3)'}}

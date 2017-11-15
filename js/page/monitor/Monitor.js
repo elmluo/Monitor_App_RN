@@ -117,7 +117,7 @@ export default class Monitor extends Component {
             component: SearchPage,
             params: {
                 title: '请输入站点名称',
-                hisArr: 'site_hisArr_monitor',
+                hisArrName: 'site_hisArr_monitor',
                 url: this.url,
                 params: this.params,
                 renderRow: this._renderRow.bind(this),
