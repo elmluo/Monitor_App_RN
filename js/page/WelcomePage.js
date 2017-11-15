@@ -109,7 +109,16 @@ export default class WelcomePage extends Component {
                     })
                 })
                 .catch((error =>{
-
+                    Alert.alert(
+                        '网络错误',
+                        '获取数据失败请重试/检测网络状况',
+                        [
+                            {text: '取消', onPress: () => {}},
+                            {text: '重试', onPress:() => {
+                                this._checkNeedUpdate();
+                            }},
+                        ]
+                    )
                 }))
         });
     }

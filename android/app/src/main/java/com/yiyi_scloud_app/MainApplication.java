@@ -31,7 +31,8 @@ public class MainApplication extends Application implements ReactApplication {
         return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new RNDeviceInfo(),
-            new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG)
+//                new UpdatePackage(),
+      new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG)
 
       );
     }

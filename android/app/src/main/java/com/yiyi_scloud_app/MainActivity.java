@@ -5,7 +5,6 @@ import android.os.Bundle;
 import cn.jpush.android.api.JPushInterface;
 import cn.jpush.reactnativejpush.JPushPackage;
 import com.facebook.react.ReactActivity;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
 
 public class MainActivity extends ReactActivity {
 
