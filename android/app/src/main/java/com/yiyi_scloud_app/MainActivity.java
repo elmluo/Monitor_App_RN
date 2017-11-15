@@ -41,4 +41,9 @@ public class MainActivity extends ReactActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+    public void updateDialog (){
+//        UpdateChecker.checkForDialog(MainActivity.getMainActivity());
+
+    }
 }

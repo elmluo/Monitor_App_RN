@@ -7,6 +7,7 @@ import {
     Dimensions,
     TextInput,
     Platform,
+    Alert
 
 } from 'react-native';
 import NavigationBar from '../../common/NavigationBar'
@@ -55,7 +56,14 @@ export default class SetUpServer extends React.Component {
             .then((response) => {
                 if(response.success == true){
                     //设置成功后保存到本地并且更新单例中ip
-                    alert('设置成功');
+                    Alert.alert(
+                        '设置成功',
+                        ''
+                        [
+                            {text: '确认', onPress: () => {}}
+
+                        ]
+                    );
 
                     dataRepository.saveRepository('Environment_Domain',IP)
                         .then(() => {
@@ -131,7 +139,8 @@ export default class SetUpServer extends React.Component {
 
 
                     <TouchableOpacity onPress={() => {
-                        this._setSeverIP(this.state.serverIp);
+                        let Ip = this.state.serverIp?this.state.serverIp:storage.getServerIP()
+                        this._setSeverIP(Ip);
                     }}>
                         <Btn text = {this.state.btnText}  />
                     </TouchableOpacity>
