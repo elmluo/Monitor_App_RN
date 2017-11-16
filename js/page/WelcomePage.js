@@ -75,7 +75,7 @@ export default class WelcomePage extends Component {
             [
                 {text: '退出程序', onPress: () => Platform.OS === 'ios'?CalendarManager.exitApplication():Updata.updateExite()},
                 {text: '立即更新', onPress:() => {
-                    Platform.OS === 'ios'?CalendarManager.upDate():Updata.updateDialog(this.state.result.version,this.state.result.url);
+                    Platform.OS === 'ios'?(CalendarManager.upDate(),CalendarManager.exitApplication()):Updata.updateDialog(this.state.result.version,this.state.result.url);
                 }},
             ],
         { cancelable: false }
