@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     InteractionManager,
     DeviceEventEmitter,
+    Dimensions,
 } from 'react-native'
 import NavigationBar from '../../common/NavigationBar'
 import BulletinDetail from './BulletinDetail'
@@ -22,6 +23,7 @@ import BackPressComponent from '../../common/BackPressComponent'
 
 let storage = new Storage();
 let dataRepository = new DataRepository();
+let {height, width} = Dimensions.get('window');
 
 // 获取本地用户存储信息
 export default class BulletinList extends Component {
@@ -102,7 +104,9 @@ export default class BulletinList extends Component {
                                     ? null
                                     :<Image source={require('../../../res/Image/Home/ic_home_dot.png')}/>
                             }
-                            <Text style={styles.cellTopLeftTitle}>{rowData.title}</Text>
+                            <Text
+                                numberOfLines={1}
+                                style={styles.cellTopLeftTitle}>{rowData.title}</Text>
                         </View>
                         <View style={styles.cellTopRight}>
                             <Text style={styles.cellTopRightTime}>{Utils._Time(rowData.time)}</Text>
@@ -198,6 +202,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#444444',
         marginLeft: 12,
+        width: width*0.5
     },
     cellTopRight: {
         flexDirection: 'row',

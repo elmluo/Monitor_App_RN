@@ -38,13 +38,57 @@ export default class CustomListView extends Component {
         this.dataRepository = new DataRepository();
         this.page = 1;
         this._data = [];
+        this.copySource = [];
         this.state = {
             noNetWork: false,
             noData: false,
             isLoading: false,
             theme: this.props.theme,
-            dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
+            dataSource: new ListView.DataSource({
+                rowHasChanged: (r1, r2) => {
+                    return r1 !== r2;
+                }
+            }),
         }
+    }
+
+    /**
+     * 一旦传入属性变化。
+     * @param nextProps
+     */
+    componentWillReceiveProps(nextProps) {
+    }
+
+    /**
+     * 组件装载，执行监听通知等操作
+     */
+    componentDidMount() {
+
+        // 组件加载完毕，监听事件-从头加载数据。
+        this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
+            this._onRefresh(true);
+        });
+
+        //  组件加载完毕，刷新listView数据源
+        this.listener = DeviceEventEmitter.addListener('custom_listView_update', () => {
+            this.copySource = this.objDeepCopy(this._data);
+            this.setState({
+                dataSource: this.state.dataSource.cloneWithRows(this.copySource),
+            });
+        });
+
+        // console.log(this.props.params);
+        InteractionManager.runAfterInteractions(() => {
+            NetInfoUtils.checkNetworkState((isConnectedNet) => {
+                if (isConnectedNet) {
+                    this._onRefresh();
+                } else {
+                    this.setState({
+                        noNetWork: true
+                    });
+                }
+            });
+        });
     }
 
     /**
@@ -110,16 +154,12 @@ export default class CustomListView extends Component {
         let url = this.props.url;
         let params = this.props.params;
         params.page = this.page;
-
-
-        // console.log(params);
+        // params.size = 10;
         this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
             if (result.success === true) {
                 // alert(JSON.stringify(result));
                 // 如果第一页没有数据，显示没有数据提示页面
                 if (!result.data || result.data.length === 0) {
-                    // alert(page);
-                    // console.log('第一页');
                     this.setState({
                         isLoading: false,
                         noNetWord: false,
@@ -131,7 +171,7 @@ export default class CustomListView extends Component {
                     this._data = this._data.concat(result.data);
                     this.setState({
                         result: result,
-                        dataSource: this.state.dataSource.cloneWithRows(this._data),
+                        dataSource: this.state.dataSource.cloneWithRows(result.data),
                         isLoading: false,
                         noData: false,
                     })
@@ -147,76 +187,55 @@ export default class CustomListView extends Component {
     }
 
     /**
+     * 对象数组深拷贝
+     */
+
+    objDeepCopy(source) {
+        let sourceCopy = source instanceof Array ? [] : {};
+        for (let item in source) {
+            sourceCopy[item] =
+                typeof source[item] === 'object'
+                    ? this.objDeepCopy(source[item])
+                    : source[item];
+        }
+        return sourceCopy;
+    }
+
+    /**
      * 上拉加载更多
      * @private
      */
     _onLoadMore() {
-        this.page++;
-        let url = this.props.url;
-        let params = this.props.params;
-        params.page = this.page;
-        this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
-            if (result.success === true) {
-                // mock数据
-                // result.data = this._data;
-                // 如果第一页没有数据，显示没有数据提示页面
-                if ((this.page > 1 && (!result.data || result.data.length === 0))) {
-                    // this.refs.toast.show(this.props.alertText);
+        this.timer = setTimeout(() => {
+            this.page++;
+            let url = this.props.url;
+            let params = this.props.params;
+            params.page = this.page;
+            // params.size = 5;
+            this.dataRepository.fetchNetRepository('POST', url, params).then(result => {
+                if (result.success === true) {
+                    // mock数据
+                    // result.data = this._data;
+                    // 如果第一页没有数据，显示没有数据提示页面
+                    if ((this.page > 1 && (!result.data || result.data.length === 0))) {
+                        // this.refs.toast.show(this.props.alertText);
+                    } else {
+                        // 将请求数据保存到内存
+                        this._data = this._data.concat(result.data);
+                        this.setState({
+                            // dataSource: this._data,
+                            dataSource: this.state.dataSource.cloneWithRows(this._data),
+                        });
+                    }
                 } else {
-                    // 将请求数据保存到内存
-                    this._data = this._data.concat(result.data);
-                    this.setState({
-                        dataSource: this.state.dataSource.cloneWithRows(this._data),
-                    })
+                    // console.log('连接服务失败');
                 }
-            } else {
-                // console.log('连接服务失败');
-            }
-        }).catch(error => {
-            this.setState({
-                result: JSON.stringify(error)
-            });
-        })
-    }
-
-    /**
-     * 一旦传入属性变化。
-     * @param nextProps
-     */
-    componentWillReceiveProps(nextProps) {
-        // 如果传入自动刷新，组件每次加载都会自动加载数据一次。
-        // if (this.props.isAutoRefresh) {
-        //     console.log(this.props);
-        //     alert(JSON.stringify(nextProps.params));
-        //     this.props = nextProps;
-        //     this._onRefresh()
-        // }
-    }
-
-    /**
-     * 组件装载，执行监听通知等操作
-     */
-    componentDidMount() {
-
-        // 组件加载完毕，监听事件-重新加载数据。
-        this.listener = DeviceEventEmitter.addListener('custom_listView', () => {
-            this._onRefresh(true);
-        });
-
-        // console.log(this.props.params);
-
-        InteractionManager.runAfterInteractions(() => {
-            NetInfoUtils.checkNetworkState((isConnectedNet) => {
-                if (isConnectedNet) {
-                    this._onRefresh();
-                } else {
-                    this.setState({
-                        noNetWork: true
-                    });
-                }
-            });
-        });
-
+            }).catch(error => {
+                this.setState({
+                    result: JSON.stringify(error)
+                });
+            })
+        }, 2000);
     }
 
     /**
@@ -235,10 +254,21 @@ export default class CustomListView extends Component {
                 renderHeader={
                     this.props.renderHeader ? this.props.renderHeader : null
                 }
+                renderFooter={() => {
+                    // return <View>
+                    //     <Text>加载中</Text>
+                    //     <Text>加载中</Text>
+                    //     <Text>加载中</Text>
+                    //     <Text>加载中</Text>
+                    //     <Text>加载中</Text>
+                    // </View>
+                    return true;
+                }}
                 renderRow={
                     this.props.renderRow ? this.props.renderRow
                         : this._renderDefaultRow.bind(this)
                 }
+                pageSize={5}
                 onEndReachedThreshold={30}
                 removeClippedSubviews={false}
                 onEndReached={() => {

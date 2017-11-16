@@ -120,34 +120,41 @@ export default class AlarmDetail extends Component {
 
                 <View style={{flex: 1, backgroundColor: 'white'}}>
                     <View style={{alignItems: 'center'}}>
-                        <ImageBackground style={{height: height * 0.45, width: width,}}
+                        <ImageBackground style={{height: height * 0.45, width: width}}
                                          source={require('../../../res/Image/Alarm/ic_alarmDetail_headerBg.png')}
                                          resizeMode='cover'>
                             {navigationBar}
-                            <View style={{backgroundColor: 'rgba(0,0,0,0)', top: 58}}>
-                                <Text style={{fontSize: 30, fontWeight: '800', color: '#FFF', textAlign: 'center'}}>
-                                    {this.props.item.name}
-                                    {/*烟雾告警*/}
-                                </Text>
-                            </View>
 
-                            <View style={{backgroundColor: 'rgba(0,0,0,0)', top: 70}}>
-                                <Text style={{fontSize: 14, color: '#FFF', textAlign: 'center'}}>
-                                    {this.props.item.siteName}
-                                    {/*国家大学科技园站*/}
-                                </Text>
-                            </View>
-                            <View style={{backgroundColor: 'rgba(0,0,0,0)', top: 90, alignItems: 'center'}}>
-
-                                <ImageBackground style={{height: 30, width: 92, justifyContent: 'center'}}
-                                                 source={require('../../../res/Image/Alarm/ic_alarmDetail_btnBg.png')}
-                                                 resizeMode='cover'>
-                                    <Text style={{fontSize: 12, color: '#FFF', textAlign: 'center'}}>
-                                        {this.alarmLevelName(this.props.item.level)}
-                                        {/*一级告警*/}
+                            <View style={{width: width, alignItems: 'center', justifyContent:'space-around', height: height*0.23, marginTop: 20}}>
+                                <View style={{backgroundColor: 'rgba(0,0,0,0)'}}>
+                                    <Text
+                                        numberOfLines={3}
+                                        style={{fontSize: 30, fontWeight: '800', color: '#FFF', textAlign: 'center',width: width*0.9}}>
+                                        {this.props.item.name}
+                                        {/*烟雾告警*/}
                                     </Text>
-                                </ImageBackground>
+                                </View>
+
+                                <View style={{backgroundColor: 'rgba(0,0,0,0)'}}>
+                                    <Text
+                                        style={{fontSize: 14, color: '#FFF', textAlign:'center'}}>
+                                        {this.props.item.siteName}
+                                        {/*国家大学科技园站*/}
+                                    </Text>
+                                </View>
+                                <View style={{backgroundColor: 'rgba(0,0,0,0)', alignItems: 'center'}}>
+
+                                    <ImageBackground style={{height: 30, width: 92, justifyContent: 'center'}}
+                                                     source={require('../../../res/Image/Alarm/ic_alarmDetail_btnBg.png')}
+                                                     resizeMode='cover'>
+                                        <Text style={{fontSize: 12, color: '#FFF', textAlign: 'center'}}>
+                                            {this.alarmLevelName(this.props.item.level)}
+                                            {/*一级告警*/}
+                                        </Text>
+                                    </ImageBackground>
+                                </View>
                             </View>
+
                         </ImageBackground>
                         <View style={{position: 'relative', top: 50}}>
                             {this.getItem(null, require('../../../res/Image/Alarm/ic_alarmDetail_turned.png'), '设备名称', null, this.props.item.deviceName ? this.props.item.deviceName : '--')}

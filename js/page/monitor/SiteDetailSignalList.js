@@ -192,7 +192,6 @@ export default class SignalList extends React.Component {
                                     this.selectArr.push(v.threshold);
                                 }
                                 this.setState({})   // 触发视图刷新
-
                             }}>
                         </TouchableOpacity>
                 } else {

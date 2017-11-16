@@ -431,6 +431,7 @@ export default class Monitor extends Component {
     }
 
     render() {
+        console.log(this.state.fsuWeekCount);
         let statusBar = {
             backgroundColor: this.state.theme.themeColor,
             barStyle: 'light-content'

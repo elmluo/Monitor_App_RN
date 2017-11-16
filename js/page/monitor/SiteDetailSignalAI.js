@@ -94,7 +94,7 @@ export default class SiteDetailSignalAI extends React.Component {
                 });
                 this.setState({
                     data: result,
-                    dataSource: this.state.dataSource.cloneWithRows(result.data),
+                    dataSource: this.state.dataSource.cloneWithRows(result.data.reverse()),
                 })
             }
 

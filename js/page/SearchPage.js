@@ -46,7 +46,7 @@ export default class ComponentName extends React.Component {
         this.backPress.componentDidMount();
 
         // 获取AsyncStorage本地数据
-        dataRepository.fetchLocalRepository(this.props.hisArr).then((result)=> {
+        dataRepository.fetchLocalRepository(this.props.hisArrName).then((result)=> {
             if (result) {
                 this.setState({hisArr: result})
             } else {
@@ -77,22 +77,28 @@ export default class ComponentName extends React.Component {
      */
     _addSearchHistory(item) {
         this.state.hisArr.push(item);
-        dataRepository.saveRepository(this.props.hisArr, this.state.hisArr);
+        dataRepository.saveRepository(this.props.hisArrName, this.state.hisArr);
         // 更新视图
         this.setState({})
     }
 
+    /**
+     * 从AsyncStorage中删除数据
+     */
     _deleteHistoryButton(item) {
         this.state.hisArr.splice(this.state.hisArr.indexOf(item), 1);
-        dataRepository.saveRepository(this.props.hisArr, this.state.hisArr);
+        dataRepository.saveRepository(this.props.hisArrName, this.state.hisArr);
         // 更新视图
         this.setState({})
     }
 
+    /**
+     * 清空所有数据
+     */
     _deleteAllHistory() {
         // 删除storage中所有项
         this.state.hisArr = [];
-        dataRepository.saveRepository(this.props.hisArr, this.state.hisArr);
+        dataRepository.saveRepository(this.props.hisArrName, this.state.hisArr);
         // 更新试图
         this.setState({})
     }

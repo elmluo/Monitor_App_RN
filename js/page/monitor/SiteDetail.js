@@ -13,6 +13,7 @@ import NavigationBar from '../../common/NavigationBar'
 import CustomListView from '../../common/CustomListView'
 import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
+import Toast from 'react-native-easy-toast';
 import Storage from '../../common/StorageClass'
 import DeviceTab from './SiteDetailDeviceTab'
 import LocationPage from './SiteDetailLocationPage';
@@ -75,8 +76,11 @@ export default class SiteDetail extends Component {
             <View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
                     onPress={() => {
-                        // alert('还不能打开地图功能');
-                        this._pushToLocation()
+                        if (!!this.props.siteInfo.longitude && !!this.props.siteInfo.latitude) {
+                            this._pushToLocation()
+                        } else {
+                            this.refs.toast.show('未配置站点经纬度！');
+                        }
                     }}>
                     <View style={{padding: 5, marginRight: 8}}>
                         <Image
@@ -173,6 +177,16 @@ export default class SiteDetail extends Component {
             <View style={styles.container}>
                 {navigationBar}
                 {content}
+                <Toast
+                    ref="toast"
+                    style={{backgroundColor: 'rgba(0,0,0,0.3)'}}
+                    position='bottom'
+                    positionValue={200}
+                    fadeInDuration={100}
+                    fadeOutDuration={1000}
+                    opacity={0.8}
+                    textStyle={{color: '#000000'}}
+                />
             </View>
         )
     }
@@ -258,7 +272,7 @@ class AlarmTabAlarm extends Component {
                             marginBottom: 10
                         }}>
                             <Text style={{color: '#444444', fontSize: 16}}>{rowData.name}</Text>
-                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils._Time(rowData.reportTime)}</Text>
+                            <Text style={{color: '#7E7E7E', fontSize: 12}}>{Utils.FormatTime(new Date(rowData.reportTime), 'yyyy-MM-dd hh:mm')}</Text>
                         </View>
                         <View>
                             <Text style={{color: '#7E7E7E', fontSize: 14}}>{rowData.siteName}</Text>

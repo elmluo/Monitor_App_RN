@@ -69,7 +69,7 @@ export default class CustomListView extends Component {
      */
     componentDidMount() {
         // 组件加载完毕，监听事件-重新加载数据。
-        this.listener = DeviceEventEmitter.addListener('custom_listView_alarm', (p) => {
+        this.listener = DeviceEventEmitter.addListener('refresh_focus_alarm', (p) => {
             // 当params想要修改的时候，可以传入参数p进行覆盖。可以覆盖原有的字段或者属性
             if (p) {
                 for (let i in p) {

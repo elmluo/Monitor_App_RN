@@ -18,7 +18,6 @@ import DataRepository from '../../expand/dao/Data'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view'
 import Storage from '../../common/StorageClass'
 import AlarmTab from './AlarmTab'
-
 let storage = new Storage();
 export default class Alarm extends Component {
     constructor(props) {
@@ -182,6 +181,8 @@ export default class Alarm extends Component {
                     // 切换页面触发事件
                     // obj={i: 2, ref: {…}, from: 1}
                     this.state.page = obj.i;
+                    DeviceEventEmitter.emit('get_focus_alarm_list');    // 重新更新本地已关注数据列表
+                    // DeviceEventEmitter.emit('custom_listView_alarm');
                 }}
                 page={this.state.page}>
                 <AlarmTab tabLabel='实时告警'
@@ -196,6 +197,7 @@ export default class Alarm extends Component {
                           {...this.props}
                           params={{...this._this_Params(0, true), ...this.state.filter}}
                           isAlarm={false}
+                          isFocusAlarm={true}   // 判断是否为关注告警列表，若是，则点击关注重新刷新列表操作。
                           url={'/app/v2/alarm/focus/list'}
                           filter={this.state.filter}>
                     关注告警

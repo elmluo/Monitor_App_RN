@@ -93,7 +93,7 @@ export default class DeviceTab extends Component {
                             {this._getImageIcon(rowData.typeCode)}
                         </View>
                         <View>
-                            <Text style={{fontSize: 14, color: '#444444', paddingLeft: 16}}>{rowData.name}</Text>
+                            <Text numberOfLines={1} style={{fontSize: 14, color: '#444444', paddingLeft: 16, width: width * 0.6}}>{rowData.name}</Text>
                         </View>
                     </View>
                     <View>
@@ -217,7 +217,7 @@ export default class DeviceTab extends Component {
             component: SearchPage,
             params: {
                 title: '请输入设备名称',
-                hisArr: 'device_hisArr',
+                hisArrName: 'device_hisArr',
                 url: this.props.url,
                 params: this.props.params,
                 renderRow: this._renderRow.bind(this),
