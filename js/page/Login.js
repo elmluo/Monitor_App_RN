@@ -271,6 +271,8 @@ export default class Login extends Component {
      * @private
      */
     _pushToSetUpServerPage() {
+        let dismissKeyboard = require('dismissKeyboard');
+        dismissKeyboard();
         this.props.navigator.push({
             component: SetUpServer,
             params: {
