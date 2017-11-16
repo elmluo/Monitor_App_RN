@@ -497,6 +497,10 @@ export default class Monitor extends Component {
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
                 console.log("获取推送消息 " + JSON.stringify(message));
+                if (message.type != 200) {
+                    //收到告警推送刷新列表
+                    this._refreshData();
+                }
                 storage.setBadge(message.aps.badge);
                 this.timer = setTimeout(() => {
                     clearTimeout(this.timer);
@@ -543,9 +547,12 @@ export default class Monitor extends Component {
             });
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
+
                 console.log("获取推送消息 " + JSON.stringify(message));
                 console.log('告警安卓badge' + this.state.alarmCount);
                 if (JSON.parse(message.extras).type != 200) {
+                    //收到告警推送刷新列表
+                    this._refreshData();
                     this.state.alarmCount++;
                     storage.setBadge(this.state.alarmCount);
                     this.timer = setTimeout(() => {
@@ -613,9 +620,11 @@ export default class Monitor extends Component {
         this.listener = DeviceEventEmitter.addListener('getNoticeNotReadCount', () => {
             // this._getNoticeNotReadCount()
             this._refreshData();
-            JPushModule.setBadge(0, (badgeNumber) => {
-                console.log(badgeNumber)
-            });
+            if (Platform.OS === 'ios') {
+                JPushModule.setBadge(0, (badgeNumber) => {
+                    console.log(badgeNumber)
+                });
+            }
         })
     }
 
