@@ -177,6 +177,7 @@ export default class Monitor extends Component {
             let params = {
                 stamp: data.stamp
             };
+            console.log(params);
             dataRepository.fetchNetRepository('POST', URL, params).then((result) => {
                 // console.log(result);
                 // 获取 一周fsu数量

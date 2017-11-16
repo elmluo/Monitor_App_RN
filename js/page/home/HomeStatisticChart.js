@@ -50,7 +50,10 @@ export default class HomeStatisticChart extends Component {
         let lastValidIndex = onlineRate.indexOf(lastValid);
         let nextValid = this.props.chartData[1];
         let nextValidIndex = onlineRate.indexOf(nextValid);
-
+        if (!nextValid) {
+            nextValid = lastValid;
+            nextValidIndex = lastValidIndex;
+        };
         for (let itr = 0; itr < onlineRate.length; itr++) {
             if (!onlineRate[itr]) {
                 onlineRate[itr] = {};
