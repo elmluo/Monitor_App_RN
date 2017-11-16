@@ -40,9 +40,9 @@ export default class Monitor extends Component {
             isLoading: false,
             noticeCount: null,
             isShowNoticeBar: false,
-            alarmCount:0,
-            visible:false,
-            visibleCount:0,
+            alarmCount: 0,
+            visible: false,
+            visibleCount: 0,
             fsuCount: [     // 初始化的数据结构和操作的数据结构统一
                 {item: "在线", count: 2},
                 {item: "离线", count: 0}
@@ -249,9 +249,9 @@ export default class Monitor extends Component {
      */
     _refreshData() {
         //显示加载动画
-        if (this.state.visibleCount === 0){
+        if (this.state.visibleCount === 0) {
             this.setState({
-                visible:true,
+                visible: true,
             })
         }
 
@@ -280,8 +280,8 @@ export default class Monitor extends Component {
                     // fsuWeekCount: results[1].data,
                     levelAlarm: results[2].data,
                     allCount: allCount,
-                    visible:false,
-                    visibleCount:1,
+                    visible: false,
+                    visibleCount: 1,
                 })
             });
             // this._getFsuCount(stamp);
@@ -480,7 +480,7 @@ export default class Monitor extends Component {
             <View style={styles.container}>
                 {navigationBar}
                 {content}
-                <LoadingView showLoading={ this.state.visible} />
+                <LoadingView showLoading={this.state.visible}/>
             </View>
         )
     }
@@ -493,17 +493,15 @@ export default class Monitor extends Component {
     componentDidMount() {
 
 
-
-
-        if (Platform.OS === 'ios'){
+        if (Platform.OS === 'ios') {
             // console.log("iOS : ");
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
                 console.log("获取推送消息 " + JSON.stringify(message));
                 storage.setBadge(message.aps.badge);
-                this.timer = setTimeout(()=> {
+                this.timer = setTimeout(() => {
                     clearTimeout(this.timer);
-                    DeviceEventEmitter.emit('setBadge', message.type,message.aps.badge);
+                    DeviceEventEmitter.emit('setBadge', message.type, message.aps.badge);
                 }, 0);
 
             });
@@ -511,52 +509,51 @@ export default class Monitor extends Component {
 
             JPushModule.addReceiveOpenNotificationListener((map) => {
                 console.log("点击 " + JSON.stringify(map));
-                if (map.type == 200){
+                if (map.type == 200) {
                     const routes = this.props.navigator.state.routeStack;
                     // console.log(routes);
                     let lent = 0;
-                    for (let i = 0;i<routes.length;i++){
-                        if (routes[i].component.name === "BulletinList"){
+                    for (let i = 0; i < routes.length; i++) {
+                        if (routes[i].component.name === "BulletinList") {
                             this.props.navigator.popToRoute(routes[i]);
-                        }else {
+                        } else {
                             lent++;
                         }
                     }
-                    if (lent == routes.length){
+                    if (lent == routes.length) {
                         this.props.navigator.push({
                             component: BulletinList,
                             params: {...this.props}
                         })
                     }
-                }else {
+                } else {
                     storage.setBadge(map.aps.badge);
-                    this.timer = setTimeout(()=> {
+                    this.timer = setTimeout(() => {
                         clearTimeout(this.timer);
-                        DeviceEventEmitter.emit('setBadge', map.type,map.aps.badge);
+                        DeviceEventEmitter.emit('setBadge', map.type, map.aps.badge);
                     }, 0);
                 }
 
 
-
             });
-        }else {
+        } else {
             // // console.log("Android: ");
-            JPushModule.notifyJSDidLoad((resultCode) =>{
+            JPushModule.notifyJSDidLoad((resultCode) => {
                 // console.log("注册事件: ", resultCode);
 
             });
             //推送消息
             JPushModule.addReceiveNotificationListener((message) => {
                 console.log("获取推送消息 " + JSON.stringify(message));
-                console.log('告警安卓badge'+this.state.alarmCount);
-                if(JSON.parse(message.extras).type != 200){
+                console.log('告警安卓badge' + this.state.alarmCount);
+                if (JSON.parse(message.extras).type != 200) {
                     this.state.alarmCount++;
                     storage.setBadge(this.state.alarmCount);
-                    this.timer = setTimeout(()=> {
+                    this.timer = setTimeout(() => {
                         clearTimeout(this.timer);
-                        DeviceEventEmitter.emit('setBadge', message.extras.type,this.state.alarmCount);
+                        DeviceEventEmitter.emit('setBadge', message.extras.type, this.state.alarmCount);
                     }, 0);
-                }else {
+                } else {
                     this._getNoticeNotReadCount();
                 }
             });
@@ -571,30 +568,30 @@ export default class Monitor extends Component {
             JPushModule.addReceiveOpenNotificationListener((map) => {
                 console.log("点击 " + JSON.stringify(map));
                 const routes = this.props.navigator.state.routeStack;
-                if (JSON.parse(map.extras).type == 200){
+                if (JSON.parse(map.extras).type == 200) {
                     //跳转详情页面 清除this.state.alarmCount
                     this.state.alarmCount = 0;
                     const routes = this.props.navigator.state.routeStack;
                     // console.log(routes);
                     let lent = 0;
-                    for (let i = 0;i<routes.length;i++){
-                        if (routes[i].component.name === "BulletinList"){
+                    for (let i = 0; i < routes.length; i++) {
+                        if (routes[i].component.name === "BulletinList") {
                             this.props.navigator.popToRoute(routes[i]);
-                        }else {
+                        } else {
                             lent++;
                         }
                     }
-                    if (lent == routes.length){
+                    if (lent == routes.length) {
                         this.props.navigator.push({
                             component: BulletinList,
                             params: {...this.props}
                         })
                     }
-                }else {
+                } else {
                     storage.setBadge(this.state.alarmCount);
-                    this.timer = setTimeout(()=> {
+                    this.timer = setTimeout(() => {
                         clearTimeout(this.timer);
-                        DeviceEventEmitter.emit('setBadge', map.extras.type,this.state.alarmCount);
+                        DeviceEventEmitter.emit('setBadge', map.extras.type, this.state.alarmCount);
                     }, 0);
                 }
 
@@ -614,8 +611,12 @@ export default class Monitor extends Component {
 
 
         // 添加监听。看完公告内容后，重新获取未读公告数量。
-        this.listener = DeviceEventEmitter.addListener('getNoticeNotReadCount', ()=> {
-            this._getNoticeNotReadCount()
+        this.listener = DeviceEventEmitter.addListener('getNoticeNotReadCount', () => {
+            // this._getNoticeNotReadCount()
+            this._refreshData();
+            JPushModule.setBadge(0, (badgeNumber) => {
+                console.log(badgeNumber)
+            });
         })
     }
 
@@ -662,7 +663,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
     onlineRateText: {
-        width: 130 ,
+        width: 130,
         justifyContent: 'center',
         marginLeft: 20,
     },

@@ -52,7 +52,8 @@ export default class ResetPasswordPage extends React.Component {
 
     _setPassword() {
 
-
+        let dismissKeyboard = require('dismissKeyboard');
+        dismissKeyboard();
         if (this.state.newPassword.length === 0) {
             this.refs.toast.show('*请输入新密码');
 

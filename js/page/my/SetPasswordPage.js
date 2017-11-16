@@ -71,7 +71,8 @@ export default class SetPasswordPage extends React.Component {
     }
 
     _setPassword() {
-
+        let dismissKeyboard = require('dismissKeyboard');
+        dismissKeyboard();
         // console.log(storage.getUserInfo());
 
         let url = '/app/v2/user/password/modify';
