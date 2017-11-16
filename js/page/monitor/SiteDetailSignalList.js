@@ -100,6 +100,7 @@ export default class SignalList extends React.Component {
                 this.refs.toast.show(result.info);
             }
         }).catch((error)=> {
+            // console.log(error);
             this.refs.toast.show('网络连接不稳定，请重试！');
         })
 
@@ -164,7 +165,7 @@ export default class SignalList extends React.Component {
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(v.time,'yyyy-MM-dd hh:mm')}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(new Date(v.time),'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>
@@ -214,7 +215,7 @@ export default class SignalList extends React.Component {
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(v.time,'yyyy-MM-dd hh:mm')}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(new Date(v.time),'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>
@@ -232,7 +233,7 @@ export default class SignalList extends React.Component {
                             </ImageBackground>
                             <View style={styles.celLeftText}>
                                 <Text numberOfLines={1} style={styles.cellLeftTitle}>{v.name}</Text>
-                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(v.time,'yyyy-MM-dd hh:mm')}</Text>
+                                <Text style={styles.cellLeftSubTitle}>{Utils.FormatTime(new Date(v.time),'yyyy-MM-dd hh:mm')}</Text>
                             </View>
                         </View>
                         <View style={styles.cellRight}>

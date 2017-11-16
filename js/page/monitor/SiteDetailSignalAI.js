@@ -113,7 +113,7 @@ export default class SiteDetailSignalAI extends React.Component {
         return (
             <View key={i} style={styles.cellWrapper}>
                 <View style={styles.cell}>
-                    <Text style={styles.cellLeft}>{Utils._Time(v.time)}</Text>
+                    <Text style={styles.cellLeft}>{Utils.FormatTime(new Date(v.time),'yyyy-MM-dd hh:mm')}</Text>
                     <Text style={styles.cellRight}>{v.value + '' + this.props.signal.unit}</Text>
                 </View>
             </View>

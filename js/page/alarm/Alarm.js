@@ -183,6 +183,7 @@ export default class Alarm extends Component {
                     this.state.page = obj.i;
                     DeviceEventEmitter.emit('get_focus_alarm_list');    // 重新更新本地已关注数据列表
                     // DeviceEventEmitter.emit('custom_listView_alarm');
+                    DeviceEventEmitter.emit('refresh_focus_alarm')
                 }}
                 page={this.state.page}>
                 <AlarmTab tabLabel='实时告警'
