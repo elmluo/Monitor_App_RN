@@ -188,7 +188,7 @@ export default class CustomListView extends Component {
                 storage.setBadge(0);
                 if (Platform.OS === 'ios') {
                     JPushModule.setBadge(0, (badgeNumber) => {
-                        console.log(badgeNumber)
+                        // console.log(badgeNumber)
                     });
                 } else {
                     DeviceEventEmitter.emit('clearAndroidBadge');

@@ -96,9 +96,9 @@ export default class WelcomePage extends Component {
         return new Promise((resolve, reject) => {
             dataRepository.fetchNetRepository('POST', url, params)
                 .then(response => {
-                    console.log('获取版本号：' + JSON.stringify(response));
+                    // console.log('获取版本号：' + JSON.stringify(response));
                     //
-                    console.log("App Version", DeviceInfo.getVersion()); // e.g. 1.1.0
+                    // console.log("App Version", DeviceInfo.getVersion()); // e.g. 1.1.0
                     if (DeviceInfo.getVersion() < response.data.version) {
                         resolve(true);
                     }else {
@@ -160,7 +160,7 @@ export default class WelcomePage extends Component {
                 password: userData.password
             };
             //进行登录
-            console.log(userData + '登录信息');
+            // console.log(userData + '登录信息');
             dataRepository.fetchNetRepository('POST', url, params)
                 .then((response) => {
                     console.log(response + '登录完成');

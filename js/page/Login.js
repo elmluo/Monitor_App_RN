@@ -72,7 +72,7 @@ export default class Login extends Component {
         })
         dataRepository.fetchNetRepository('POST', url, params)
             .then((response) => {
-                console.log('技术支持账号'+JSON.stringify(response));
+                // console.log('技术支持账号'+JSON.stringify(response));
                 this.setState({
                     visible:false,
                 })

@@ -52,7 +52,7 @@ export default class ComponentName extends React.Component {
             } else {
                 this.setState({hisArr: []})
             }
-            console.log(result)
+            // console.log(result)
         });
     }
 

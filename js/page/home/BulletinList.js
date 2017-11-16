@@ -109,7 +109,7 @@ export default class BulletinList extends Component {
                                 style={styles.cellTopLeftTitle}>{rowData.title}</Text>
                         </View>
                         <View style={styles.cellTopRight}>
-                            <Text style={styles.cellTopRightTime}>{Utils._Time(rowData.time)}</Text>
+                            <Text style={styles.cellTopRightTime}>{Utils.FormatTime(new Date(rowData.time),'yyyy-MM-dd hh:mm')}</Text>
                             <Image source={require('../../../res/Image/BaseIcon/ic_listPush_nor.png')}/>
                         </View>
 

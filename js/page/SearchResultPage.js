@@ -68,7 +68,13 @@ export default class SearchResult extends React.Component {
             barStyle: 'light-content'
         };
         let url = this.props.url;
-        let params = this.props.params;
+
+        // 注意如果是从父组件传递过来的对象，同一个引用，最好是重新赋值一个对象。
+        let params = {
+            stamp: storage.getLoginInfo().stamp,
+            page: 1,
+            size: 20,
+        };
         params.keyword= this.props.searchText;
 
         return (

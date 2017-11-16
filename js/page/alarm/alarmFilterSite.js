@@ -123,7 +123,7 @@ export default class AlarmFilterSite extends Component {
         };
 
         let _renderRow = (type) => {
-            console.log('renderRow调用');
+            // console.log('renderRow调用');
             return (rowData, sectionID, rowID, hightlightRow) => {
                 return (
                     <TouchableOpacity
