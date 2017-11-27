@@ -145,6 +145,7 @@ export default class CustomListView extends Component {
         if (this.props.fsuList) {
             this._data = this._data.concat(this.props.fsuList);
         }
+        // console.log(this._data);
         // 开启加载动画
         if (isLoading) {
             this.setState({
@@ -171,7 +172,7 @@ export default class CustomListView extends Component {
                     this._data = this._data.concat(result.data);
                     this.setState({
                         result: result,
-                        dataSource: this.state.dataSource.cloneWithRows(result.data),
+                        dataSource: this.state.dataSource.cloneWithRows(this._data),
                         isLoading: false,
                         noData: false,
                     })

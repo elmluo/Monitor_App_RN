@@ -71,8 +71,9 @@ export default class DeviceTab extends Component {
      */
     _renderRow(rowData) {
         let fsuOnline;
-
+        console.log(rowData);
         // 判断是否FSU还是一般设备
+        console.log('FSUID'+rowData.fsuId);
         if (rowData.fsuId) {
             if (rowData.online) {
                 fsuOnline = <View style={[styles.onlineState, {backgroundColor: '#3C7FFC'}]}><Text
@@ -115,7 +116,7 @@ export default class DeviceTab extends Component {
         // 当选择为全部系统的时候，默认不传递参数或者参数为null，
         if (this.state.selectedSystem !== '全部系统') {
             params.system = this.state.selectedSystem;
-        }else {
+        } else {
             params.system = null;
         }
         // alert(JSON.stringify(params));
@@ -144,7 +145,7 @@ export default class DeviceTab extends Component {
             siteId: this.props.siteInfo.siteId,
         };
         dataRepository.fetchNetRepository('POST', url, params).then((result) => {
-            // console.log(result);
+            // console.log(result, 123456);
             this.setState({
                 fsuList: result.data
             })
