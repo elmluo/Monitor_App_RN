@@ -11,6 +11,7 @@ import {
     ScrollView,
     RefreshControl,
     TouchableOpacity,
+    NativeModules,
     Dimensions,
     Alert,
 } from 'react-native'
@@ -18,6 +19,7 @@ import NavigationBar from '../../common/NavigationBar'
 import DataRepository from '../../expand/dao/Data'
 import Storage from '../../common/StorageClass'
 
+let CalendarManager = NativeModules.CalendarManager;
 let {width, height} = Dimensions.get('window');
 let dataRepository = new DataRepository();
 let storage = new Storage();
@@ -30,19 +32,38 @@ export default class Function extends Component {
 
         }
     }
+    _getUserInfo(){
+        dataRepository.fetchLocalRepository('/app/v2/user/login').then((result)=>{
 
+            let str=storage.getServerIP();
+            let pattern = "http";
+            str = str.replace(new RegExp(pattern), "https");
+            CalendarManager.pushVideoVC_stamp(result.stamp,result.userId,str);
+
+        });
+
+    }
 
     _IconView(icon, text, marginTop) {
         let viewWidth = width / 3;
         let iconView = <TouchableOpacity onPress={() => {
-            Alert.alert(
-                '此功能暂未开放',
-                '',
-                [
-                    {text: '确定', onPress: () => {}},
-                ],
-                { cancelable: false }
-            )
+            if (text === '监控系统')
+            {
+                this._getUserInfo();
+
+            }else {
+                Alert.alert(
+                    '此功能暂未开放',
+                    '',
+                    [
+                        {
+                            text: '确定', onPress: () => {
+                        }
+                        },
+                    ],
+                    {cancelable: false}
+                )
+            }
         }}>
             <View style={{marginTop: marginTop ? marginTop : 25, width: viewWidth, alignItems: 'center'}}>
                 <Image source={icon}/>

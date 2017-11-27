@@ -26,8 +26,6 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
   [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
   NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
   
-
-  
   NSURL *jsCodeLocation;
 
   
@@ -48,7 +46,12 @@ JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [UIViewController new];
   rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
+  // 初始化Nav
+  _nav = [[BasicMainNC alloc]initWithRootViewController:rootViewController];
+  _nav.navigationBarHidden = YES;
+  [[UIApplication sharedApplication] setStatusBarHidden:NO];
+  self.window.rootViewController = _nav;
+  
   [self.window makeKeyAndVisible];
   return YES;
 }

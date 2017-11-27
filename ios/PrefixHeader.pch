@@ -1,0 +1,76 @@
+//
+//  PrefixHeader.pch
+//  YYBatteryApp
+//
+//  Created by  LJ on 2017/3/8.
+//  Copyright © 2017年 杭州义益钛迪信息技术有限公司. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#pragma mark - system api
+
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+
+#pragma mark - encapsulation public
+
+#import "ProgressHUD.h"
+#import "AppUtility.h"
+#import "NetWorkManager.h"
+#import "GlobalConstants.h"
+#import "URLConstants.h"
+#import "FileCacheManager.h"
+#import "DefectShow.h"
+#import "MJRefresh.h"
+#import "CustomRefreshGifHeader.h"
+
+#pragma mark - The three parties
+
+#import <AFNetworking/AFNetworking.h>
+//#import <SDWebImage/UIImageView+WebCache.h>
+//#import <SDWebImage/UIButton+WebCache.h>
+#import <MBProgressHUD/MBProgressHUD.h>
+#import <Reachability/Reachability.h>
+#import <MyObjectCoding/NSObject+NSCoding.h>
+#import <JSONModel/JSONModel.h>
+#import <Masonry/Masonry.h>
+#import "LYLDataBaseManager.h"
+#pragma mark - H file
+
+#import "Theme.h"
+#import "CommonDefine.h"
+#import "JHHJView.h"
+
+#pragma mark - categories
+
+#import "NSString+Extension.h"
+#import "NSTimer+Extension.h"
+#import "NSDate+Extension.h"
+#import "NSArray+RemoveDuplicate.h"
+#import "NSMutableAttributedString+Extension.h"
+#import "NSDictionary+Extension.h"
+#import "NSObject+Release.h"
+#import "NSObject+Extension.h"
+#import "UIBarButtonItem+JPExtension.h"
+#import "MBProgressHUD+LJ.h"
+
+#import "UIColor+Extension.h"
+#import "UIView+Rotate.h"
+#import "UINavigationBar+SetElement.h"
+#import "UIViewController+Extension.h"
+#import "UIButton+Extension.h"
+#import "UIImageView+GIF.h"
+#import "UIView+Extension.h"
+#import "UIBarButtonItem+Extension.h"
+#import "UIDevice+Extension.h"
+#import "UIImage+Extension.h"
+#import "UIImageView+Extension.h"
+#import "UIScrollView+Extension.h"
+
+
+#endif /* PrefixHeader_pch */

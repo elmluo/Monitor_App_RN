@@ -9,10 +9,11 @@
 
 #import <UIKit/UIKit.h>
 #import <RCTJPushModule.h>
-
+#import "BasicMainNC.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate,JPUSHRegisterDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
+@property (nonatomic, strong) BasicMainNC *nav;
 
 @end
