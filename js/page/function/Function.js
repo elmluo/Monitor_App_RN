@@ -123,7 +123,7 @@ export default class Function extends Component {
                 }}>
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_battery_Dis.png'), '蓄电池')}
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_door_Dis.png'), '门禁系统')}
-                    {this._IconView(require('../../../res/Image/Subsystem/subsystem_battery_Dis.png'), '监控系统')}
+                    {this._IconView(require('../../../res/Image/Subsystem/subsystem_monitor_Dis.png'), '监控系统')}
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_energy_Dis.png'), '能耗系统', 40)}
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_airCondition_Dis.png'), '空调系统', 40)}
                 </View>

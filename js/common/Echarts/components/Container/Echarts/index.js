@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { WebView, View, StyleSheet,Platform } from 'react-native';
+import { WebView, View, StyleSheet } from 'react-native';
 import renderChart from './renderChart';
 import merge from 'merge';
 import resolveAssetSource from 'resolveAssetSource';
@@ -19,7 +19,7 @@ export default class App extends Component {
       source = { uri: `${_source.uri}` };
     } else {
       const sourceAndroid = { uri: `file:///android_asset/tpl.html` };
-      const sourceIOS = { uri: 'http://download.kongtrolink.com/tpl.html' };
+      const sourceIOS = { uri: `file://${_source.uri}` };
       source = Platform.OS === 'ios' ? sourceIOS : sourceAndroid;
     }
 
@@ -33,7 +33,7 @@ export default class App extends Component {
           style={ merge(this.props.style || {}, {
             height: this.props.height || 400
           })}
-           source={source}
+          source={source}
         />
       </View>
     );
