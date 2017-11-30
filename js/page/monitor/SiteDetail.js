@@ -147,12 +147,12 @@ export default class SiteDetail extends Component {
                            params={{
                                stamp: storage.getLoginInfo().stamp,
                                siteId: this.props.siteInfo.siteId,
+                               // siteInfo: this.props.siteInfo,
                                // system: '',
                                // keyword: '',
                                page: 1,
                                size: 20,
                            }}>
-                    设备
                 </DeviceTab>
 
                 <AlarmTabAlarm tabLabel='告警'

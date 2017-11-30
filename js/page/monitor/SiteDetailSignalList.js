@@ -147,7 +147,7 @@ export default class SignalList extends React.Component {
                 </View>
             } else {
                 value = <View>
-                    <Text style={styles.cellLeftImageBgText}>{v.value + '' + v.unit}</Text>
+                    <Text style={styles.cellLeftImageBgText}>{v.value?(v.value+''+(v.unit?v.unit:'-')):'--' }</Text>
                 </View>
             }
 
@@ -330,8 +330,8 @@ let styles = new StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        width: 50,
-        height: 50,
+        width: 52,
+        height: 52,
         marginRight: 16,
     },
     cellLeftImageBgText: {

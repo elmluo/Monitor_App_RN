@@ -29,17 +29,28 @@ export default class Function extends Component {
         this.state = {
             theme: this.props.theme,
             isLoading: false,
-
+            videoEnable: false,
+            data:[],
         }
     }
+
+    componentDidMount(){
+        this._refreshData();
+    }
+
     _getUserInfo(){
         dataRepository.fetchLocalRepository('/app/v2/user/login').then((result)=>{
 
             let str=storage.getServerIP();
             let pattern = "http";
-            str = str.replace(new RegExp(pattern), "https");
-            CalendarManager.pushVideoVC_stamp(result.stamp,result.userId,str);
 
+            if ( str.indexOf("sc.kongtrolink.com") == 0){
+                str = str.replace(new RegExp(pattern), "https");
+            }
+            //传递必要参数：stamp,userId 设置原生https 请求路径
+            CalendarManager.setData_stamp(result.stamp,result.userId,str);
+            //跳转方法
+            CalendarManager.pushVideoVC_Play("不播放");
         });
 
     }
@@ -47,10 +58,14 @@ export default class Function extends Component {
     _IconView(icon, text, marginTop) {
         let viewWidth = width / 3;
         let iconView = <TouchableOpacity onPress={() => {
-            if (text === '监控系统')
-            {
-                this._getUserInfo();
 
+            if (this.state.videoEnable == true)
+            {
+                if (text ==='监控系统'){
+
+                    this._getUserInfo();
+
+                }
             }else {
                 Alert.alert(
                     '此功能暂未开放',
@@ -64,6 +79,7 @@ export default class Function extends Component {
                     {cancelable: false}
                 )
             }
+
         }}>
             <View style={{marginTop: marginTop ? marginTop : 25, width: viewWidth, alignItems: 'center'}}>
                 <Image source={icon}/>
@@ -87,11 +103,24 @@ export default class Function extends Component {
             };
             dataRepository.fetchNetRepository('POST', URL, params).then(result => {
 
-
+                console.log('获取数据'+JSON.stringify(result.data));
                 if (result.success === true) {
                     this.setState({
                         isLoading: false,
+                        data:result.data,
+
                     })
+                    for (let i = 0; i<result.data.length;i++){
+                        let functionData =result.data[i];
+                        if (functionData.name === '监控系统'){
+                            this.setState({
+                                videoEnable: functionData.enable,
+                            })
+
+                            return;
+                        }
+
+                    }
                 }
 
             }, (error) => {
@@ -99,6 +128,8 @@ export default class Function extends Component {
             })
         })
     }
+
+
 
     render() {
         let statusBar = {
@@ -144,7 +175,7 @@ export default class Function extends Component {
                 }}>
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_battery_Dis.png'), '蓄电池')}
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_door_Dis.png'), '门禁系统')}
-                    {this._IconView(require('../../../res/Image/Subsystem/subsystem_monitor_Dis.png'), '监控系统')}
+                    {this._IconView(this.state.videoEnable?require('../../../res/Image/Subsystem/subsystem_monitor_Nom.png'):require('../../../res/Image/Subsystem/subsystem_monitor_Dis.png'), '监控系统')}
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_energy_Dis.png'), '能耗系统', 40)}
                     {this._IconView(require('../../../res/Image/Subsystem/subsystem_airCondition_Dis.png'), '空调系统', 40)}
                 </View>

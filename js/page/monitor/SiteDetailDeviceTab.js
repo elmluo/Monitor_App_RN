@@ -9,7 +9,8 @@ import {
     TouchableOpacity,
     Dimensions,
     DeviceEventEmitter,
-    ScrollView
+    ScrollView,
+    NativeModules,
 } from 'react-native';
 import CustomListView from '../../common/CustomListView'
 import SearchPage from '../../page/SearchPage';
@@ -22,6 +23,7 @@ import FsuInfo from './SiteDetailFsuInfo';
 let {width, height} = Dimensions.get('window');
 let storage = new Storage();
 let dataRepository = new DataRepository();
+let CalendarManager = NativeModules.CalendarManager;
 
 export default class DeviceTab extends Component {
 
@@ -43,13 +45,19 @@ export default class DeviceTab extends Component {
      * @private
      */
     _pushToSignalList(rowData) {
-        this.props.navigator.push({
-            component: SignalList,
-            params: {
-                deviceInfo: rowData,
-                ...this.props
-            }
-        })
+
+        if (rowData.type === '摄像头'){
+            this._pushToIosVideo(rowData);
+        }else {
+            this.props.navigator.push({
+                component: SignalList,
+                params: {
+                    deviceInfo: rowData,
+                    ...this.props
+                }
+            })
+        }
+
     }
 
     /**
@@ -65,6 +73,30 @@ export default class DeviceTab extends Component {
             }
         })
     }
+
+    /**
+     * 路由跳转原生监控模块
+     * @private
+     */
+    _pushToIosVideo(rowData) {
+        dataRepository.fetchLocalRepository('/app/v2/user/login').then((result)=>{
+
+            let str=storage.getServerIP();
+            let pattern = "http";
+            if ( str.indexOf("sc.kongtrolink.com") == 0){
+                str = str.replace(new RegExp(pattern), "https");
+            }
+            CalendarManager.setData_stamp(result.stamp,result.userId,str);
+            let siteArr =new Array(this.props.siteInfo.name,this.props.siteInfo.siteId);
+            let deviceArr = new Array(rowData.name,rowData.deviceId);
+            console.log('站点数据：'+siteArr,'设备数据'+deviceArr);
+            CalendarManager.setSiteArr(siteArr,deviceArr);
+            CalendarManager.pushVideoVC_Play("播放");
+
+        });
+    }
+
+
 
     /**
      * 渲染列表cell
@@ -93,7 +125,7 @@ export default class DeviceTab extends Component {
                             {this._getImageIcon(rowData.typeCode)}
                         </View>
                         <View>
-                            <Text numberOfLines={1} style={{fontSize: 14, color: '#444444', paddingLeft: 16, width: width * 0.6}}>{rowData.name}</Text>
+                            <Text numberOfLines={1} style={{fontSize: 14, color: '#444444', paddingLeft: 16, width: width * 0.6}}>{rowData.name?rowData.name:'--'}</Text>
                         </View>
                     </View>
                     <View>
